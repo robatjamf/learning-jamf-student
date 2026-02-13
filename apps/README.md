@@ -2,7 +2,17 @@
 
 Install software in the order listed below. Command line tools and Homebrew are required first since several tools depend on them.
 
-A **USB stick** will be provided with the macOS command line tools installers (macOS 26 and macOS 15). No large downloads needed.
+## USB Stick
+
+A USB stick will be provided on Day 1 with the following:
+
+| File | Description |
+|------|-------------|
+| `Command_Line_Tools_for_Xcode_18.dmg` | Command line tools for macOS 26 |
+| `Command_Line_Tools_for_Xcode_16.dmg` | Command line tools for macOS 15 |
+| macOS IPSW | Restore image used for imaging exercises on Day 3 |
+
+Additional resources may be added to the USB stick before the course.
 
 ## Install Order
 
@@ -10,10 +20,7 @@ A **USB stick** will be provided with the macOS command line tools installers (m
 
 Provides Git, compilers, and other developer utilities required by Homebrew and the course.
 
-Install the `.dmg` for your macOS version from the USB stick:
-
-- **macOS 26** — `Command_Line_Tools_for_Xcode_18.dmg`
-- **macOS 15** — `Command_Line_Tools_for_Xcode_16.dmg`
+Install the `.dmg` for your macOS version from the USB stick (see table above).
 
 ### 2. Homebrew
 
