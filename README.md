@@ -1,6 +1,6 @@
 # Learning Jamf — Student Guide
 
-This is a 3-day, hands-on training course where you'll learn to manage Apple devices at scale using Jamf Pro — from enrollment and configuration to packaging, imaging, and API-driven automation.
+This is a 3-day, hands-on training course where you'll learn to manage Apple devices at scale using Jamf Pro — from enrollment and configuration to API-driven automation and AI-native development.
 
 All lab machines are **Apple Silicon Macs (M-series)**.
 
@@ -23,11 +23,11 @@ Install these tools before Day 1. See [apps/](apps/) for detailed install instru
 
 **Postman** — API client for testing Jamf Pro APIs &#8594; [Download](https://www.postman.com/downloads/)
 
-**Tart** — macOS VM tool for imaging workflows &#8594; [tart.run](https://tart.run/quick-start/)
-> `brew install cirruslabs/cli/tart`
+**VMware Fusion OR Virtual Buddy** — macOS VM tool (choose ONE) &#8594; Provided on USB sticks
+> Students choose one tool based on disk space and familiarity. See [apps/README.md](apps/README.md) for selection guidance.
 
-**Packer** — Automated image builder &#8594; [hashicorp.com](https://developer.hashicorp.com/packer/downloads)
-> `brew tap hashicorp/tap && brew install hashicorp/tap/packer`
+**macOS IPSW files** — VM source images (macOS 15 and 26) &#8594; Provided on USB sticks
+> Too large for GitHub, distributed via USB during workshop
 
 **Claude Code** — AI coding assistant &#8594; [Setup guide](https://code.claude.com/docs/en/setup)
 > `curl -fsSL https://claude.ai/install.sh | bash`
@@ -37,4 +37,7 @@ Install these tools before Day 1. See [apps/](apps/) for detailed install instru
 | Folder | Description |
 |--------|-------------|
 | [apps/](apps/) | Detailed install guides organized by training day |
+| [day-1/](day-1/) | Day 1 learning log — connections and context |
+| [day-2/](day-2/) | Day 2 learning log — technical foundations |
+| [day-3/](day-3/) | Day 3 exercise directory — AI-native development with Claude Code |
 | [resources/](resources/) | Reference materials, cheat sheets, and useful links |
