@@ -95,8 +95,10 @@ claude --version
 **What it does:** Changes directory to the training repository folder
 
 ```bash
-cd ~/agent-native-workshop
+cd ~/learning-jamf-student
 ```
+
+**Note:** This assumes you cloned the repo to your home directory. If you cloned it elsewhere, adjust the path accordingly.
 
 ### Claude Code
 
@@ -110,6 +112,35 @@ claude /init
 
 ---
 
+## Block 2: VMs & Infrastructure
+
+**Note:** Block 2 uses GUI applications (VMware Fusion or Virtual Buddy) - no command-line commands. Reference the slides and facilitator instructions for VM creation steps.
+
+### VM Configuration Settings
+
+When creating your VM, use these settings:
+
+- **CPU:** 4 cores
+- **RAM:** 8 GB
+- **Disk Space:** 50 GB
+- **Source:** macOS IPSW file from USB stick (macOS 15 or 26)
+
+### VM Operations
+
+**Create VM:**
+1. Copy IPSW file from USB stick to your Desktop
+2. Open VMware Fusion or Virtual Buddy
+3. Create new VM → Install from IPSW → Select your IPSW file
+4. Set resources (4 CPU, 8 GB RAM, 50 GB disk)
+5. Wait 15-20 minutes for macOS to install
+
+**Take Snapshot:**
+- **VMware Fusion:** VM menu → Snapshots → Take Snapshot
+- **Virtual Buddy:** Click snapshot button in toolbar
+- Name it "Clean install" before making changes
+
+---
+
 ## Block 3: API Bootcamp
 
 ### API Credentials
@@ -117,6 +148,26 @@ claude /init
 Use these credentials for all API calls:
 - **Username:** `jamfpro_api`
 - **Password:** `eap.zog.neek26`
+
+### Jamf Pro Swagger UI
+
+#### Open Swagger UI (API Documentation)
+
+**What it does:** Opens the interactive API documentation built into Jamf Pro where you can browse all available endpoints
+
+**Open this URL in your browser:**
+```
+https://projsadp.jamfcloud.com/api/doc
+```
+
+This is the full Jamf Pro API reference with:
+- All available endpoints organized by category
+- Request/response examples
+- Interactive "Try it out" buttons to test API calls directly in your browser
+
+**Tip:** Keep this tab open during the API exercises - it's helpful to see what endpoints are available and what data they return.
+
+---
 
 ### curl
 
