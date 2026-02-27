@@ -205,6 +205,24 @@ The XML body had: <id>1</id> and <value>Rob</value>
 What does each element mean? Why does this API use XML instead of JSON?"
 ```
 
+### curl
+
+#### Invalidate Your Token (Security Best Practice)
+
+**What it does:** Invalidates your bearer token when you're done using it - security best practice!
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"
+```
+
+**Why this matters:**
+- Tokens stay active for a while after you get them
+- If someone finds your token in terminal history, they could use it
+- Always invalidate tokens when you're done - especially in production environments
+- Pattern: **Authenticate → Work → Invalidate** (like Login → Work → Logout)
+
 ---
 
 ## Block 4: Webhooks
