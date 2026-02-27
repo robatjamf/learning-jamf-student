@@ -8,8 +8,9 @@ A USB stick will be provided on Day 1 with the following:
 
 | File | Description |
 |------|-------------|
-| `Command_Line_Tools_for_Xcode_18.dmg` | Command line tools for macOS 26 |
-| `Command_Line_Tools_for_Xcode_16.dmg` | Command line tools for macOS 15 |
+| `Command_Line_Tools_for_Xcode_18.dmg` | Command line tools for macOS 26 — **Install this FIRST** |
+| `Command_Line_Tools_for_Xcode_16.dmg` | Command line tools for macOS 15 — **Install this FIRST** |
+| `homebrew.pkg` | Homebrew package manager installer — **Install this SECOND** |
 | `VMware-Fusion-[version].dmg` | VMware Fusion installer (one VM tool option) |
 | `VirtualBuddy-[version].dmg` | Virtual Buddy installer (one VM tool option) |
 | `macOS-15-[version].ipsw` | macOS 15 restore image for VM exercises |
@@ -23,15 +24,15 @@ A USB stick will be provided on Day 1 with the following:
 
 Provides Git, compilers, and other developer utilities required by Homebrew and the course.
 
-Install the `.dmg` for your macOS version from the USB stick (see table above).
+**Install the `.dmg` for your macOS version from the USB stick:**
+- macOS 26: `Command_Line_Tools_for_Xcode_18.dmg`
+- macOS 15: `Command_Line_Tools_for_Xcode_16.dmg`
 
-### 2. Homebrew
+### 2. Homebrew (from USB)
 
-Package manager for macOS — used to install Node.js, Tart, and Packer.
+Package manager for macOS — used to install Node.js and other tools.
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+**Install `homebrew.pkg` from the USB stick** (double-click to install).
 
 After install, follow the on-screen instructions to add Homebrew to your PATH.
 

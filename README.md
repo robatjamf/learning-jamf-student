@@ -8,13 +8,13 @@ All lab machines are **Apple Silicon Macs (M-series)**.
 
 Install these tools before Day 1. See [apps/](apps/) for detailed install instructions organized by day.
 
-> **⚠️ IMPORTANT:** Install Command Line Tools **FIRST** (from USB stick) before installing Homebrew. This avoids a 500+ MB download during Homebrew installation.
+> **⚠️ IMPORTANT:** Install Command Line Tools **FIRST** (from USB stick), then install Homebrew (also from USB stick). Both install without internet downloads.
 
 **Command Line Tools** — Developer utilities including Git and compilers
 > Provided on USB stick — **Install this FIRST before Homebrew**
 
-**Homebrew** — Package manager for macOS &#8594; [brew.sh](https://brew.sh/)
-> `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+**Homebrew** — Package manager for macOS
+> Provided on USB stick (`homebrew.pkg`) — **Install this SECOND after Command Line Tools**
 
 **Node.js 20** — JavaScript runtime for automation scripts
 > `brew install node@20`
