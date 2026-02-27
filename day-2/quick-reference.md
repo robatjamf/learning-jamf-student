@@ -96,22 +96,20 @@ claude /init
 
 ## Block 3: API Bootcamp
 
+### API Credentials
+
+Use these credentials for all API calls:
+- **Username:** `jamfpro_api`
+- **Password:** `eap.zog.neek26`
+
 ### curl
 
-#### Check curl Installation
+#### Authenticate to Jamf Pro API (Step 1)
 
-**What it does:** Confirms curl is installed (comes with macOS)
-
-```bash
-curl --version
-```
-
-#### Authenticate to Jamf Pro API
-
-**What it does:** Authenticates to Jamf Pro API and gets bearer token
+**What it does:** Authenticates to Jamf Pro API and shows the full JSON response with token
 
 ```bash
-curl -s -u "YOUR_USERNAME:YOUR_PASSWORD" \
+curl -s -u "jamfpro_api:eap.zog.neek26" \
   -H "Content-Type: application/json" \
   -X POST \
   "https://projsadp.jamfcloud.com/api/v1/auth/token"
@@ -119,12 +117,24 @@ curl -s -u "YOUR_USERNAME:YOUR_PASSWORD" \
 
 ### Shell
 
-#### Save Token as Variable
+#### Save Token as Variable (Step 2)
 
-**What it does:** Saves token as shell variable for reuse in API calls
+**What it does:** Gets the token and extracts just the token value using jq, then saves it as $TOKEN variable
 
 ```bash
-TOKEN="paste-your-token-here"
+TOKEN=$(curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token" \
+  | jq -r '.token')
+```
+
+#### Verify Token Saved
+
+**What it does:** Displays your token to confirm it was saved correctly
+
+```bash
+echo $TOKEN
 ```
 
 ### curl
@@ -151,38 +161,61 @@ curl -s \
   | jq .
 ```
 
-#### Create a Category
+#### Update Extension Attribute (Workshop Status)
 
-**What it does:** Creates a category in Jamf Pro (POST request with JSON body)
+**What it does:** Updates the "Workshop Status" Extension Attribute on your computer using XML format (Classic API)
+
+**Important:**
+- Replace `YOUR_DEVICE_ID` with your device ID from the GET call above
+- Replace `YourName` with your actual name (e.g., Rob, Sarah, Marcus)
+- This update triggers the Smart Group webhook in Block 4!
 
 ```bash
-curl -s \
+curl -X PUT \
   -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -X POST \
-  -d '{"name": "Training - YOUR_NAME", "priority": 5}' \
-  "https://projsadp.jamfcloud.com/api/v1/categories"
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '<computer>
+  <extension_attributes>
+    <extension_attribute>
+      <id>1</id>
+      <value>YourName</value>
+    </extension_attribute>
+  </extension_attributes>
+</computer>'
 ```
+
+#### Verify in Jamf Pro UI
+
+After running the command above:
+1. Open Jamf Pro web interface: https://projsadp.jamfcloud.com
+2. Go to: Computers → Search for your device → General tab
+3. Look for: **Extension Attributes** section
+4. You should see: **Workshop Status: YourName**
 
 ### Claude Code
 
-#### Ask About API Fields
+#### Ask About XML vs JSON
 
-**What it does:** Asks Claude Code to explain API request fields (companion moment)
+**What it does:** Asks Claude Code to explain the difference between XML and JSON APIs (companion moment)
 
 ```bash
-claude "I just made a POST request to the Jamf Pro API to create a category.
-The JSON body was: {\"name\": \"Training - Rob\", \"priority\": 5}
-What does each field mean? What other fields could I add?"
+claude "I just updated a computer's Extension Attribute using the Jamf Pro Classic API.
+The XML body had: <id>1</id> and <value>Rob</value>
+What does each element mean? Why does this API use XML instead of JSON?"
 ```
 
 ---
 
 ## Block 4: Webhooks
 
+### Connection to Block 3
+
+The Extension Attribute you updated in Block 3 connects to this block! When you updated the EA, your computer joined the **"Workshop Participants"** Smart Group. The webhook watches that Smart Group for membership changes.
+
 ### curl
 
-#### Test webhook.site URL
+#### Test webhook.site URL (Optional)
 
 **What it does:** Tests webhook.site URL with a POST request
 
@@ -192,15 +225,32 @@ curl -X POST https://webhook.site/YOUR_WEBHOOK_URL \
   -d '{"message": "Hello from YOUR_NAME!"}'
 ```
 
-### Jamf
+### Trigger Smart Group Webhook
 
-#### Trigger Webhook Event
-
-**What it does:** Forces a check-in from enrolled Mac to trigger webhook event
+**What it does:** Run the Extension Attribute update command again (from Block 3) to trigger the Smart Group webhook. Watch the webhook.site URL on the projector to see your update appear in real-time!
 
 ```bash
-sudo jamf recon
+curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '<computer>
+  <extension_attributes>
+    <extension_attribute>
+      <id>1</id>
+      <value>YourName</value>
+    </extension_attribute>
+  </extension_attributes>
+</computer>'
 ```
+
+**What happens:**
+1. You update the EA via API →
+2. Computer joins Smart Group →
+3. Webhook fires →
+4. JSON payload appears in webhook.site!
+
+This is **event-driven integration** in action.
 
 ---
 
