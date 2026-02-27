@@ -46,12 +46,24 @@ curl -fsSL https://claude.ai/install.sh | bash
 source ~/.zshrc
 ```
 
-#### Set API Key
+#### Set API Key (Each Student Gets Their Own Key)
 
 **What it does:** Sets up API key for Claude Code authentication
 
+**IMPORTANT:** Each student receives their own individual API key. Check the projector during Block 1B for your assigned key (Student 1, Student 2, etc.).
+
 ```bash
-export ANTHROPIC_API_KEY=YOUR_API_KEY
+export ANTHROPIC_API_KEY=sk-ant-api03-YOUR_ASSIGNED_KEY_HERE
+```
+
+**Note:** This export command only lasts for the current Terminal session. If you close Terminal or open a new tab, you'll need to run this command again.
+
+#### Verify API Key is Set
+
+**What it does:** Confirms your API key was set correctly (should display your key starting with sk-ant-api03-)
+
+```bash
+echo $ANTHROPIC_API_KEY
 ```
 
 ### Claude Code
@@ -64,6 +76,8 @@ export ANTHROPIC_API_KEY=YOUR_API_KEY
 claude "What is 2 + 2?"
 ```
 
+**Expected result:** Claude should respond with information about the answer being 4.
+
 #### Verify Installation
 
 **What it does:** Confirms Claude Code is installed correctly
@@ -71,6 +85,8 @@ claude "What is 2 + 2?"
 ```bash
 claude --version
 ```
+
+**Expected result:** Shows version number (e.g., claude v1.0.0)
 
 ### Shell
 
