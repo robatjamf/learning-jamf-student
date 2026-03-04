@@ -4,9 +4,6 @@ This is a 3-day, hands-on training course where you'll learn to manage Apple dev
 
 All lab machines are **Apple Silicon Macs (M-series)**.
 
-## Group Chat 
-
-[Join Here](http://chat.local/#/register?magic_token=9993f9f5aade3ad340f5bc6c353c338b5056bf3fe38a48b903fc1996137fbf6100000000000006000000000000003839393332377b54a369000000000000)
 
 ## Required Software
 
