@@ -16,6 +16,6 @@
    **Favorite animal:** Red Panda
    ```
 
-4. **Commit and push** your branch.
+4. **Commit and push** your branch with comment.
 
 5. **Open a Pull Request** back into `main`.
