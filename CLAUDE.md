@@ -58,13 +58,22 @@ Students work on personal branches (e.g., `Amanda`, `students/jane-doe`) and ope
 
 ## Current Project State
 
-Day 3 pages are built. See `COMPOUND.md` for full session history, design decisions, and what to focus on next.
+Day 3 pages are built. The `planned/index.html` was fully rebuilt in Session 2 with a scrapbook theme. See `COMPOUND.md` for full history.
 
 | File | Status |
 |------|--------|
 | `day-3/site/one-shot/index.html` | Complete — dark theme, static, kept for comparison |
-| `day-3/site/planned/index.html` | Complete — Apple aesthetic, flashcards, scroll animations |
-| `day-3/learning-log.md` | Blank — Amanda's Day 3 reflections not yet filled in |
+| `day-3/site/planned/index.html` | Complete — scrapbook theme, expandable day notes, visual deeper dives, Permanent Marker font |
+| `day-3/amanda-learning-log.md` | Complete — all 4 Day 3 checkpoints filled in |
+
+**Planned page key features:**
+- Scrapbook aesthetic: torn paper edges, sticky notes, tape strips, photo corners, page tags
+- Cover: "This notebook belongs to: Amanda" ownership label
+- 3 expandable day sections — "My notes" (Amanda's words) + "Deeper dive" (Claude-expanded visuals)
+- Deeper dive visuals: icon grid (Day 1), comparison table (Day 2), loop step grid (Day 3)
+- 20-card flashcard deck (index card style, 3D flip, keyboard/swipe nav)
+- Curl cheat sheet with copy-to-clipboard
+- Skills pill section + terracotta closing quote
 
 ## Key Reference Files
 

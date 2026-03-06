@@ -3,777 +3,1070 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Amanda — Jamf Workshop Review</title>
+  <title>Apple Device Management: My Notes — Amanda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #f5f5f7;
-      --surface:   #ffffff;
-      --text:      #1d1d1f;
-      --secondary: #6e6e73;
-      --accent:    #0071e3;
-      --border:    rgba(0,0,0,0.08);
-      --shadow:    0 2px 24px rgba(0,0,0,0.07);
-      --shadow-lg: 0 8px 40px rgba(0,0,0,0.13);
-      --radius:    18px;
-      --radius-sm: 12px;
-      --ease:      cubic-bezier(0.4,0,0.2,1);
-      /* dark palette */
-      --dark-bg:      #0a0f1e;
-      --dark-surface: rgba(255,255,255,0.06);
-      --dark-border:  rgba(255,255,255,0.10);
-      --dark-text:    #f5f5f7;
-      --dark-secondary: rgba(255,255,255,0.55);
-      --dark-accent:  #60a5fa;
+      --cream:          #F7F5F2;
+      --paper:          #FFFFFF;
+      --sage-bg:        #EEF6F0;
+      --text:           #1A1A1A;
+      --text-light:     #555555;
+      --sticky-yellow:  #FFE566;
+      --sticky-green:   #95E06C;
+      --sticky-coral:   #FF6B6B;
+      --sticky-blue:    #5BC8F5;
+      --tape-amber:     rgba(255,185,0,0.50);
+      --tape-sage:      rgba(100,190,120,0.50);
+      --tape-blue:      rgba(60,170,220,0.50);
+      --terracotta:     #E8472A;
+      --olive:          #3DAA60;
+      --dark-brown:     #1E1E1E;
+      --darker-brown:   #111111;
+      --shadow-sm:      2px 4px 12px rgba(0,0,0,0.10);
+      --shadow-md:      4px 8px 24px rgba(0,0,0,0.14);
+      --shadow-lg:      6px 16px 40px rgba(0,0,0,0.18);
+      --hand: 'Permanent Marker', cursive;
+      --body: 'Inter', system-ui, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-                   "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
+      font-family: var(--body);
+      background: var(--cream);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    /* ─── NAV ─── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(10,15,30,0.80);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      height: 52px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .nav-inner {
-      max-width: 980px; width: 100%;
-      padding: 0 24px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo { font-size: 0.9rem; font-weight: 600; color: #f5f5f7; letter-spacing: -0.01em; }
-    .nav-links { display: flex; gap: 24px; list-style: none; }
-    .nav-links a {
-      font-size: 0.8rem; color: rgba(255,255,255,0.55);
-      text-decoration: none; transition: color 0.2s;
-    }
-    .nav-links a:hover { color: #f5f5f7; }
-
-    /* ─── ANIMATE ON SCROLL ─── */
-    .animate {
+    /* ── SCROLL ANIMATE ── */
+    .anim {
       opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+      transform: translateY(36px) rotate(-0.8deg);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1);
     }
-    .animate.delay-1 { transition-delay: 0.1s; }
-    .animate.delay-2 { transition-delay: 0.2s; }
-    .animate.delay-3 { transition-delay: 0.3s; }
-    .animate.delay-4 { transition-delay: 0.4s; }
-    .animate.visible  { opacity: 1; transform: translateY(0); }
+    .anim.d1 { transition-delay: 0.10s; }
+    .anim.d2 { transition-delay: 0.20s; }
+    .anim.d3 { transition-delay: 0.30s; }
+    .anim.d4 { transition-delay: 0.40s; }
+    .anim.visible { opacity: 1; transform: translateY(0) rotate(0deg); }
 
-    /* ─── LAYOUT ─── */
-    section { padding: 96px 24px; }
-    .container { max-width: 980px; margin: 0 auto; }
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes wobble {
+      0%   { transform: rotate(var(--rot,0deg)); }
+      25%  { transform: rotate(calc(var(--rot,0deg) + 3deg)); }
+      75%  { transform: rotate(calc(var(--rot,0deg) - 3deg)); }
+      100% { transform: rotate(var(--rot,0deg)); }
+    }
 
-    .eyebrow {
-      font-size: 0.75rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 12px;
+    /* ── LAYOUT ── */
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* ── COVER ── */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 24px;
+      background: #F0E8CC;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-tape-top {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 20px;
+      background: rgba(255,185,0,0.72);
+    }
+    .cover-tape-corner {
+      position: absolute;
+      width: 80px; height: 20px;
+      background: rgba(60,180,140,0.68);
+      border-radius: 2px;
+    }
+    .cover-tape-corner.tl { top: 48px; left: -16px; transform: rotate(-42deg); }
+    .cover-tape-corner.tr { top: 48px; right: -16px; transform: rotate(42deg); }
+    .cover-label {
+      font-family: var(--hand);
+      font-size: 1rem; color: var(--text-light);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .cover-title {
+      font-family: var(--hand);
+      font-size: clamp(2.6rem, 8vw, 5rem);
+      font-weight: 700; color: var(--text);
+      line-height: 1.1; margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .cover-sub {
+      font-size: 1.05rem; color: var(--text-light);
+      line-height: 1.7; max-width: 480px; margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+    .cover-stats {
+      display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+    .cover-stat {
+      background: var(--paper); border-radius: 8px;
+      padding: 14px 22px; box-shadow: var(--shadow-sm); text-align: center;
+    }
+    .cover-stat-num {
+      font-family: var(--hand); font-size: 2rem; font-weight: 700;
+      color: var(--terracotta); display: block;
+    }
+    .cover-stat-label {
+      font-size: 0.78rem; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    /* ── OWNERSHIP LABEL ── */
+    .ownership-label {
+      margin-top: 44px;
+      background: var(--paper);
+      border: 2px dashed rgba(0,0,0,0.18);
+      padding: 14px 32px 16px;
+      border-radius: 4px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      opacity: 0; animation: fadeUp 0.9s ease 1.0s forwards;
+      position: relative;
+    }
+    .ownership-label::before {
+      /* tape holding the label */
+      content: '';
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 18px; border-radius: 2px;
+      background: var(--tape-blue);
+    }
+    .ownership-line {
+      font-family: var(--body); font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-light);
+      display: block; margin-bottom: 4px;
+    }
+    .ownership-name {
+      font-family: var(--hand); font-size: 2.2rem; color: var(--text); display: block;
+    }
+
+    /* ── PHOTO CORNERS ── */
+    .photo-corner {
+      position: absolute; width: 18px; height: 18px;
+    }
+    .photo-corner::before, .photo-corner::after {
+      content: ''; position: absolute; background: #333; border-radius: 1px;
+    }
+    .photo-corner::before { width: 100%; height: 3px; top: 0; left: 0; }
+    .photo-corner::after  { width: 3px; height: 100%; top: 0; left: 0; }
+    .photo-corner.tl { top: 10px; left: 10px; }
+    .photo-corner.tr { top: 10px; right: 10px; transform: rotate(90deg); }
+    .photo-corner.bl { bottom: 10px; left: 10px; transform: rotate(-90deg); }
+    .photo-corner.br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+    /* ── PAGE NUMBER TAG ── */
+    .page-tag {
+      display: inline-block;
+      background: var(--sticky-yellow);
+      font-family: var(--hand); font-size: 1rem; color: var(--text);
+      padding: 4px 16px; border-radius: 2px;
+      box-shadow: var(--shadow-sm);
+      position: absolute; bottom: -12px; right: 32px;
+      transform: rotate(1.5deg);
+    }
+    .page-tag::before {
+      content: '';
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 40px; height: 14px; border-radius: 2px;
+      background: var(--tape-amber);
+    }
+
+    /* ── EXTRA TAPE STRIP ── */
+    .tape-strip {
+      position: absolute;
+      height: 18px; border-radius: 2px;
+    }
+    .tape-strip.left {
+      width: 56px; left: -8px; top: 40%;
+      transform: rotate(-90deg);
+      background: var(--tape-sage);
+    }
+    .tape-strip.corner-right {
+      width: 60px; right: 24px; bottom: 20px;
+      transform: rotate(-6deg);
+      background: var(--tape-blue);
+    }
+    .tape-strip.corner-left {
+      width: 60px; left: 24px; bottom: 20px;
+      transform: rotate(5deg);
+      background: rgba(255,100,100,0.35);
+    }
+
+    /* ── TORN DIVIDER ── */
+    .torn { display: block; width: 100%; line-height: 0; }
+    .torn svg { display: block; width: 100%; }
+
+    /* ── DAY SECTIONS ── */
+    .day-section { padding: 72px 24px 56px; }
+    .day-section.alt { background: var(--sage-bg); }
+
+    /* ── STICKY NOTE ── */
+    .sticky {
+      display: inline-block;
+      padding: 18px 22px;
+      border-radius: 2px;
+      box-shadow: var(--shadow-md);
+      font-family: var(--hand);
+      font-size: 1.1rem; line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 24px;
+      max-width: 380px;
+      position: relative;
+    }
+    .sticky::before {
+      content: '';
+      position: absolute; top: -11px; left: 50%;
+      transform: translateX(-50%);
+      width: 56px; height: 16px; border-radius: 2px;
+    }
+    .sticky .sticky-attr {
+      display: block; margin-top: 8px;
+      font-size: 0.8rem; color: var(--text-light);
+    }
+    .sticky.yellow { background: var(--sticky-yellow); --rot: -2deg; transform: rotate(-2deg); }
+    .sticky.yellow::before { background: var(--tape-amber); }
+    .sticky.coral  { background: var(--sticky-coral);  --rot: 2deg;   transform: rotate(2deg); }
+    .sticky.coral::before  { background: rgba(210,130,120,0.4); }
+    .sticky.blue   { background: var(--sticky-blue);   --rot: -1.5deg; transform: rotate(-1.5deg); }
+    .sticky.blue::before   { background: var(--tape-blue); }
+    .sticky:hover { animation: wobble 0.45s ease; }
+
+    /* ── DAY CARD ── */
+    .day-card {
+      background: var(--paper);
+      border-radius: 8px; padding: 36px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .day-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .day-card::before {
+      content: '';
+      position: absolute; top: -11px; right: 48px;
+      width: 80px; height: 20px; border-radius: 2px;
+      transform: rotate(1deg);
+    }
+    .day-card.tape-amber::before { background: var(--tape-amber); }
+    .day-card.tape-sage::before  { background: var(--tape-sage); }
+    .day-card.tape-blue::before  { background: var(--tape-blue); }
+
+    .day-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+    .day-badge {
+      font-family: var(--hand); font-size: 1.1rem; font-weight: 700;
+      color: var(--paper); background: var(--terracotta);
+      padding: 6px 18px; border-radius: 4px;
+      box-shadow: var(--shadow-sm); white-space: nowrap; flex-shrink: 0;
+    }
+    .day-title {
+      font-family: var(--hand);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700; color: var(--text); line-height: 1.15;
+    }
+    .day-teaser {
+      font-size: 0.97rem; color: var(--text-light);
+      line-height: 1.7; max-width: 640px; margin-bottom: 24px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .chip {
+      background: var(--cream); border: 1px solid rgba(61,43,31,0.15);
+      color: var(--text); padding: 4px 12px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 500;
+    }
+
+    /* ── EXPAND BUTTON ── */
+    .expand-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--tape-amber);
+      border: none; padding: 9px 20px;
+      font-family: var(--hand); font-size: 1.05rem; color: var(--text);
+      cursor: pointer; border-radius: 3px; box-shadow: var(--shadow-sm);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .expand-btn:hover { background: rgba(220,168,80,0.65); transform: scale(1.03); }
+    .expand-btn .chev { transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1); }
+    .expand-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+    /* ── EXPANDABLE BODY ── */
+    .expand-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.65s cubic-bezier(0.16,1,0.3,1);
+    }
+    .expand-body.open { max-height: 3000px; }
+    .expand-inner { padding-top: 28px; display: flex; flex-direction: column; gap: 22px; }
+
+    /* ── NOTES PANEL (sticky-style) ── */
+    .notes-panel {
+      border-radius: 4px; padding: 24px 26px;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transform: translateX(-18px) rotate(-0.8deg);
+      transition: opacity 0.45s ease 0.08s, transform 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.08s;
+    }
+    .notes-panel.yellow { background: var(--sticky-yellow); }
+    .notes-panel.green  { background: var(--sticky-green); }
+    .notes-panel.blue   { background: var(--sticky-blue); }
+    .expand-body.open .notes-panel {
+      opacity: 1; transform: translateX(0) rotate(-0.6deg);
+    }
+    .panel-label {
+      font-family: var(--body); font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .note-item { margin-bottom: 14px; }
+    .note-item:last-child { margin-bottom: 0; }
+    .note-q { font-family: var(--body); font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .note-a { font-size: 0.93rem; color: var(--text); line-height: 1.65; }
+    .note-divider { border: none; border-top: 1px dashed rgba(61,43,31,0.2); margin: 12px 0; }
+
+    /* ── DIVE CARD ── */
+    .dive-card {
+      background: var(--paper);
+      border: 1px solid rgba(61,43,31,0.08);
+      border-radius: 8px; padding: 24px 26px;
+      box-shadow: var(--shadow-sm);
+      opacity: 0; transform: translateY(14px);
+      transition: opacity 0.45s ease 0.22s, transform 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.22s;
+    }
+    .expand-body.open .dive-card { opacity: 1; transform: translateY(0); }
+    .dive-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--sticky-green); color: var(--text);
+      padding: 3px 12px; border-radius: 20px;
+      font-family: var(--body); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .dive-card h4 {
+      font-family: var(--hand); font-size: 1.3rem; font-weight: 700;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .dive-card p { font-size: 0.93rem; color: var(--text-light); line-height: 1.7; margin-bottom: 10px; }
+    .dive-card p:last-child { margin-bottom: 0; }
+    .dive-card strong { color: var(--text); }
+    .dive-fact {
+      background: var(--cream);
+      border-left: 3px solid var(--terracotta);
+      padding: 10px 14px; border-radius: 0 6px 6px 0;
+      font-size: 0.89rem; color: var(--text); line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    /* ── FLASHCARD SECTION ── */
+    .flashcard-section { padding: 80px 24px; background: var(--dark-brown); }
+    .section-eyebrow {
+      font-family: var(--hand); font-size: 1rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      display: block; margin-bottom: 6px;
     }
     .section-title {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700; letter-spacing: -0.03em;
-      line-height: 1.1; color: var(--text);
-      margin-bottom: 16px;
+      font-family: var(--hand); font-size: clamp(1.9rem,4.5vw,2.8rem);
+      font-weight: 700; line-height: 1.15; margin-bottom: 10px;
     }
-    .section-sub {
-      font-size: 1.1rem; color: var(--secondary);
-      line-height: 1.6; max-width: 560px;
-      margin-bottom: 56px;
-    }
+    .section-sub { font-size: 0.97rem; line-height: 1.7; margin-bottom: 44px; max-width: 500px; }
 
-    /* ─── TINTED LIGHT SECTION ─── */
-    .tinted-section { background: #eef4ff; }
-    .tinted-section .compare-row { background: #deeaff; }
-
-    /* ─── DARK SECTION ─── */
-    .dark-section { background: #0a0f1e; }
-    .dark-section .eyebrow { color: #60a5fa; }
-    .dark-section .section-title { color: #f5f5f7; }
-    .dark-section .section-sub  { color: rgba(255,255,255,0.55); }
-    .dark-section .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 2px 24px rgba(0,0,0,0.35);
-    }
-    .dark-section .card h3 { color: #f5f5f7; }
-    .dark-section .card p  { color: rgba(255,255,255,0.55); }
-    .dark-section .card-icon { background: rgba(255,255,255,0.07); }
-    .dark-section .quote-block {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-left: 4px solid #60a5fa;
-      box-shadow: none;
-    }
-    .dark-section .quote-text { color: #f5f5f7; }
-    .dark-section .quote-attr { color: rgba(255,255,255,0.45); }
-    .dark-section .pain-list li { color: rgba(255,255,255,0.55); border-bottom-color: rgba(255,255,255,0.08); }
-    .dark-section .pain-dot { background: #60a5fa; }
-
-    /* ─── HERO ─── */
-    #hero {
-      min-height: 100vh;
-      background: linear-gradient(160deg, #070c1a 0%, #0d1b3e 45%, #070c1a 100%);
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 120px 24px 80px;
-      position: relative; overflow: hidden;
-    }
-    #hero::before {
-      content: "";
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 55% at 50% 35%,
-        rgba(100,180,255,0.20) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-inner { max-width: 720px; position: relative; z-index: 1; }
-    .hero-tag {
-      display: inline-block;
-      background: rgba(96,165,250,0.12);
-      color: #93c5fd;
-      border: 1px solid rgba(96,165,250,0.25);
-      border-radius: 40px;
-      padding: 6px 18px;
-      font-size: 0.82rem; font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 32px;
-    }
-    .hero-name {
-      font-size: clamp(3rem, 9vw, 6.5rem);
-      font-weight: 800; letter-spacing: -0.04em;
-      line-height: 1; color: #f5f5f7;
-      margin-bottom: 20px;
-    }
-    .hero-sub {
-      font-size: clamp(1.1rem, 3vw, 1.5rem);
-      color: rgba(255,255,255,0.55); line-height: 1.5;
-      margin-bottom: 48px; letter-spacing: -0.01em;
-    }
-    .hero-meta {
-      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
-    }
-    .hero-meta-item { text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .hero-meta-num {
-      font-size: 2.2rem; font-weight: 700; letter-spacing: -0.03em;
-      color: #f5f5f7; white-space: nowrap;
-      height: 2.8rem; display: flex; align-items: center; justify-content: center;
-    }
-    .hero-meta-num.text-stat {
-      font-size: 1.25rem; letter-spacing: -0.01em;
-    }
-    .hero-meta-label {
-      font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 4px;
-      letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600;
-    }
-    .hero-divider {
-      width: 1px; background: rgba(255,255,255,0.12);
-      align-self: stretch;
-    }
-
-    /* ─── CARDS ─── */
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 32px;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .card-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-    }
-    .card h3 {
-      font-size: 1rem; font-weight: 700; margin-bottom: 10px;
-      letter-spacing: -0.01em;
-    }
-    .card p {
-      font-size: 0.9rem; color: var(--secondary); line-height: 1.65;
-    }
-    .card-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; margin-bottom: 16px;
-    }
-    /* coloured card icons (light sections) */
-    .icon-blue   { background: rgba(0,113,227,0.10); }
-    .icon-purple { background: rgba(130,80,220,0.10); }
-    .icon-teal   { background: rgba(0,180,160,0.10); }
-    .icon-green  { background: rgba(52,199,89,0.10); }
-    .icon-orange { background: rgba(255,140,0,0.10); }
-
-    /* ─── EXPANDABLE NOTES ─── */
-    .notes-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; background: none; border: none; cursor: pointer;
-      padding: 18px 24px;
-      text-align: left;
-    }
-    .notes-toggle-label {
-      font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--accent);
-    }
-    .notes-chevron {
-      width: 20px; height: 20px; flex-shrink: 0;
-      border-radius: 50%; background: rgba(0,113,227,0.10);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.35s var(--ease), background 0.15s;
-      font-size: 0.65rem; color: var(--accent);
-    }
-    .notes-block {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-top: 20px;
-    }
-    .notes-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.45s var(--ease);
-      border-radius: 0 0 var(--radius) var(--radius);
-    }
-    .notes-body.open { max-height: 600px; }
-    .notes-toggle[aria-expanded="true"] .notes-chevron { transform: rotate(180deg); background: rgba(0,113,227,0.15); }
-    .notes-inner {
-      padding: 0 24px 24px;
-      display: flex; flex-direction: column; gap: 16px;
-    }
-    .note-item {}
-    .note-q {
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em;
-      text-transform: uppercase; color: var(--secondary);
-      margin-bottom: 5px;
-    }
-    .note-a {
-      font-size: 0.9rem; color: var(--text); line-height: 1.65;
-    }
-    .note-divider {
-      border: none; border-top: 1px solid var(--border);
-    }
-    /* tinted section adjustments */
-    .tinted-section .notes-block { background: #fff; }
-    .tinted-section .notes-toggle-label { color: var(--accent); }
-    .tinted-section .note-divider { border-top-color: rgba(0,0,0,0.07); }
-
-    /* ─── QUOTE BLOCK ─── */
-    .quote-block {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 36px 40px;
-      border-left: 4px solid var(--accent);
-    }
-    .quote-text {
-      font-size: 1.15rem; font-style: italic;
-      color: var(--text); line-height: 1.7;
-      margin-bottom: 12px;
-    }
-    .quote-attr {
-      font-size: 0.82rem; color: var(--secondary); font-weight: 600;
-    }
-
-    /* ─── PERSONA SECTION ─── */
-    .persona-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    @media (max-width: 640px) { .persona-grid { grid-template-columns: 1fr; } }
-
-    .pain-list { list-style: none; }
-    .pain-list li {
-      display: flex; align-items: flex-start; gap: 10px;
-      font-size: 0.9rem; color: var(--secondary); line-height: 1.55;
-      padding: 8px 0; border-bottom: 1px solid var(--border);
-    }
-    .pain-list li:last-child { border-bottom: none; }
-    .pain-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent); flex-shrink: 0; margin-top: 7px;
-    }
-
-    /* ─── API vs WEBHOOK COMPARISON ─── */
-    .compare-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-    }
-    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
-    .compare-card {
-      background: var(--surface); border-radius: var(--radius);
-      box-shadow: var(--shadow); padding: 32px;
-      border-top: 4px solid transparent;
-    }
-    .compare-card.api   { border-top-color: #0071e3; }
-    .compare-card.webhook { border-top-color: #34c759; }
-    .compare-label {
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; margin-bottom: 12px;
-    }
-    .compare-card.api .compare-label { color: #0071e3; }
-    .compare-card.webhook .compare-label { color: #34c759; }
-    .compare-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; }
-    .compare-rows { display: flex; flex-direction: column; gap: 12px; }
-    .compare-row { background: var(--bg); border-radius: var(--radius-sm); padding: 12px 16px; }
-    .compare-row-label { font-size: 0.72rem; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-    .compare-row-val { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
-
-    /* ─── COMMANDS ─── */
-    .command-block {
-      background: #0a2150;
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-    .command-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 20px;
-      background: rgba(0,0,0,0.30);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .command-title { font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.75); }
-    .copy-btn {
-      font-size: 0.75rem; font-weight: 600; color: #60a5fa;
-      background: none; border: none; cursor: pointer; padding: 4px 8px;
-      border-radius: 6px; transition: background 0.15s;
-    }
-    .copy-btn:hover { background: rgba(96,165,250,0.12); }
-    .copy-btn.copied { color: #34c759; }
-    .command-body {
-      padding: 20px;
-      font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
-      font-size: 0.82rem; line-height: 1.7;
-      color: #7dd3fc;
-      white-space: pre-wrap;
-      word-break: break-all;
-      background: rgba(0,0,0,0.15);
-    }
-
-    /* ─── FLASHCARDS ─── */
-    #flashcards { background: var(--bg); }
-    .flashcard-wrapper {
-      max-width: 560px; margin: 0 auto;
-      text-align: center;
-    }
+    .flashcard-wrapper { max-width: 500px; margin: 0 auto; }
     .flashcard-counter {
-      font-size: 0.82rem; color: var(--secondary);
-      margin-bottom: 24px; font-weight: 500;
+      text-align: center; font-family: var(--hand); font-size: 1rem;
+      color: rgba(254,252,247,0.45); margin-bottom: 18px;
     }
-    .flashcard-scene {
-      width: 100%; height: 260px;
-      perspective: 1000px;
-      cursor: pointer;
-      margin-bottom: 28px;
-    }
+    .flashcard-scene { width: 100%; height: 270px; perspective: 1200px; cursor: pointer; }
     .flashcard-card {
-      width: 100%; height: 100%;
-      position: relative;
+      width: 100%; height: 100%; position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.55s var(--ease);
-      border-radius: var(--radius);
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
     }
     .flashcard-card.flipped { transform: rotateY(180deg); }
     .fc-front, .fc-back {
       position: absolute; inset: 0;
-      border-radius: var(--radius);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 6px;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 32px;
-      box-shadow: var(--shadow-lg);
+      justify-content: center; align-items: center; text-align: center;
+      padding: 28px;
     }
     .fc-front {
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-    .fc-front .fc-term {
-      font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
-      color: var(--text); margin-bottom: 12px;
-    }
-    .fc-front .fc-hint {
-      font-size: 0.8rem; color: var(--secondary);
+      background: var(--paper);
+      background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(61,43,31,0.08) 28px);
+      box-shadow: var(--shadow-lg), 3px 3px 0 rgba(61,43,31,0.08);
     }
     .fc-back {
-      background: linear-gradient(135deg, #0050a3 0%, #0071e3 100%);
+      background: var(--sticky-yellow);
       transform: rotateY(180deg);
+      box-shadow: var(--shadow-lg), 3px 3px 0 rgba(61,43,31,0.08);
     }
-    .fc-back .fc-def {
-      font-size: 0.95rem; color: #fff; line-height: 1.65;
-      text-align: center; margin-bottom: 12px;
-    }
-    .fc-back .fc-analogy {
-      font-size: 0.8rem; color: rgba(255,255,255,0.7);
-      font-style: italic; line-height: 1.5; text-align: center;
-    }
-    .flashcard-nav {
-      display: flex; align-items: center; justify-content: center;
-      gap: 16px;
-    }
-    .fc-btn {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--surface); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 1.1rem;
-      transition: background 0.15s, transform 0.1s;
-      color: var(--text); box-shadow: var(--shadow);
-    }
-    .fc-btn:hover { background: #e8e8ed; }
-    .fc-btn:active { transform: scale(0.94); }
-    .fc-hint-tap { font-size: 0.78rem; color: var(--secondary); margin-top: 16px; }
+    .fc-term { font-family: var(--hand); font-size: 2.1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .fc-hint { font-family: var(--hand); font-size: 0.93rem; color: var(--text-light); }
+    .fc-def  { font-size: 0.92rem; color: var(--text); line-height: 1.65; margin-bottom: 10px; }
+    .fc-analogy { font-family: var(--hand); font-size: 0.93rem; color: var(--text-light); font-style: italic; }
 
-    /* ─── COMPOUND LOOP ─── */
-    .loop-steps {
+    .flashcard-nav { display: flex; gap: 12px; justify-content: center; margin-top: 22px; }
+    .fc-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(254,252,247,0.18);
+      background: rgba(254,252,247,0.07); color: var(--paper);
+      font-size: 1.1rem; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .fc-btn:hover { background: rgba(254,252,247,0.16); border-color: rgba(254,252,247,0.38); }
+    .fc-btn.wide { width: auto; border-radius: 24px; padding: 0 18px; font-family: var(--hand); font-size: 1rem; }
+    .fc-nav-hint { text-align: center; font-size: 0.78rem; color: rgba(254,252,247,0.3); margin-top: 10px; }
+
+    /* ── CHEAT SHEET SECTION ── */
+    .cheatsheet-section { padding: 80px 24px; background: var(--cream); }
+    .cheatsheet-paper {
+      background: var(--paper); border-radius: 8px; padding: 40px;
+      box-shadow: var(--shadow-md); position: relative;
+      background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(61,43,31,0.06) 32px);
+    }
+    .cheatsheet-paper::before {
+      content: '';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      width: 110px; height: 20px;
+      background: var(--tape-sage); border-radius: 2px;
+    }
+    .cheatsheet-title {
+      font-family: var(--hand); font-size: 2rem;
+      color: var(--text); margin-bottom: 28px; text-align: center;
+    }
+    .command-block { background: var(--darker-brown); border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
+    .command-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .command-title { font-family: var(--body); font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.55); }
+    .copy-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.65); padding: 3px 11px; border-radius: 4px;
+      font-size: 0.76rem; cursor: pointer; transition: background 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.18); }
+    .copy-btn.copied { background: rgba(140,175,120,0.35); color: var(--sticky-green); }
+    .command-body {
+      padding: 13px 14px; font-family: 'Courier New', monospace;
+      font-size: 0.83rem; color: var(--sticky-green);
+      white-space: pre-wrap; word-break: break-all; line-height: 1.6;
+    }
+
+    /* ── SKILLS SECTION ── */
+    .skills-section { padding: 72px 24px; background: var(--sage-bg); text-align: center; }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 700px; margin: 0 auto; }
+    .skill-pill {
+      font-family: var(--hand); font-size: 1rem;
+      background: var(--paper); color: var(--text);
+      padding: 6px 18px; border-radius: 20px;
+      box-shadow: var(--shadow-sm); border: 1px solid rgba(61,43,31,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .skill-pill:hover { transform: translateY(-2px) rotate(-1deg); box-shadow: var(--shadow-md); }
+
+    /* ── CLOSING QUOTE ── */
+    .closing-section {
+      padding: 96px 24px; background: var(--terracotta);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .closing-section::before {
+      content: '"';
+      font-family: var(--hand); font-size: 18rem;
+      color: rgba(255,255,255,0.08);
+      position: absolute; top: -50px; left: 30px; line-height: 1;
+    }
+    .closing-quote {
+      font-family: var(--hand);
+      font-size: clamp(1.7rem,4.5vw,2.8rem); font-weight: 700;
+      color: var(--paper); line-height: 1.3;
+      max-width: 680px; margin: 0 auto 20px; position: relative;
+    }
+    .closing-attr { font-family: var(--hand); font-size: 1.05rem; color: rgba(254,252,247,0.65); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--darker-brown); color: rgba(254,252,247,0.35);
+      text-align: center; padding: 26px 24px;
+      font-size: 0.8rem; line-height: 1.6;
+    }
+
+    /* ── MDM CAPABILITY GRID (Day 1) ── */
+    .mdm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .mdm-tile {
+      background: var(--cream); border-radius: 6px;
+      padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    .mdm-tile-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .mdm-tile-text { font-size: 0.84rem; color: var(--text); line-height: 1.45; font-weight: 500; }
+    .stat-callout {
+      background: var(--sticky-yellow);
+      border-radius: 6px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 14px;
+      margin: 14px 0;
+    }
+    .stat-callout-num {
+      font-family: var(--hand); font-size: 2rem; color: var(--text); white-space: nowrap;
+    }
+    .stat-callout-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+
+    /* ── API vs WEBHOOK COMPARISON TABLE (Day 2) ── */
+    .compare-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 14px 0; font-size: 0.88rem;
+    }
+    .compare-table th {
+      padding: 10px 14px; font-family: var(--hand); font-size: 1.1rem;
+      text-align: left; border-bottom: 2px solid rgba(0,0,0,0.12);
+    }
+    .compare-table th.api-col  { background: var(--sticky-blue);   border-radius: 6px 0 0 0; }
+    .compare-table th.hook-col { background: var(--sticky-coral);  border-radius: 0 6px 0 0; }
+    .compare-table th .col-sub { display: block; font-family: var(--body); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.65; margin-top: 2px; }
+    .compare-table td {
+      padding: 9px 14px; vertical-align: top;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      line-height: 1.5; color: var(--text);
+    }
+    .compare-table td.api-col  { background: rgba(91,200,245,0.08); }
+    .compare-table td.hook-col { background: rgba(255,107,107,0.08); }
+    .compare-table tr:last-child td.api-col  { border-radius: 0 0 0 6px; border-bottom: none; }
+    .compare-table tr:last-child td.hook-col { border-radius: 0 0 6px 0; border-bottom: none; }
+    .row-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-light); display: block; margin-bottom: 2px;
+    }
+    .direction-row {
+      display: flex; gap: 10px; margin: 14px 0; align-items: stretch;
+    }
+    .direction-card {
+      flex: 1; border-radius: 6px; padding: 12px 14px; text-align: center;
+    }
+    .direction-card.api  { background: var(--sticky-blue); }
+    .direction-card.hook { background: var(--sticky-coral); }
+    .direction-card .dir-arrow { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+    .direction-card .dir-label { font-family: var(--hand); font-size: 1.1rem; color: var(--text); }
+    .direction-card .dir-sub   { font-size: 0.78rem; color: var(--text); opacity: 0.7; margin-top: 2px; }
+
+    /* ── COMPOUND LOOP STEPS (Day 3) ── */
+    .loop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 14px 0;
     }
     .loop-step {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px 24px;
+      border-radius: 6px; padding: 14px 16px;
+      border: 2px solid rgba(0,0,0,0.08);
+      background: var(--cream);
     }
     .loop-step-num {
-      font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 8px;
+      font-family: var(--hand); font-size: 1.6rem; color: var(--terracotta);
+      line-height: 1; margin-bottom: 6px;
     }
-    .loop-step h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
-    .loop-step p { font-size: 0.85rem; color: var(--secondary); line-height: 1.55; }
+    .loop-step h5 { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .loop-step p  { font-size: 0.82rem; color: var(--text-light); line-height: 1.5; }
+    .shot-compare {
+      display: flex; gap: 10px; margin: 14px 0;
+    }
+    .shot-card {
+      flex: 1; border-radius: 6px; padding: 12px 14px;
+    }
+    .shot-card.oneshot { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.25); }
+    .shot-card.planned { background: rgba(149,224,108,0.15); border: 1px solid rgba(149,224,108,0.35); }
+    .shot-label { font-family: var(--hand); font-size: 1rem; color: var(--text); margin-bottom: 6px; display: block; }
+    .shot-card ul { padding-left: 16px; font-size: 0.82rem; color: var(--text); line-height: 1.7; }
 
-    .principles-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .principle-item {
-      background: var(--surface);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow);
-      padding: 20px 24px;
-      display: flex; gap: 16px; align-items: flex-start;
-    }
-    .principle-num {
-      font-size: 1.5rem; font-weight: 800; color: rgba(0,0,0,0.07);
-      flex-shrink: 0; line-height: 1; letter-spacing: -0.04em;
-    }
-    .principle-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
-    .principle-body p { font-size: 0.82rem; color: var(--secondary); line-height: 1.5; }
-
-    /* ─── SKILLS ─── */
-    #skills {
-      background: linear-gradient(145deg, #0050c8 0%, #0071e3 60%, #0082ff 100%);
-    }
-    .skills-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
-    .skill-pill {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 40px;
-      padding: 8px 18px;
-      font-size: 0.85rem; font-weight: 500;
-      color: #f5f5f7;
-      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-    }
-    .skill-pill:hover {
-      background: rgba(255,255,255,0.13);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      background: #070c1a;
-      text-align: center; padding: 48px 24px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      font-size: 0.8rem; color: rgba(255,255,255,0.35);
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 640px) {
-      section { padding: 72px 20px; }
-      .nav-links { display: none; }
-      .card { padding: 24px; }
-      .hero-divider { display: none; }
+    @media (max-width: 580px) {
+      .day-card { padding: 22px 18px; }
+      .notes-panel, .dive-card { padding: 18px 18px; }
+      .cheatsheet-paper { padding: 28px 18px; }
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <span class="nav-logo">Amanda</span>
-    <ul class="nav-links">
-      <li><a href="#day1">Day 1</a></li>
-      <li><a href="#day2">Day 2</a></li>
-      <li><a href="#clarifier">API vs Webhook</a></li>
-      <li><a href="#flashcards">Flashcards</a></li>
-      <li><a href="#day3">Day 3</a></li>
-    </ul>
-  </div>
-</nav>
+<!-- ══ COVER ══ -->
+<div class="cover">
+  <div class="cover-tape-top"></div>
+  <div class="cover-tape-corner tl"></div>
+  <div class="cover-tape-corner tr"></div>
 
-<!-- ─── HERO ─── -->
-<section id="hero">
-  <div class="hero-inner">
-    <div class="animate">
-      <span class="hero-tag">Jamf Pro Workshop &middot; March 2026</span>
+  <p class="cover-label">Jamf Workshop &middot; March 2026</p>
+  <h1 class="cover-title">Apple Device Management:<br>My Notes</h1>
+  <p class="cover-sub">Three days learning how Apple devices get managed, deployed, and automated — and how to build with AI as a collaborator.</p>
+
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <span class="cover-stat-num">3</span>
+      <span class="cover-stat-label">Days</span>
     </div>
-    <h1 class="hero-name animate delay-1">Amanda.</h1>
-    <p class="hero-sub animate delay-2">
-      Three days. Apple device management, APIs, virtual machines,<br>and AI-native development. Here&rsquo;s what I learned.
-    </p>
-    <div class="hero-meta animate delay-3">
-      <div class="hero-meta-item">
-        <div class="hero-meta-num">3</div>
-        <div class="hero-meta-label">Days</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-meta-item">
-        <div class="hero-meta-num">20+</div>
-        <div class="hero-meta-label">New concepts</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-meta-item">
-        <div class="hero-meta-num">1</div>
-        <div class="hero-meta-label">VM enrolled</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-meta-item">
-        <div class="hero-meta-num text-stat">Black Panther</div>
-        <div class="hero-meta-label">Spirit animal</div>
-      </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">20+</span>
+      <span class="cover-stat-label">Concepts</span>
+    </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">1</span>
+      <span class="cover-stat-label">VM enrolled</span>
+    </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">Black Panther</span>
+      <span class="cover-stat-label">Favourite animal</span>
     </div>
   </div>
-</section>
 
-<!-- ─── DAY 1 ─── -->
-<section id="day1">
+  <div class="ownership-label">
+    <span class="ownership-line">This notebook belongs to:</span>
+    <span class="ownership-name">Amanda</span>
+  </div>
+</div>
+
+<!-- torn edge into sage -->
+<div class="torn" style="background:var(--cream);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#EEF4F0"/>
+  </svg>
+</div>
+
+<!-- ══ DAY 1 ══ -->
+<section id="day1" class="day-section alt">
   <div class="container">
-    <p class="eyebrow animate">Day 1</p>
-    <h2 class="section-title animate">Jamf, personas,<br>and a rubber duck.</h2>
-    <p class="section-sub animate">Understanding what Jamf does, who it helps, and why diverse perspectives matter.</p>
 
-    <div class="card-grid" style="margin-bottom: 20px;">
-      <div class="card animate delay-1">
-        <div class="card-icon icon-blue">&#127963;</div>
-        <h3>What is Jamf?</h3>
-        <p>Jamf is a software company that simplifies the use of Apple devices for end users. It makes the process as seamless as possible so users enjoy their experience and don&rsquo;t feel restricted.</p>
-        <p style="margin-top:10px;">It serves industries far beyond what you&rsquo;d expect &mdash; including building companies. The range of customers is vast.</p>
-      </div>
-      <div class="card animate delay-2">
-        <div class="card-icon icon-purple">&#127758;</div>
-        <h3>AI tools I shared</h3>
-        <p><strong>NotebookLM</strong> &mdash; A Gemini-powered app that turns large amounts of information into digestible podcasts and flashcards.</p>
-        <p style="margin-top:10px;"><strong>Dia</strong> &mdash; An AI browser that summarises everything you see into what you specifically need.</p>
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky yellow">
+        "I did not know that Jamf worked with building companies — I got to understand how vast their types of customers are."
+        <span class="sticky-attr">— Amanda, Day 1</span>
       </div>
     </div>
 
-    <div class="persona-grid" style="margin-bottom: 20px;">
-      <div class="card animate delay-1">
-        <p class="eyebrow" style="margin-bottom: 8px;">Persona mapped</p>
-        <h3 style="margin-bottom: 16px;">K-12 IT Coordinator</h3>
-        <ul class="pain-list">
-          <li><span class="pain-dot"></span>Heavy manual workload with no automation</li>
-          <li><span class="pain-dot"></span>Tight school budgets leave little room for tools</li>
-          <li><span class="pain-dot"></span>Teachers lack the tech skills to self-serve</li>
-        </ul>
-        <p style="margin-top: 16px; font-size: 0.85rem; color: var(--secondary);">
-          <strong style="color: var(--text);">What I&rsquo;d build:</strong> A teacher training programme so they can share the load and build internal capacity.
-        </p>
+    <div class="day-card tape-amber anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip left"></div>
+      <div class="tape-strip corner-right"></div>
+      <span class="page-tag">pg. 01</span>
+      <div class="day-header">
+        <div class="day-badge">Day 1</div>
+        <h2 class="day-title">Context, Culture<br>&amp; What is Jamf?</h2>
       </div>
-      <div class="quote-block animate delay-2" style="display:flex; flex-direction:column; justify-content:center;">
-        <p class="quote-text">&ldquo;After the rubber duck exercise I learnt there is no wrong answer. We all had the same task &mdash; &lsquo;Draw a duck&rsquo; &mdash; and every interpretation was different and creative. Together we can create amazing things; every idea just needs to be actualised.&rdquo;</p>
-        <p class="quote-attr">Biggest takeaway from Day 1</p>
+      <div class="chip-row">
+        <span class="chip">MDM</span>
+        <span class="chip">Jamf Pro</span>
+        <span class="chip">Persona Mapping</span>
+        <span class="chip">Global Tech Traditions</span>
+        <span class="chip">Rubber Duck</span>
       </div>
-    </div>
+      <p class="day-teaser">The day started with cultural exchange, moved into what Jamf actually does, and ended with a rubber duck that taught me more than I expected. Jamf turned out to be much bigger than I thought.</p>
 
-    <div class="notes-block animate">
-      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
-        <span class="notes-toggle-label">My reflections from Day 1</span>
-        <span class="notes-chevron">&#9660;</span>
+      <button class="expand-btn" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
       </button>
-      <div class="notes-body">
-        <div class="notes-inner">
-          <div class="note-item">
-            <div class="note-q">What stood out from the icebreakers?</div>
-            <div class="note-a">I know most of my classmates but I learnt a lot of new things about my facilitators. Nate is a musician. Rob can speak 4 languages &mdash; English, Dutch, German&hellip; Josh comes from a teaching background. Salty liquorice is not nice.</div>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel yellow">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">What stood out from the icebreakers?</div>
+              <div class="note-a">I know most of my classmates but I learnt a lot of new things about my facilitators. Nate is a musician. Rob can speak 4 languages — English, Dutch, German... Josh comes from a teaching background. Salty liquorice is not nice.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I shared in Global Tech Traditions</div>
+              <div class="note-a">I spoke about NotebookLM — a Gemini AI powered app that helps you digest large bits of information into easy podcasts and flashcards. The tool I learned about was Dia, an AI browser that summarises information into what you specifically need.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">In my own words, what does Jamf do?</div>
+              <div class="note-a">Jamf is a software company that tries to simplify the use of Apple devices for end users. It tries to make the process as seamless as possible so that end users enjoy their time and do not feel restricted.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">Biggest takeaway from Day 1</div>
+              <div class="note-a">After the rubber duck exercise, I learnt there is no wrong answer. We all had the same task — "Draw a duck" — and every interpretation was different and creative. Together we can create amazing things; every idea just needs to be actualised.</div>
+            </div>
           </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What did I share in Global Tech Traditions?</div>
-            <div class="note-a">I spoke about NotebookLM &mdash; a Gemini AI powered app which helps you digest large bits of information into easy understandable podcasts and flashcards. The tool I learned about was Dia, an AI browser which summarises all the information you see into what you specifically need.</div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>What MDM really does</h4>
+            <p><strong>MDM (Mobile Device Management)</strong> lets one IT admin control thousands of devices from a single screen — no physical visits, no manual configuration on each machine.</p>
+
+            <div class="mdm-grid">
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128241;</div><div class="mdm-tile-text">Install &amp; remove apps silently</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128274;</div><div class="mdm-tile-text">Enforce password &amp; lock policies</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128246;</div><div class="mdm-tile-text">Configure Wi-Fi &amp; VPN automatically</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128465;</div><div class="mdm-tile-text">Remotely wipe a lost or stolen device</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128202;</div><div class="mdm-tile-text">See inventory of every managed device</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#9881;</div><div class="mdm-tile-text">Push settings &amp; profiles at scale</div></div>
+            </div>
+
+            <div class="stat-callout">
+              <span class="stat-callout-num">75,000+</span>
+              <span class="stat-callout-text">organisations use Jamf — including NASA, IBM, and thousands of schools. It's Apple-only and goes deeper than any cross-platform tool.</span>
+            </div>
+
+            <div class="dive-fact">
+              <strong>Why it mattered for your K-12 persona:</strong> An IT coordinator with 500 iPads, a tight budget, and teachers who aren't tech-savvy can't visit every device. MDM is what makes that job possible at all.
+            </div>
           </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What surprised me about Jamf?</div>
-            <div class="note-a">I did not know that Jamf worked with building companies and was shocked to see that they also work in such fields. I got to understand how vast their types of customers are.</div>
-          </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What am I curious about going into Day 2?</div>
-            <div class="note-a">I am definitely looking forward to seeing what we will do with Claude and how it all works with the different technologies I already know.</div>
-          </div>
+
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── DAY 2 ─── -->
-<section id="day2" class="tinted-section">
+<!-- torn edge into cream -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,22 C25,10 50,34 75,20 C100,8 125,30 150,18 C175,6 200,28 225,14 C250,2 275,26 300,14 C325,4 350,28 375,16 C400,4 425,28 450,16 C475,4 500,26 525,14 C550,4 575,28 600,16 C625,4 650,28 675,16 C700,4 725,26 750,14 C775,4 800,28 825,16 C850,4 875,26 900,14 C925,2 950,26 975,14 C1000,4 1025,28 1050,16 C1075,4 1100,26 1125,14 C1150,4 1175,26 1200,14 L1200,40 L0,40 Z" fill="#F5F0E8"/>
+  </svg>
+</div>
+
+<!-- ══ DAY 2 ══ -->
+<section id="day2" class="day-section">
   <div class="container">
-    <p class="eyebrow animate">Day 2</p>
-    <h2 class="section-title animate">VMs, APIs,<br>and webhooks.</h2>
-    <p class="section-sub animate">Hands-on with real infrastructure. Enrolled a virtual Mac, made API calls, and watched events fire in real time.</p>
 
-    <div class="card-grid-3">
-      <div class="card animate delay-1">
-        <div class="card-icon icon-teal">&#128187;</div>
-        <h3>Virtual Machines</h3>
-        <p>Used Tart to create a macOS VM, downloaded a configuration profile, and enrolled it in Jamf Pro.</p>
-        <p style="margin-top:12px;"><em>&ldquo;Your computer is a big house. A VM is one of the rooms inside &mdash; its own little house with its own rules.&rdquo;</em></p>
-      </div>
-      <div class="card animate delay-2">
-        <div class="card-icon icon-orange">&#128268;</div>
-        <h3>APIs</h3>
-        <p>Made a POST request in Postman to create a new category in Jamf Pro.</p>
-        <p style="margin-top:12px;">First attempt: <strong>401 Unauthorized</strong> &mdash; no bearer token. Fixed it, got the token, request succeeded.</p>
-        <p style="margin-top:8px;"><em>APIs are like a restaurant waiter &mdash; they carry your request to the kitchen and bring the data back.</em></p>
-      </div>
-      <div class="card animate delay-3">
-        <div class="card-icon icon-green">&#128276;</div>
-        <h3>Webhooks</h3>
-        <p>Watched a webhook fire automatically when a Smart Group membership changed.</p>
-        <p style="margin-top:12px;">The payload contained device data that looks opaque from the outside &mdash; unless you know the device IDs.</p>
-        <p style="margin-top:8px;"><em>A webhook is a doorbell &mdash; you don&rsquo;t check the door every 5 minutes; it rings when someone arrives.</em></p>
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky coral">
+        "Theoretically I know the difference between webhooks and APIs — but when doing it practically, I could not tell them apart in the moment."
+        <span class="sticky-attr">— Amanda, Day 2</span>
       </div>
     </div>
 
-    <div class="quote-block animate" style="margin-top: 20px;">
-      <p class="quote-text">&ldquo;It finally made sense how virtual machines work, and I got to create my own, which I really enjoyed.&rdquo;</p>
-      <p class="quote-attr">What clicked on Day 2</p>
-    </div>
+    <div class="day-card tape-sage anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip corner-left"></div>
+      <div class="tape-strip corner-right" style="background:var(--tape-sage);"></div>
+      <span class="page-tag" style="background:var(--sticky-green);">pg. 02</span>
+      <div class="day-header">
+        <div class="day-badge" style="background:var(--olive);">Day 2</div>
+        <h2 class="day-title">VMs, APIs<br>&amp; Webhooks</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip">Virtual Machines</span>
+        <span class="chip">Tart</span>
+        <span class="chip">REST API</span>
+        <span class="chip">Bearer Token</span>
+        <span class="chip">Postman</span>
+        <span class="chip">Webhooks</span>
+        <span class="chip">curl</span>
+      </div>
+      <p class="day-teaser">Hands-on with real infrastructure. Enrolled a virtual Mac into Jamf, made real API calls, got a 401, fixed it, and watched a webhook fire automatically. The most practical day.</p>
 
-    <div class="notes-block animate">
-      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
-        <span class="notes-toggle-label">My reflections from Day 2</span>
-        <span class="notes-chevron">&#9660;</span>
+      <button class="expand-btn" style="background:var(--tape-sage);" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
       </button>
-      <div class="notes-body">
-        <div class="notes-inner">
-          <div class="note-item">
-            <div class="note-q">What did I do with my Tart VM?</div>
-            <div class="note-a">I downloaded a configuration profile on my VM and managed to enroll it in my Jamf Pro instance.</div>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel green">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">First impression of Claude Code</div>
+              <div class="note-a">Claude Code is smarter than all the other AI models I have used. It has a different interface but definitely does everything well. When I ran /init, it created a well written summary of the entire repo, going as far as thinking about what I wanted to do.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I did with my Tart VM</div>
+              <div class="note-a">I downloaded a configuration profile on my VM and managed to enroll it in my Jamf Pro instance. A VM is like a computer inside a computer — imagine your computer is a big house. The VM is one of those rooms: its own little house with its own rules.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">API calls in Postman</div>
+              <div class="note-a">I made a POST to create a new category and at first received a 401 — I wasn't authorised because I didn't have a token. Once I got the token it worked. I created a category for computers in my Jamf Pro instance.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I learnt about webhooks</div>
+              <div class="note-a">Webhooks are a way to send feedback when an event has occurred. They are automatic and do not really require human input. The payload looked like a bunch of information — hard to read unless you know the device IDs.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What clicked today</div>
+              <div class="note-a">It finally made sense how virtual machines work and I got to create my own, which I really enjoyed.</div>
+            </div>
           </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What API calls did I make in Postman?</div>
-            <div class="note-a">I made a POST to create a new category and at first I received a 401 because I didn&rsquo;t have a token &mdash; which means I wasn&rsquo;t authorised. Once I got the token it worked and I successfully created a category for computers in Jamf Pro.</div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>API vs Webhook — side by side</h4>
+
+            <div class="direction-row">
+              <div class="direction-card api">
+                <span class="dir-arrow">&#8594;</span>
+                <div class="dir-label">API — you ask</div>
+                <div class="dir-sub">YOU &rarr; SERVER</div>
+              </div>
+              <div class="direction-card hook">
+                <span class="dir-arrow">&#8592;</span>
+                <div class="dir-label">Webhook — it tells you</div>
+                <div class="dir-sub">SERVER &rarr; YOU</div>
+              </div>
+            </div>
+
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th class="api-col">API<span class="col-sub">pull model</span></th>
+                  <th class="hook-col">Webhook<span class="col-sub">push model</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="api-col"><span class="row-label">Who starts it?</span>You do — your code sends the request</td>
+                  <td class="hook-col"><span class="row-label">Who starts it?</span>The server — when an event happens</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">When?</span>Whenever you choose to call it</td>
+                  <td class="hook-col"><span class="row-label">When?</span>Automatically, the moment something changes</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">Analogy</span>Calling a restaurant to order food</td>
+                  <td class="hook-col"><span class="row-label">Analogy</span>A push notification arriving on your phone</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">Your Jamf example</span>POST request to create a category in Postman</td>
+                  <td class="hook-col"><span class="row-label">Your Jamf example</span>Payload fired when device joined Smart Group</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="dive-fact">
+              <strong>The practical tell:</strong> If you clicked "Send" or typed curl — that was an API call, you started it. If data appeared on webhook.site without you doing anything — that was a webhook, Jamf started it.
+            </div>
+            <p style="font-size:0.88rem;color:var(--text-light);line-height:1.6;margin-top:10px;">The <strong style="color:var(--text);">401 Unauthorized</strong> you hit means the server understood you but needs proof of identity first. Bearer tokens solve this — authenticate once, get a token, attach it to every request like a wristband at an event.</p>
           </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What I learnt about webhooks</div>
-            <div class="note-a">Webhooks are a way to send feedback when an event has occurred. They are automatic and do not really require human input as much. The payload looked like a bunch of information &mdash; hard to read unless you know the device IDs.</div>
-          </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What is still fuzzy?</div>
-            <div class="note-a">The difference between webhooks and APIs. Theoretically I know the difference &mdash; webhooks are automatic, APIs need human interaction. But when doing it practically, I could not tell the difference between the API call and the webhook in the moment.</div>
-          </div>
+
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── API vs WEBHOOK ─── -->
-<section id="clarifier">
-  <div class="container">
-    <p class="eyebrow animate">Still fuzzy? Let&rsquo;s fix that.</p>
-    <h2 class="section-title animate">API vs Webhook.</h2>
-    <p class="section-sub animate">The theory is clear. Here&rsquo;s a side-by-side to make the practical difference stick.</p>
+<!-- torn edge into sage -->
+<div class="torn" style="background:var(--cream);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,18 C30,6 60,30 90,16 C120,4 150,26 180,14 C210,2 240,24 270,12 C300,2 330,26 360,14 C390,2 420,24 450,12 C480,2 510,26 540,14 C570,2 600,24 630,12 C660,2 690,26 720,14 C750,2 780,24 810,12 C840,2 870,26 900,14 C930,2 960,24 990,12 C1020,2 1050,26 1080,14 C1110,2 1140,24 1170,12 L1200,14 L1200,40 L0,40 Z" fill="#EEF4F0"/>
+  </svg>
+</div>
 
-    <div class="compare-grid">
-      <div class="compare-card api animate delay-1">
-        <div class="compare-label">API</div>
-        <h3>You ask. It answers.</h3>
-        <div class="compare-rows">
-          <div class="compare-row">
-            <div class="compare-row-label">Who starts it?</div>
-            <div class="compare-row-val">You do &mdash; your code sends a request</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">When?</div>
-            <div class="compare-row-val">Whenever you choose to call it</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">Analogy</div>
-            <div class="compare-row-val">Calling a restaurant to order food</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">Example you did</div>
-            <div class="compare-row-val">POST to create a Jamf category via curl</div>
-          </div>
-        </div>
-      </div>
-      <div class="compare-card webhook animate delay-2">
-        <div class="compare-label" style="color:#34c759;">Webhook</div>
-        <h3>It tells you. You listen.</h3>
-        <div class="compare-rows">
-          <div class="compare-row">
-            <div class="compare-row-label">Who starts it?</div>
-            <div class="compare-row-val">The server &mdash; when an event happens</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">When?</div>
-            <div class="compare-row-val">Automatically, the moment something changes</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">Analogy</div>
-            <div class="compare-row-val">A push notification landing on your phone</div>
-          </div>
-          <div class="compare-row">
-            <div class="compare-row-label">Example you saw</div>
-            <div class="compare-row-val">Jamf fired a payload when device joined Smart Group</div>
-          </div>
-        </div>
+<!-- ══ DAY 3 ══ -->
+<section id="day3" class="day-section alt">
+  <div class="container">
+
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky blue">
+        "Working with AI is a conversation not a command line. Collaborating, refining and asking questions is what gets you to what you want."
+        <span class="sticky-attr">— Amanda, Day 3</span>
       </div>
     </div>
 
-    <div class="card animate" style="margin-top:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-      <div style="font-size:2rem;">&#128161;</div>
-      <p style="font-size:0.95rem; color:var(--secondary); line-height:1.6;">
-        <strong style="color:var(--text);">The practical tell:</strong> If you wrote curl or clicked &ldquo;Send&rdquo; in Postman, that was an API call. If you just watched something appear on webhook.site without doing anything, that was a webhook firing.
-      </p>
+    <div class="day-card tape-blue anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip left" style="background:var(--tape-blue);"></div>
+      <div class="tape-strip corner-left"></div>
+      <span class="page-tag" style="background:var(--sticky-blue);">pg. 03</span>
+      <div class="day-header">
+        <div class="day-badge" style="background:#5B7FA6;">Day 3</div>
+        <h2 class="day-title">Building with AI —<br>The Compound Loop</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip">Claude Code</span>
+        <span class="chip">Plan Mode</span>
+        <span class="chip">One-Shot vs Planned</span>
+        <span class="chip">Compound Engineering</span>
+        <span class="chip">Prompt Design</span>
+      </div>
+      <p class="day-teaser">Built a full website twice in one day — once without planning, once with. The difference was significant. The biggest lesson wasn't about code: it was about how to work with AI.</p>
+
+      <button class="expand-btn" style="background:var(--tape-blue);" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
+      </button>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel blue">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">After the One-Shot</div>
+              <div class="note-a">The one-shot page was done well — it chose its own theme and all the information was included. I expected worse, like a bare HTML page, but it came out really well considering it had no context from me.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">After the Planned Build</div>
+              <div class="note-a">I spent the most time answering questions about what I wanted for the page. The planning process was fun — I felt like a part of the process and included in the major decision making. The planned page felt more personal and more of my style.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">After the Review Step</div>
+              <div class="note-a">The content matched my plan but the colour theme and layout was a bit different from what I anticipated. The agent covered things like what the goal of the page was, what I wanted to use it for — important stuff I was definitely not thinking about.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What surprised me about working with AI this way?</div>
+              <div class="note-a">I was surprised at how relatively easy it is to build a website using AI. I also did not expect the website to be so well thought out, which I really appreciate. I enjoyed and learned a lot at the same time.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I would tell a friend</div>
+              <div class="note-a">Working with AI is all about the prompt. If your prompts are well structured and well thought out, your results are more likely to be what you want — instead of letting the agent blindly make decisions. It is not their fault when you get something you did not want due to being vague.</div>
+            </div>
+          </div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>One-shot vs Planned — and the Compound loop</h4>
+
+            <div class="shot-compare">
+              <div class="shot-card oneshot">
+                <span class="shot-label">&#9889; One-shot</span>
+                <ul>
+                  <li>No context given</li>
+                  <li>Agent makes all decisions</li>
+                  <li>Fast — but generic</li>
+                  <li>Hard to iterate on</li>
+                </ul>
+              </div>
+              <div class="shot-card planned">
+                <span class="shot-label">&#10003; Planned</span>
+                <ul>
+                  <li>You define the brief</li>
+                  <li>Agent asks questions first</li>
+                  <li>Slower — but yours</li>
+                  <li>Easy to build on</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="font-size:0.88rem;color:var(--text-light);line-height:1.6;margin-bottom:12px;">The Compound Engineering loop is the framework that makes the planned approach systematic:</p>
+
+            <div class="loop-grid">
+              <div class="loop-step">
+                <div class="loop-step-num">01</div>
+                <h5>Plan</h5>
+                <p>Define before building. Ask questions. The plan IS the work.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">02</div>
+                <h5>Work</h5>
+                <p>Execute within the plan. AI builds; you stay in control.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">03</div>
+                <h5>Review</h5>
+                <p>Your eyes first. Use it. Then ask AI what it missed.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">04</div>
+                <h5>Compound</h5>
+                <p>Distil decisions &amp; lessons. Next session starts smarter.</p>
+              </div>
+            </div>
+
+            <div class="dive-fact">
+              <strong>Why it works:</strong> Senior engineers don't start coding immediately — they ask questions, write specs, draw diagrams. The Compound loop is that same practice, adapted for working with AI.
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ─── COMMANDS ─── -->
-<section id="commands" style="background: #0c2d6b;">
-  <div class="container">
-    <p class="eyebrow animate" style="color:#93c5fd;">Reference</p>
-    <h2 class="section-title animate" style="color:#ffffff;">Commands you ran.</h2>
-    <p class="section-sub animate" style="color:rgba(255,255,255,0.65);">The actual curl commands from Day 2. Click to copy any of them.</p>
+<!-- torn edge into dark brown -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#3D2B1F"/>
+  </svg>
+</div>
 
-    <div class="animate delay-1">
+<!-- ══ FLASHCARDS ══ -->
+<section id="flashcards" class="flashcard-section">
+  <div class="container">
+    <span class="section-eyebrow anim" style="color:var(--sticky-yellow); text-align:center; display:block;">Study</span>
+    <h2 class="section-title anim" style="color:var(--paper); text-align:center;">Index Cards</h2>
+    <p class="section-sub anim" style="color:rgba(254,252,247,0.55); text-align:center; margin:0 auto 44px;">Tap any card to flip and reveal the definition.</p>
+
+    <div class="flashcard-wrapper anim d1">
+      <div class="flashcard-counter">
+        Card <span id="fc-current">1</span> of <span id="fc-total">20</span>
+      </div>
+
+      <div class="flashcard-scene" id="fc-scene" onclick="flipCard()">
+        <div class="flashcard-card" id="fc-card">
+          <div class="fc-front">
+            <div class="fc-term" id="fc-term">MDM</div>
+            <div class="fc-hint">Tap to reveal</div>
+          </div>
+          <div class="fc-back">
+            <div class="fc-def" id="fc-def">Loading...</div>
+            <div class="fc-analogy" id="fc-analogy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-nav">
+        <button class="fc-btn" onclick="prevCard()" aria-label="Previous">&#8592;</button>
+        <button class="fc-btn wide" onclick="flipCard()">Flip</button>
+        <button class="fc-btn" onclick="nextCard()" aria-label="Next">&#8594;</button>
+      </div>
+      <p class="fc-nav-hint">Arrow keys or swipe to navigate &middot; Space to flip</p>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into cream -->
+<div class="torn" style="background:var(--dark-brown);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,22 C25,10 50,34 75,20 C100,8 125,30 150,16 C175,4 200,26 225,14 C250,2 275,26 300,14 C325,4 350,28 375,16 C400,4 425,26 450,14 C475,2 500,26 525,14 C550,4 575,28 600,16 C625,4 650,26 675,14 C700,2 725,26 750,14 C775,4 800,28 825,16 C850,4 875,26 900,14 C925,2 950,26 975,14 C1000,4 1025,28 1050,16 C1075,4 1100,26 1125,14 C1150,2 1175,26 1200,14 L1200,40 L0,40 Z" fill="#F5F0E8"/>
+  </svg>
+</div>
+
+<!-- ══ CHEAT SHEET ══ -->
+<section id="commands" class="cheatsheet-section">
+  <div class="container">
+    <span class="section-eyebrow anim" style="color:var(--terracotta);">Reference</span>
+    <h2 class="section-title anim" style="color:var(--text);">Curl Cheat Sheet</h2>
+    <p class="section-sub anim" style="color:var(--text-light);">The actual commands from Day 2. Click any to copy.</p>
+
+    <div class="cheatsheet-paper anim d1">
+      <div class="cheatsheet-title">Day 2 Commands — Jamf Pro API</div>
+
       <div class="command-block">
         <div class="command-header">
           <span class="command-title">1. Get a bearer token</span>
@@ -784,9 +1077,7 @@
   -X POST \
   "https://projsadp.jamfcloud.com/api/v1/auth/token"</div>
       </div>
-    </div>
 
-    <div class="animate delay-2">
       <div class="command-block">
         <div class="command-header">
           <span class="command-title">2. Save the token to a variable</span>
@@ -798,9 +1089,7 @@
   "https://projsadp.jamfcloud.com/api/v1/auth/token" \
   | jq -r '.token')</div>
       </div>
-    </div>
 
-    <div class="animate delay-3">
       <div class="command-block">
         <div class="command-header">
           <span class="command-title">3. List all computers</span>
@@ -811,9 +1100,7 @@
   "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
   | jq .</div>
       </div>
-    </div>
 
-    <div class="animate delay-4">
       <div class="command-block">
         <div class="command-header">
           <span class="command-title">4. Update an Extension Attribute (triggers the webhook!)</span>
@@ -836,158 +1123,13 @@
   </div>
 </section>
 
-<!-- ─── FLASHCARDS ─── -->
-<section id="flashcards">
-  <div class="container">
-    <p class="eyebrow animate" style="text-align:center;">Interactive</p>
-    <h2 class="section-title animate" style="text-align:center;">Flashcards.</h2>
-    <p class="section-sub animate" style="text-align:center; margin: 0 auto 56px;">Click any card to flip it and reveal the definition.</p>
-
-    <div class="flashcard-wrapper animate">
-      <div class="flashcard-counter">
-        Card <span id="fc-current">1</span> of <span id="fc-total">20</span>
-      </div>
-
-      <div class="flashcard-scene" id="fc-scene" onclick="flipCard()">
-        <div class="flashcard-card" id="fc-card">
-          <div class="fc-front">
-            <div class="fc-term" id="fc-term">MDM</div>
-            <div class="fc-hint">Tap to reveal</div>
-          </div>
-          <div class="fc-back">
-            <div class="fc-def" id="fc-def">Loading...</div>
-            <div class="fc-analogy" id="fc-analogy"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flashcard-nav">
-        <button class="fc-btn" onclick="prevCard()" aria-label="Previous card">&#8592;</button>
-        <button class="fc-btn" onclick="flipCard()" style="width:auto; border-radius:40px; padding:0 20px; font-size:0.82rem; font-weight:600;">Flip</button>
-        <button class="fc-btn" onclick="nextCard()" aria-label="Next card">&#8594;</button>
-      </div>
-      <p class="fc-hint-tap">Use arrow keys or swipe to navigate</p>
-    </div>
-  </div>
-</section>
-
-<!-- ─── DAY 3 ─── -->
-<section id="day3" class="tinted-section">
-  <div class="container">
-    <p class="eyebrow animate">Day 3</p>
-    <h2 class="section-title animate">The Compound<br>Engineering loop.</h2>
-    <p class="section-sub animate">A framework for working with AI that applies to any tool, now or in the future.</p>
-
-    <div class="loop-steps">
-      <div class="loop-step animate delay-1">
-        <div class="loop-step-num">01 &mdash; Plan</div>
-        <h4>Define before you build</h4>
-        <p>Gather context, ask the agent questions, surface risks. The plan IS the work. Execution is confirmation.</p>
-      </div>
-      <div class="loop-step animate delay-2">
-        <div class="loop-step-num">02 &mdash; Work</div>
-        <h4>Execute with AI</h4>
-        <p>Build within the plan. Stay in scope. If you&rsquo;re watching code write itself, you skipped the important part.</p>
-      </div>
-      <div class="loop-step animate delay-3">
-        <div class="loop-step-num">03 &mdash; Review</div>
-        <h4>Your eyes first</h4>
-        <p>Open it. Use it. Click things. Compare to your plan. Then ask the agent what it missed.</p>
-      </div>
-      <div class="loop-step animate delay-4">
-        <div class="loop-step-num">04 &mdash; Compound</div>
-        <h4>Distill the session</h4>
-        <p>Run /compound. Capture decisions, tradeoffs, dead ends. The next session starts smarter.</p>
-      </div>
-    </div>
-
-    <div class="notes-block animate" style="margin-bottom: 48px;">
-      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
-        <span class="notes-toggle-label">My reflections from Day 3</span>
-        <span class="notes-chevron">&#9660;</span>
-      </button>
-      <div class="notes-body">
-        <div class="notes-inner">
-          <div class="note-item">
-            <div class="note-q">What surprised me about working with AI this way?</div>
-            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
-          </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">What would I tell a friend about working with AI?</div>
-            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
-          </div>
-          <hr class="note-divider" />
-          <div class="note-item">
-            <div class="note-q">Which principle will I remember?</div>
-            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h3 class="animate" style="font-size:1.3rem; font-weight:700; margin-bottom:20px; letter-spacing:-0.02em;">7 Transferable Principles</h3>
-    <div class="principles-list">
-      <div class="principle-item animate delay-1">
-        <div class="principle-num">01</div>
-        <div class="principle-body">
-          <h4>Context is everything</h4>
-          <p>The agent only knows what you tell it. Quality output = quality context.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-1">
-        <div class="principle-num">02</div>
-        <div class="principle-body">
-          <h4>Planning &gt; building</h4>
-          <p>80% planning, 20% building. The plan is the real work.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-2">
-        <div class="principle-num">03</div>
-        <div class="principle-body">
-          <h4>Share your mental model</h4>
-          <p>The agent starts from zero every time. Transfer your picture of the goal.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-2">
-        <div class="principle-num">04</div>
-        <div class="principle-body">
-          <h4>Review against the plan</h4>
-          <p>Your judgment comes first. Then ask the agent for what you missed.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-3">
-        <div class="principle-num">05</div>
-        <div class="principle-body">
-          <h4>Recognise when to quit</h4>
-          <p>Sunk cost is a trap. Starting fresh with better context is the skill.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-3">
-        <div class="principle-num">06</div>
-        <div class="principle-body">
-          <h4>It&rsquo;s a conversation</h4>
-          <p>Not a command line. Collaborate, ask questions, refine together.</p>
-        </div>
-      </div>
-      <div class="principle-item animate delay-4">
-        <div class="principle-num">07</div>
-        <div class="principle-body">
-          <h4>Compound your sessions</h4>
-          <p>Distill everything. Make the next session inherit what you figured out.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── SKILLS ─── -->
-<section id="skills">
+<!-- ══ SKILLS ══ -->
+<section id="skills" class="skills-section">
   <div class="container" style="text-align:center;">
-    <p class="eyebrow animate" style="color:#60a5fa;">All three days</p>
-    <h2 class="section-title animate" style="color:#f5f5f7;">Skills unlocked.</h2>
-    <p class="section-sub animate" style="margin: 0 auto 48px; color:rgba(255,255,255,0.5);">Everything I can now do that I couldn&rsquo;t before.</p>
-    <div class="skills-wrap animate" style="justify-content:center;">
+    <span class="section-eyebrow anim" style="color:var(--terracotta);">All three days</span>
+    <h2 class="section-title anim" style="color:var(--text);">Skills Unlocked</h2>
+    <p class="section-sub anim" style="color:var(--text-light); margin:0 auto 36px;">Everything I can now do that I couldn't before this week.</p>
+    <div class="skills-wrap anim d1">
       <span class="skill-pill">Git branching &amp; PRs</span>
       <span class="skill-pill">Jamf Pro basics</span>
       <span class="skill-pill">MDM concepts</span>
@@ -1011,40 +1153,56 @@
   </div>
 </section>
 
+<!-- torn edge into terracotta -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#C1694F"/>
+  </svg>
+</div>
+
+<!-- ══ CLOSING QUOTE ══ -->
+<section class="closing-section">
+  <div class="container">
+    <p class="closing-quote anim">"Working with AI is a conversation, not a command line. Collaborating, refining and asking questions is what gets you to what you want."</p>
+    <p class="closing-attr anim d1">— Amanda &middot; Day 3 &middot; Jamf Workshop, March 2026</p>
+  </div>
+</section>
+
 <footer>
   Built with Claude Code using the Compound Engineering loop &mdash; Jamf Workshop &middot; March 2026 &middot; Amanda
 </footer>
 
 <script>
-  /* ─── EXPANDABLE NOTES ─── */
-  function toggleNotes(btn) {
+  /* ── EXPANDABLE NOTES ── */
+  function toggleExpand(btn) {
     const body = btn.nextElementSibling;
     const expanded = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', !expanded);
+    btn.setAttribute('aria-expanded', String(!expanded));
     body.classList.toggle('open', !expanded);
   }
 
-  /* ─── SCROLL ANIMATIONS ─── */
+  /* ── SCROLL ANIMATIONS ── */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); }
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+  }, { threshold: 0.10 });
+  document.querySelectorAll('.anim').forEach(el => observer.observe(el));
 
-  /* ─── COPY TO CLIPBOARD ─── */
+  /* ── COPY TO CLIPBOARD ── */
   function copyCmd(btn) {
     const body = btn.closest('.command-block').querySelector('.command-body');
-    // decode HTML entities back to text for copying
-    const txt = body.innerText;
-    navigator.clipboard.writeText(txt).then(() => {
+    navigator.clipboard.writeText(body.innerText).then(() => {
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
     });
   }
 
-  /* ─── FLASHCARDS ─── */
+  /* ── FLASHCARDS ── */
   const cards = [
     { term: 'MDM', def: 'Mobile Device Management — a system for managing many devices from one place: pushing settings, installing apps, enforcing security rules.', analogy: 'Like a school principal who can set rules for every classroom at once, instead of walking to each room individually.' },
     { term: 'Jamf', def: 'An MDM platform specialised for Apple devices — iPhone, iPad, Mac, and Apple TV — used by businesses, schools, hospitals, and more.', analogy: 'The control tower for an entire Apple fleet.' },
@@ -1054,7 +1212,7 @@
     { term: 'JSON', def: 'JavaScript Object Notation — a structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes.', analogy: 'Like filling out a form: each field has a label and a value. {"name": "Amanda"} is JSON.' },
     { term: 'Webhook', def: 'A URL that receives data automatically when something happens. The server tells you — you don\'t have to keep asking.', analogy: 'A doorbell. You don\'t check the door every 5 minutes; it rings when someone arrives.' },
     { term: 'Polling vs Pushing', def: 'Two ways to get updates. Polling = you keep asking. Pushing = the system tells you when there\'s news.', analogy: '"Are we there yet?" (polling) vs "I\'ll tell you when we get there." (pushing)' },
-    { term: 'Virtual Machine', def: 'A computer running inside another computer. It has its own operating system and behaves like a separate machine.', analogy: 'A snow globe — its own little world inside your world. You can reset it or delete it without affecting your real computer.' },
+    { term: 'Virtual Machine', def: 'A computer running inside another computer. It has its own operating system and behaves like a separate machine.', analogy: 'A snow globe — its own little world inside your world. Reset or delete it without touching your real computer.' },
     { term: 'Tart', def: 'A command-line tool for running macOS virtual machines on Apple Silicon Macs.', analogy: 'Key commands: tart clone (copy), tart run (start), tart stop (shutdown), tart ip (find its address).' },
     { term: '401 Unauthorized', def: 'An HTTP error code meaning you made a request without proper authentication — the server won\'t respond until you prove who you are.', analogy: 'Trying to get into a club without showing your ID. The bouncer turns you away.' },
     { term: 'Agent', def: 'An AI helper that doesn\'t just talk — it can actually do things: read files, write code, run commands.', analogy: 'Like a really smart assistant who can type on your keyboard, not just give you advice.' },
@@ -1064,7 +1222,7 @@
     { term: 'Plan Mode', def: 'When the agent stops and shows you what it\'s going to do before it does it. You can approve, adjust, or say no.', analogy: 'Looking at the blueprint before the builder starts construction.' },
     { term: 'Compounding', def: 'Distilling everything from a session — decisions, tradeoffs, dead ends — into a reference that future sessions build on.', analogy: 'A pilot\'s logbook. Every flight recorded so the next pilot inherits all that experience.' },
     { term: 'Integration', def: 'Code that makes two software systems talk to each other automatically, without anyone copying data by hand.', analogy: 'Online shopping — the cart talks to payments, payments talk to shipping. Seamless.' },
-    { term: 'Persona', def: 'A fictional character representing a real type of user, used to understand different people\'s needs and pain points.', analogy: 'Four workshop personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.' },
+    { term: 'Persona', def: 'A fictional character representing a real type of user, used to understand different people\'s needs and pain points.', analogy: 'Workshop personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.' },
     { term: 'Rubber Duck Debugging', def: 'Explaining your problem out loud — to a rubber duck, a colleague, or anyone — forces you to articulate it clearly, often revealing the answer.', analogy: 'The duck doesn\'t answer. But explaining it to the duck does.' },
   ];
 
@@ -1072,10 +1230,10 @@
   let isFlipped = false;
 
   function updateCard() {
-    const card = cards[currentIndex];
-    document.getElementById('fc-term').textContent = card.term;
-    document.getElementById('fc-def').textContent = card.def;
-    document.getElementById('fc-analogy').textContent = card.analogy;
+    const c = cards[currentIndex];
+    document.getElementById('fc-term').textContent = c.term;
+    document.getElementById('fc-def').textContent = c.def;
+    document.getElementById('fc-analogy').textContent = c.analogy;
     document.getElementById('fc-current').textContent = currentIndex + 1;
     document.getElementById('fc-total').textContent = cards.length;
   }
@@ -1099,14 +1257,12 @@
     setTimeout(updateCard, 180);
   }
 
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') nextCard();
     if (e.key === 'ArrowLeft')  prevCard();
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
   });
 
-  // Touch/swipe
   let touchStartX = 0;
   document.getElementById('fc-scene').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
   document.getElementById('fc-scene').addEventListener('touchend', e => {
