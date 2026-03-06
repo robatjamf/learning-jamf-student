@@ -22,15 +22,17 @@ There is no build system, test suite, or linting. The repo is primarily document
 | `day-3/site/one-shot/` | Round 1 HTML page (single-page summary, built without planning — keep for comparison) |
 | `day-3/site/planned/client/` | Round 2 — full multi-page site built using the Compound Engineering loop |
 
-## Current State (as of Session 1)
+## Current State (as of Session 2)
 
 The planned site is complete and working. Five pages, two CSS files, two JS files — no frameworks, no build step.
 
 - `client/index.html` — Home: overview cards + expandable day summaries
-- `client/quiz.html` — Quiz with topic selector, two modes, 27 questions, 3 question types
+- `client/quiz.html` — Quiz with topic selector, two modes, **42 questions**, 3 question types, **12 topic filters**
 - `client/cheat-sheet.html` — Git / Tart / curl / Claude Code with tabs
-- `client/notes.html` — 18-topic knowledge base with sticky sidebar and scroll-spy
+- `client/notes.html` — 18-topic knowledge base with sticky sidebar; Claude Code section has a "Ron's take" callout
 - `client/resources.html` — Linux VM hosting step-by-step, API guide, tools, links
+
+Quiz topic filters: All Topics, Day 1, Day 2, Day 3, Jamf & MDM, Personas, APIs, VMs, Webhooks, Claude Code, AI & LLMs, macOS, Networking, IAM, DevOps, Security
 
 See `COMPOUND.md` for full session history, decisions, and what to tackle next.
 

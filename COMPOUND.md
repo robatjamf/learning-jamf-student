@@ -148,10 +148,91 @@ Coverage is solid across all days and all main topics. Tradeoff: some topics (ma
 
 ---
 
-### Next Session — Where to Start
+### Next Session — Where to Start (carried into Session 2)
 
 1. **Review step**: Open the site in a browser and evaluate it against the plan. What matches? What is missing? What is unexpectedly good or bad?
-2. **Quiz expansion**: Add questions for notes topics not yet covered (macOS management, IAM, DevOps, security, networking basics).
-3. **Personalisation**: The notes are accurate but generic. Consider adding a personal "Ron's take" callout to each section — one sentence of Ron's own framing.
+2. **Quiz expansion**: Add questions for notes topics not yet covered (macOS management, IAM, DevOps, security, networking basics). ✅ Done in Session 2.
+3. **Personalisation**: The notes are accurate but generic. Consider adding a personal "Ron's take" callout to each section — one sentence of Ron's own framing. ✅ Partially done in Session 2 (Claude Code section).
 4. **Resources link verification**: Confirm all external links in resources.html are correct and live.
-5. **Day 3 learning log**: `day-3/ron-learning-log.md` is empty — fill it in as part of the compound step.
+5. **Day 3 learning log**: `day-3/ron-learning-log.md` was filled in by Ron before Session 2.
+
+---
+
+## Session 2 — Quiz Expansion + Day 3 Personalisation (2026-03-06)
+
+### What We Built
+
+**Quiz expanded: 27 → 42 questions** in `day-3/site/planned/client/js/quiz.js`
+
+New questions added by category:
+- **Day 3 experience** (ids 28–31) — draws directly from `day-3/ron-learning-log.md`: one-shot vs planned comparison, planning phase as the longest step, context as the critical variable, architecture vs code-detail focus shift
+- **macOS Management** (ids 32–34) — Gatekeeper, SIP, FileVault
+- **Networking** (ids 35–36) — DNS, TCP vs UDP
+- **IAM** (ids 37–38) — Identity Provider role, HR → IdP → Jamf flow
+- **DevOps** (ids 39–40) — CI/CD definition, Infrastructure as Code
+- **Security** (ids 41–42) — Principle of Least Privilege, CIA Triad
+
+**New topic filters added** to the TOPICS array: macOS, Networking, IAM, DevOps, Security — now selectable in the quiz setup screen.
+
+**Ron's take callout added** to the Claude Code section of `notes.html` — a styled block drawing directly from the learning log: planning felt excessive but paid off, the one-shot vs planned comparison as proof that context is the variable, and the shift from code details to architecture.
+
+---
+
+### How We Got Here
+
+Ron filled in `day-3/ron-learning-log.md` before this session. Key reflections that shaped the work:
+
+- The one-shot didn't look bad but wasn't what he wanted — showed the importance of context
+- The planning process was the longest part — self-reflection questions, back-and-forth to refine the plan
+- The biggest difference between one-shot and planned was the amount of information
+- Everything matched the plan in the review step
+- AI is highly efficient if used well; effort shifts from code details to architecture
+
+These reflections were the direct source for the Day 3 quiz questions and the Ron's take callout. The goal was to make the site reflect his actual experience, not just generic AI/compound loop content.
+
+---
+
+### Decisions Made
+
+**Day 3 quiz questions draw from the learning log, not generic theory**
+The existing Day 3 questions (21–27) covered the Compound loop and Claude Code mechanics. The new questions (28–31) are grounded in what actually happened during the workshop — the one-shot result, the planning effort, the review outcome. This makes them more meaningful as self-review material.
+
+**Ron's take added to Claude Code section only (not all 18 topics)**
+The full ask from Session 1 COMPOUND.md was to add a Ron's take callout to every notes section. We only did the Claude Code section this session — the one where Ron had the most direct, specific reflections. The remaining 17 sections would benefit from the same treatment but would require Ron to provide his own framing for each topic.
+
+**Styling the Ron's take callout inline rather than a CSS class**
+The callout uses inline styles (accent-coloured left border, surface background) rather than adding a new `.ron-take` CSS class. Reason: one instance doesn't justify a new class, and the inline approach is readable and self-contained. If more callouts are added across notes sections, a dedicated class would be worth extracting.
+
+---
+
+### Tradeoffs
+
+**New questions assigned to day: 1 or 2, not day: 3**
+macOS, Networking, IAM, DevOps, and Security questions were tagged with their most relevant day (day 1 or 2) rather than day 3. This means selecting "Day 3" in the quiz will not show them. This is correct behaviour — those topics belong to Days 1 and 2 context. If selecting "Day 3" should also show broader ecosystem topics, a future change could revisit topic-to-day mapping.
+
+**Quiz now has 42 questions but no explicit progress indicator of new vs old**
+The setup screen shows the count of questions in the selected filter ("X questions ready") — that number updates automatically. No other UI changes needed.
+
+---
+
+### Current State
+
+**Working:**
+- All 5 pages render correctly
+- Quiz: 42 questions, 12 topic filters (including 5 new: macOS, Networking, IAM, DevOps, Security)
+- Notes: Claude Code section has Ron's take callout
+- All Session 1 functionality unchanged
+
+**Still to do:**
+- Ron's take callouts for the other 17 notes sections — requires Ron's own framing per topic
+- Resources page external link verification
+- Git hygiene: three deleted learning-log.md files (`day-1/learning-log.md`, `day-2/learning-log.md`, `day-3/learning-log.md`) are unstaged deletions — decide whether to commit or restore
+
+---
+
+### Next Session — Where to Start
+
+1. **Ron's take for remaining notes sections** — 17 sections still have no personal callout. Most impactful candidates: Jamf & MDM, APIs, Webhooks, VMs, Prompt Engineering. Requires Ron's own words.
+2. **Resources link verification** — Open `resources.html` and check every external link.
+3. **Git commit** — Stage and commit the Session 2 changes (quiz.js and notes.html). Decide on the three deleted learning-log.md files.
+4. **PR to main** — When satisfied, open a PR from branch `ron` into `main`.

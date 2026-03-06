@@ -267,6 +267,178 @@ const ALL_QUESTIONS = [
     ],
     correct: 1,
     explanation: '/compact summarises the current conversation context into a condensed form, freeing up context window space so you can continue working without losing important session history.'
+  },
+
+  // ---- DAY 3 — COMPOUND ENGINEERING EXPERIENCE ----
+  {
+    id: 28, day: 3, topic: 'claudecode',
+    type: 'mcq',
+    question: 'What did the one-shot page demonstrate compared to the planned build?',
+    options: [
+      'The one-shot was better because it was faster to make',
+      'Without context, AI produces generic output — context is what makes the difference',
+      'Planning makes no difference to the final output',
+      'AI always produces the same result regardless of input'
+    ],
+    correct: 1,
+    explanation: 'The one-shot page (built with minimal context) produced a basic 3-card summary. The planned build — built after a thorough interview and planning phase — produced a full multi-page interactive site. Context is the most powerful input you can give an AI.'
+  },
+  {
+    id: 29, day: 3, topic: 'claudecode',
+    type: 'mcq',
+    question: 'In the Day 3 build, which part of the Compound loop took the most time?',
+    options: ['Work — writing the code', 'Review — checking the output', 'Plan — the interview and planning phase', 'Compound — writing the COMPOUND.md'],
+    correct: 2,
+    explanation: 'The planning phase took the most time — it involved a multi-round interview covering learning style, technical baseline, goals, and audience. That investment paid off: the final site matched the plan almost exactly.'
+  },
+  {
+    id: 30, day: 3, topic: 'claudecode',
+    type: 'tf',
+    question: 'After the review step, significant parts of the planned site did not match the original plan.',
+    correct: false,
+    explanation: 'Everything matched the plan. The thoroughness of the planning phase — including the extended interview and iterative plan review — meant the built site aligned closely with what was intended. Time spent planning reduces rework.'
+  },
+  {
+    id: 31, day: 3, topic: 'claudecode',
+    type: 'mcq',
+    question: 'When working with AI, where does your effort shift compared to traditional coding?',
+    options: [
+      'From architecture to writing individual lines of code',
+      'From writing code to testing only',
+      'From worrying about code details to focusing on how things work together (architecture)',
+      'From planning to documentation'
+    ],
+    correct: 2,
+    explanation: 'Working with AI tools shifts your effort away from individual code details and toward architecture — how components connect, what the system should do, and whether the output matches the intent. The AI handles implementation; you handle design.'
+  },
+
+  // ---- macOS MANAGEMENT ----
+  {
+    id: 32, day: 1, topic: 'macos',
+    type: 'mcq',
+    question: 'What does Gatekeeper do on macOS?',
+    options: [
+      'Encrypts the startup disk',
+      'Prevents unsigned or unnotarised applications from running',
+      'Manages user accounts and permissions',
+      'Backs up data to iCloud'
+    ],
+    correct: 1,
+    explanation: 'Gatekeeper restricts app execution to apps signed with an Apple Developer certificate and notarised (scanned by Apple for malware). It prevents untrusted software from running by default — a key first line of endpoint defence.'
+  },
+  {
+    id: 33, day: 1, topic: 'macos',
+    type: 'tf',
+    question: 'System Integrity Protection (SIP) can be bypassed by a root-level (sudo) user to modify system files.',
+    correct: false,
+    explanation: 'SIP protects critical system files even from root. To disable SIP you must boot into Recovery Mode — no user-level process, not even root, can bypass it at runtime. This is a deliberate design decision to protect the OS from malware with elevated privileges.'
+  },
+  {
+    id: 34, day: 1, topic: 'macos',
+    type: 'mcq',
+    question: 'What does FileVault provide?',
+    options: [
+      'A secure password manager built into macOS',
+      'Encryption of only the user\'s home folder',
+      'Full-disk encryption for the entire startup volume',
+      'Encrypted backups to iCloud'
+    ],
+    correct: 2,
+    explanation: 'FileVault provides full-disk encryption (XTS-AES-128) for the entire startup volume. Without the login password or a recovery key, the data on the drive is unreadable — even if the drive is physically removed from the Mac.'
+  },
+
+  // ---- NETWORKING ----
+  {
+    id: 35, day: 2, topic: 'networking',
+    type: 'mcq',
+    question: 'What does DNS do?',
+    options: [
+      'Assigns IP addresses to devices on a network',
+      'Translates domain names (like jamf.com) into IP addresses',
+      'Encrypts network traffic between devices',
+      'Manages firewall rules for incoming connections'
+    ],
+    correct: 1,
+    explanation: 'DNS (Domain Name System) is the internet\'s phonebook — it translates human-readable domain names into IP addresses that computers use to reach each other. Without DNS, you\'d need to remember IP addresses for every site you visit.'
+  },
+  {
+    id: 36, day: 2, topic: 'networking',
+    type: 'mcq',
+    question: 'What is the key difference between TCP and UDP?',
+    options: [
+      'UDP guarantees delivery; TCP does not',
+      'TCP guarantees ordered, reliable delivery; UDP is faster but offers no delivery guarantee',
+      'They are interchangeable — both provide the same guarantees',
+      'TCP is used for video; UDP is used for web traffic'
+    ],
+    correct: 1,
+    explanation: 'TCP establishes a connection, ensures packets arrive in order, and retransmits lost ones — reliable but slower. UDP sends packets without guarantees — faster, used for video streaming, DNS lookups, and anything where speed matters more than perfect delivery.'
+  },
+
+  // ---- IAM ----
+  {
+    id: 37, day: 1, topic: 'iam',
+    type: 'mcq',
+    question: 'What is the role of an Identity Provider (IdP) like Okta or Azure AD?',
+    options: [
+      'To store device configuration profiles',
+      'To centrally manage user identities and authenticate them across multiple applications',
+      'To monitor network traffic for threats',
+      'To provide cloud storage for organisation data'
+    ],
+    correct: 1,
+    explanation: 'An IdP is the central authority for user identities. It authenticates users and issues tokens that other services (including Jamf Pro) trust. In the Day 1 workflow: HR → IdP → Jamf. Users live in the IdP, not directly in Jamf.'
+  },
+  {
+    id: 38, day: 1, topic: 'iam',
+    type: 'tf',
+    question: 'In the Day 1 persona workflow, HR data flowed directly from HR systems into Jamf Pro.',
+    correct: false,
+    explanation: 'The correct flow is: HR → Identity Provider → SIEM or ServiceNow → Jamf Pro. The IdP is the intermediary — Jamf receives identity information from the IdP, not directly from HR. This architecture keeps identity centralised and auditable.'
+  },
+
+  // ---- DEVOPS ----
+  {
+    id: 39, day: 2, topic: 'devops',
+    type: 'mcq',
+    question: 'What does CI/CD stand for?',
+    options: [
+      'Code Integration / Code Deployment',
+      'Continuous Integration / Continuous Delivery (or Deployment)',
+      'Cloud Infrastructure / Cloud Delivery',
+      'Component Integration / Component Deployment'
+    ],
+    correct: 1,
+    explanation: 'CI (Continuous Integration) automates building and testing code on every push. CD (Continuous Delivery/Deployment) automates getting that tested code to staging or production. Together they reduce manual steps, catch issues early, and make releases routine rather than risky.'
+  },
+  {
+    id: 40, day: 2, topic: 'devops',
+    type: 'tf',
+    question: 'Infrastructure as Code (IaC) means managing servers and infrastructure using GUI consoles.',
+    correct: false,
+    explanation: 'Infrastructure as Code means defining infrastructure in code files (not GUI consoles) — making it versionable, repeatable, and reviewable like application code. Tools include Terraform, Ansible, and Pulumi. The opposite of IaC is "ClickOps" — configuring infrastructure manually through a web console.'
+  },
+
+  // ---- SECURITY ----
+  {
+    id: 41, day: 2, topic: 'security',
+    type: 'mcq',
+    question: 'What is the Principle of Least Privilege?',
+    options: [
+      'Every user should have admin access for flexibility',
+      'Users and processes should only have the minimum access they need to do their job',
+      'Security tools should have the lowest priority in the system',
+      'Sensitive data should be stored with minimal encryption'
+    ],
+    correct: 1,
+    explanation: 'Least Privilege: grant only the access actually needed — nothing more. If a service only needs to read one table, it should not have write access to the whole database. This limits the blast radius if credentials are compromised.'
+  },
+  {
+    id: 42, day: 2, topic: 'security',
+    type: 'typed',
+    question: 'What do the three letters in the CIA Triad stand for?',
+    acceptedKeywords: ['confidentiality', 'integrity', 'availability'],
+    explanation: 'CIA Triad: Confidentiality (data only accessible to authorised parties), Integrity (data has not been tampered with), Availability (systems accessible when needed). These three properties are the foundation of information security — trade-offs between them drive most security design decisions.'
   }
 ];
 
@@ -285,6 +457,11 @@ const TOPICS = [
   { id: 'webhooks',  label: 'Webhooks',      days: null,    topics: ['webhooks'] },
   { id: 'claudecode',label: 'Claude Code',   days: null,    topics: ['claudecode'] },
   { id: 'ai',        label: 'AI & LLMs',     days: null,    topics: ['ai'] },
+  { id: 'macos',     label: 'macOS',         days: null,    topics: ['macos'] },
+  { id: 'networking',label: 'Networking',    days: null,    topics: ['networking'] },
+  { id: 'iam',       label: 'IAM',           days: null,    topics: ['iam'] },
+  { id: 'devops',    label: 'DevOps',        days: null,    topics: ['devops'] },
+  { id: 'security',  label: 'Security',      days: null,    topics: ['security'] },
 ];
 
 // ============================================================
