@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pride's Workshop Study Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Themes ── */
+    :root {
+      --black: #0a0a0a;
+      --card: #1a1d24;
+      --card2: #13151b;
+      --border: #2a2d36;
+      --accent: #00b4d8;
+      --accent2: #7c3aed;
+      --accent3: #10b981;
+      --accent4: #f97316;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --output-bg: #0f1117;
+      --tab-jamf: #f97316;
+      --tab-git: #00b4d8;
+      --tab-api: #a78bfa;
+      --tab-aidev: #10b981;
+    }
+
+    [data-theme="sunset"] {
+      --black: #0d0806;
+      --card: #221610;
+      --card2: #1a0f0a;
+      --border: #3a2318;
+      --accent: #f97316;
+      --accent2: #e11d48;
+      --accent3: #fbbf24;
+      --accent4: #fb923c;
+      --text: #fef3e2;
+      --muted: #a87c5a;
+      --output-bg: #120d08;
+      --tab-jamf: #fb923c;
+      --tab-git: #f97316;
+      --tab-api: #e11d48;
+      --tab-aidev: #fbbf24;
+    }
+
+    [data-theme="forest"] {
+      --black: #060d07;
+      --card: #121f14;
+      --card2: #0e1a10;
+      --border: #1e3322;
+      --accent: #22c55e;
+      --accent2: #06b6d4;
+      --accent3: #a3e635;
+      --accent4: #4ade80;
+      --text: #ecfdf5;
+      --muted: #6ba882;
+      --output-bg: #080f09;
+      --tab-jamf: #4ade80;
+      --tab-git: #22c55e;
+      --tab-api: #06b6d4;
+      --tab-aidev: #a3e635;
+    }
+
+    [data-theme="mono"] {
+      --black: #0a0a0a;
+      --card: #1c1c1c;
+      --card2: #141414;
+      --border: #2e2e2e;
+      --accent: #e5e5e5;
+      --accent2: #999999;
+      --accent3: #cccccc;
+      --accent4: #aaaaaa;
+      --text: #f5f5f5;
+      --muted: #888888;
+      --output-bg: #0d0d0d;
+      --tab-jamf: #aaaaaa;
+      --tab-git: #e5e5e5;
+      --tab-api: #999999;
+      --tab-aidev: #cccccc;
+    }
+
+    /* ── Theme switcher ── */
+    .theme-bar {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 10px;
+    }
+
+    .theme-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .theme-btn:hover { transform: scale(1.15); }
+    .theme-btn.active { border-color: white; }
+
+    .theme-btn[data-target="default"] { background: linear-gradient(135deg, #00b4d8, #7c3aed); }
+    .theme-btn[data-target="sunset"]  { background: linear-gradient(135deg, #f97316, #e11d48); }
+    .theme-btn[data-target="forest"]  { background: linear-gradient(135deg, #22c55e, #06b6d4); }
+    .theme-btn[data-target="mono"]    { background: linear-gradient(135deg, #888, #e5e5e5); }
+
+    /* ── Base ── */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      background: var(--black);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      padding: 100px 24px 64px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, color-mix(in srgb, var(--accent2) 8%, transparent) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .day-pills {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .day-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .day-pill.d1 { border-color: rgba(249,115,22,0.4); color: var(--accent4); background: rgba(249,115,22,0.07); }
+    .day-pill.d2 { border-color: rgba(124,58,237,0.4); color: #a78bfa; background: rgba(124,58,237,0.07); }
+    .day-pill.d3 { border-color: rgba(16,185,129,0.4); color: var(--accent3); background: rgba(16,185,129,0.07); }
+
+    /* ── Sticky tabs ── */
+    .tabs-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: color-mix(in srgb, var(--black) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+    }
+
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    .tab-btn.active[data-tab="jamf"]  { background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.06)); border-color: var(--tab-jamf); color: var(--tab-jamf); }
+    .tab-btn.active[data-tab="git"]   { background: linear-gradient(135deg, rgba(0,180,216,0.2), rgba(0,180,216,0.06)); border-color: var(--tab-git); color: var(--tab-git); }
+    .tab-btn.active[data-tab="api"]   { background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(124,58,237,0.06)); border-color: var(--tab-api); color: var(--tab-api); }
+    .tab-btn.active[data-tab="aidev"] { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.06)); border-color: var(--tab-aidev); color: var(--tab-aidev); }
+
+    /* ── Tab panels ── */
+    .panel { display: none; max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
+    .panel.active { display: block; }
+
+    /* ── Search filter ── */
+    .search-wrap { margin-bottom: 28px; }
+
+    .search-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.875rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--accent); }
+
+    /* ── Context banner ── */
+    .context-banner {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    .context-banner strong { color: var(--text); }
+
+    .context-banner code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.82em;
+    }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-bottom: 48px;
+      overflow-x: auto;
+      padding: 20px 0;
+    }
+
+    .flow-node {
+      border-radius: 100px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    #panel-jamf  .flow-node { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.4); color: var(--tab-jamf); }
+    #panel-git   .flow-node { background: rgba(0,180,216,0.12); border: 1px solid rgba(0,180,216,0.4); color: var(--tab-git); }
+    #panel-api   .flow-node { background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.4); color: var(--tab-api); }
+    #panel-aidev .flow-node { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.4); color: var(--tab-aidev); }
+
+    .flow-arrow {
+      font-size: 1.2rem;
+      color: var(--muted);
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    .flow-back {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding-left: 8px;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .flow-back-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .flow-back-line::before {
+      content: "";
+      position: absolute;
+      left: 0; top: -3px;
+      border: 4px solid transparent;
+      border-right-color: var(--border);
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-left: 12px;
+      border-left: 3px solid var(--border);
+    }
+
+    #panel-jamf  .section-label { color: var(--tab-jamf); border-left-color: var(--tab-jamf); }
+    #panel-git   .section-label { color: var(--tab-git); border-left-color: var(--tab-git); }
+    #panel-api   .section-label { color: var(--tab-api); border-left-color: var(--tab-api); }
+    #panel-aidev .section-label { color: var(--tab-aidev); border-left-color: var(--tab-aidev); }
+
+    /* ── Persona cards ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      transition: border-color 0.2s;
+    }
+
+    .persona-card:hover { border-color: var(--accent4); }
+
+    .persona-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent4);
+      margin-bottom: 6px;
+    }
+
+    .persona-pain {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 20px; margin-bottom: 48px; }
+
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .step-card.hidden { display: none; }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px 16px;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: white;
+      margin-top: 1px;
+    }
+
+    #panel-jamf  .step-num { background: var(--accent4); }
+    #panel-git   .step-num { background: var(--accent); }
+    #panel-api   .step-num { background: var(--accent2); }
+    #panel-aidev .step-num { background: var(--accent3); }
+
+    .step-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .step-desc  { font-size: 0.875rem; color: var(--muted); }
+
+    /* ── Code blocks ── */
+    .code-block { position: relative; }
+
+    .code-lang {
+      position: absolute;
+      top: 10px;
+      left: 24px;
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+      font-family: "SF Mono", monospace;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit;
+      letter-spacing: 0.02em;
+      z-index: 1;
+    }
+
+    .code-block:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .copy-btn.copied { color: var(--accent3); border-color: var(--accent3); }
+
+    pre {
+      background: #0d0f14;
+      border-top: 1px solid var(--border);
+      padding: 36px 24px 16px;
+      font-family: "SF Mono", "Fira Code", "Menlo", monospace;
+      font-size: 0.8rem;
+      color: #c9d1d9;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.7;
+    }
+
+    /* ── Output box ── */
+    .output-box {
+      background: var(--output-bg);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .output-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent3);
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .output-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+      font-family: "SF Mono", "Fira Code", monospace;
+      white-space: pre-wrap;
+    }
+
+    /* ── Quick ref ── */
+    .qref {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .qref-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .qref-toggle span { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+
+    .qref-body {
+      display: none;
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .qref-body.open { display: block; }
+
+    .qref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.825rem;
+      margin-top: 16px;
+    }
+
+    .qref-table th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qref-table td {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: top;
+    }
+
+    .qref-table tr.hidden-row { display: none; }
+
+    .qref-table td:first-child {
+      font-family: "SF Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--tab-git);
+      padding-right: 24px;
+      white-space: nowrap;
+    }
+
+    #panel-jamf  .qref-table td:first-child { color: var(--tab-jamf); }
+    #panel-api   .qref-table td:first-child { color: var(--tab-api); }
+    #panel-aidev .qref-table td:first-child { color: var(--tab-aidev); }
+
+    .qref-table td:last-child { color: var(--muted); }
+
+    .qref-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+      line-height: 1.6;
+    }
+
+    .qref-note strong { color: var(--text); }
+    .qref-note code {
+      font-family: "SF Mono", monospace;
+      background: rgba(255,255,255,0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    /* ── Scroll to top ── */
+    .scroll-top {
+      position: fixed;
+      bottom: 32px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .hero { padding: 80px 16px 48px; }
+      .hero-stats { gap: 24px; }
+      .stat-num { font-size: 1.6rem; }
+      .tabs-wrapper { padding: 10px 16px; }
+      .tabs { justify-content: flex-start; }
+      pre { font-size: 0.73rem; padding: 34px 14px 14px; }
+      .code-lang { left: 14px; }
+      .step-header { padding: 16px 16px 12px; }
+      .output-box { padding: 10px 16px; }
+      .qref-toggle { padding: 14px 16px; }
+      .qref-body { padding: 0 16px 16px; }
+      .panel { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme switcher -->
+  <div class="theme-bar">
+    <button class="theme-btn active" data-target="default" title="Ocean"></button>
+    <button class="theme-btn" data-target="sunset" title="Sunset"></button>
+    <button class="theme-btn" data-target="forest" title="Forest"></button>
+    <button class="theme-btn" data-target="mono" title="Mono"></button>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge">3-Day Workshop Study Guide</div>
+    <h1>Pride's <span>Workshop Study Guide</span></h1>
+    <p>Step-by-step walkthroughs &amp; visual flows — all 3 days, built for how you learn.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Topics</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Commands</div>
+      </div>
+    </div>
+    <div class="day-pills">
+      <span class="day-pill d1">Day 1 — Jamf &amp; Git</span>
+      <span class="day-pill d2">Day 2 — API &amp; VMs</span>
+      <span class="day-pill d3">Day 3 — AI Dev</span>
+    </div>
+  </div>
+
+  <!-- Sticky tabs -->
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="jamf">&#x1F527; Jamf Pro</button>
+      <button class="tab-btn" data-tab="git">&#x1F33F; Git</button>
+      <button class="tab-btn" data-tab="api">&#x1F50C; Jamf API</button>
+      <button class="tab-btn" data-tab="aidev">&#x1F916; AI Dev</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       TAB 0: Jamf Pro Fundamentals (Day 1)
+  ════════════════════════════════════════ -->
+  <div class="panel active" id="panel-jamf">
+
+    <div class="search-wrap">
+      <input class="search-input" type="search" placeholder="Search Jamf Pro content..." data-panel="jamf" />
+    </div>
+
+    <div class="context-banner">
+      <strong>Day 1 context.</strong> Before touching any code, you learned what Jamf Pro actually is and who uses it. This tab covers the core concepts — MDM, personas, Zero Touch Deployment, and webhooks — that underpin everything else in the workshop.
+    </div>
+
+    <div class="section-label">How Jamf Pro Works</div>
+    <div class="flow">
+      <div class="flow-node">Apple Device</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">MDM Enrollment</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Jamf Pro</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Push Policy</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Device Configured</div>
+    </div>
+
+    <div class="section-label">Key Concepts — Step by Step</div>
+    <div class="steps">
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">What is MDM?</div>
+            <div class="step-desc">MDM (Mobile Device Management) lets IT teams manage many Apple devices from one place — pushing settings, installing apps, and enforcing security rules without touching each device. Jamf Pro is Apple's premier MDM platform, designed specifically for Apple hardware and built around Apple's own best practices.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">terminal</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>Without MDM: IT visits each Mac manually to install software, set configs, enforce passwords
+With MDM:   IT sends one policy from Jamf Pro → it applies to 1,000 Macs automatically
+
+Jamf Pro manages:
+  - macOS Macs (including Apple Silicon M-series)
+  - iPhones and iPads
+  - Apple TVs</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Why it matters</div>
+          <div class="output-text">Every API call, webhook, and automation you built in Days 2–3 exists to make MDM tasks faster and less manual.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Zero Touch Deployment</div>
+            <div class="step-desc">A device can be fully configured the moment a user turns it on — without IT ever touching it. The Mac enrolls in Jamf Pro automatically on first boot, downloads policies, installs apps, and sets security configs. The user just logs in and starts working.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">terminal</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>Flow:
+  New Mac shipped to user
+       ↓
+  User powers it on → macOS Setup Assistant runs
+       ↓
+  Device detects DEP (Device Enrollment Program) profile
+       ↓
+  Auto-enrolls in Jamf Pro
+       ↓
+  Jamf pushes policies: apps, settings, restrictions
+       ↓
+  User logs in → fully configured Mac, no IT involvement</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Why it matters</div>
+          <div class="output-text">This is one of Jamf's biggest selling points — IT can scale to thousands of devices without a dedicated setup team.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Webhooks — Push vs Pull</div>
+            <div class="step-desc">Instead of constantly asking "did anything change?" (polling), webhooks let Jamf Pro notify an external system the moment something happens (pushing). You set up a webhook URL, and Jamf sends a JSON payload to it automatically when a trigger fires.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">terminal</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>Polling (bad):  Your script → "Any changes?" → Jamf → "No"
+                Your script → "Any changes?" → Jamf → "No"
+                Your script → "Any changes?" → Jamf → "Yes" ← wasted 100 requests
+
+Pushing (good): Jamf → event fires → sends JSON to your webhook URL instantly
+
+Workshop example:
+  Trigger: Computer Added to Smart Group
+  Webhook fires → sends JSON payload to webhook.site
+  You see the device data appear in real time</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Why it matters</div>
+          <div class="output-text">Webhooks let you build real integrations — Slack alerts, ticketing systems, auto-remediation scripts — that react instantly without constant polling.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">Extension Attributes</div>
+            <div class="step-desc">Custom data fields you add to computer records in Jamf Pro. You used one in the workshop (Workshop Status) to tag each computer with a participant's name, which then appeared in the Jamf dashboard and triggered a Smart Group.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">xml</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre># What you did in Day 2:
+# Updated Extension Attribute ID 1 (Workshop Status) via API
+# with your name → triggered Smart Group → fired webhook
+
+curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;Pride&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">HTTP 201 — computer record updated. Your name now shows under "Workshop Status" in the Jamf Pro dashboard. If a Smart Group watches this attribute, the webhook fires.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-label">The 4 Jamf Personas</div>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-name">Enterprise IT Admin</div>
+        <div class="persona-pain">Manages hundreds of Macs across departments. Pain points: manual software deployment, security compliance, scaling support.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-name">K-12 IT Coordinator</div>
+        <div class="persona-pain">Manages iPads and Macs for students and teachers. Pain points: device setup at scale, content filtering, shared device management.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-name">Security Analyst</div>
+        <div class="persona-pain">Your mapped persona. Pain points: manual compliance checks, excessive alert emails, slow incident response, manual report generation.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-name">Help Desk Technician</div>
+        <div class="persona-pain">Handles day-to-day user issues. Pain points: repeated manual tasks, constant interruptions, no self-service tools for users.</div>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — Jamf &amp; MDM Terms <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Term</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>MDM</td><td>Mobile Device Management — centralized system to manage, configure, and secure Apple devices at scale</td></tr>
+            <tr><td>Jamf Pro</td><td>Apple's premier MDM platform — built specifically for Apple hardware, aligns with Apple's own deployment guides</td></tr>
+            <tr><td>DEP / ADE</td><td>Device Enrollment Program / Apple Device Enrollment — lets Macs auto-enroll in MDM on first boot without manual setup</td></tr>
+            <tr><td>Zero Touch</td><td>Devices configure themselves automatically on first boot — no IT hands-on required</td></tr>
+            <tr><td>Policy</td><td>A set of instructions Jamf pushes to devices — install this app, set this setting, run this script</td></tr>
+            <tr><td>Smart Group</td><td>A dynamic group of devices that automatically updates based on criteria (e.g., devices where Workshop Status = "Pride")</td></tr>
+            <tr><td>Extension Attribute</td><td>A custom data field you add to computer records — used to store info Jamf doesn't track by default</td></tr>
+            <tr><td>Webhook</td><td>A URL Jamf calls (via HTTP POST) when a specific event occurs — sends a JSON payload with event data</td></tr>
+            <tr><td>Polling vs Pushing</td><td>Polling: you keep asking if anything changed. Pushing: system tells you the moment something happens. Webhooks = pushing.</td></tr>
+            <tr><td>JSSResource</td><td>The Classic API endpoint path — older Jamf API (XML-based). Used for things like updating Extension Attributes.</td></tr>
+            <tr><td>api/v1</td><td>The modern Jamf Pro API endpoint path — JSON-based, uses Bearer tokens, is the preferred API going forward</td></tr>
+            <tr><td>Swagger UI</td><td>Interactive API docs at /api/doc — lets you explore and test every endpoint without writing code</td></tr>
+            <tr><td>Persona</td><td>A fictional character representing a real user type — used in UX/product work to understand pain points and workflows</td></tr>
+            <tr><td>Journey Map</td><td>Visual walkthrough of a persona's workflow — shows steps, tools, pain points, and opportunities to improve</td></tr>
+            <tr><td>Integration</td><td>Code or config that makes two software systems talk to each other automatically (e.g., Jamf → Slack via webhook)</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>The Security Analyst persona (your mapped persona):</strong> Pain points are manual workflows, too many alert emails, slow report generation, and constant interruptions. Jamf helps by automating compliance checks, enabling self-service, and using Smart Groups + webhooks to trigger real-time alerts — replacing manual monitoring with event-driven automation.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       TAB 1: Git (Day 1)
+  ════════════════════════════════════════ -->
+  <div class="panel" id="panel-git">
+
+    <div class="search-wrap">
+      <input class="search-input" type="search" placeholder="Search Git content..." data-panel="git" />
+    </div>
+
+    <div class="context-banner">
+      <strong>Day 1 exercise.</strong> You worked on a branch named <code>students/pride</code>, added <code>Students/pride.txt</code> with your name and favorite animal, then opened a PR to <code>main</code>. Git isn't just for code — it's how teams collaborate on anything text-based without overwriting each other's work.
+    </div>
+
+    <div class="section-label">Process Flow</div>
+    <div class="flow">
+      <div class="flow-node">Create Branch</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Add File</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Stage</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Commit</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Push</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Open PR</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Merge</div>
+    </div>
+
+    <div class="section-label">Step-by-Step Walkthrough</div>
+    <div class="steps">
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Create your branch</div>
+            <div class="step-desc">Branches let you work in isolation without affecting anyone else on main. In the workshop, every student got their own branch — named <code>students/&lt;name&gt;</code> — so everyone could work at the same time without conflicts.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>git checkout -b students/pride</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Switched to a new branch 'students/pride'</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Create your file</div>
+            <div class="step-desc">In the workshop, every student created a <code>.txt</code> file in the <code>Students/</code> folder with their name and favorite animal. This was the actual change that got submitted as a PR to main. It proves the workflow — any change (code, config, docs) follows the same process.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>echo "Name: Pride\nFavorite animal: ..." > Students/pride.txt
+
+# Or open VS Code and create it manually:
+code Students/pride.txt</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">No output — file now exists at Students/pride.txt. Confirm with: ls Students/</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Stage the file</div>
+            <div class="step-desc">Staging is a checkpoint — you choose exactly what goes into the commit. You can have 10 changed files but only stage 2. Think of it as selecting which changes to seal in an envelope before sending.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>git add Students/pride.txt
+
+# Stage everything changed at once (use carefully):
+# git add .
+
+# Check what's staged:
+git status</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Changes to be committed:
+  new file:   Students/pride.txt</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">Commit</div>
+            <div class="step-desc">A commit is a permanent snapshot saved to your branch's history. The message should describe what changed and why — not just "update file". Anyone reading the git log should understand the change from the message alone.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>git commit -m "add pride student file"
+
+# See your commits:
+git log --oneline</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">[students/pride abc1234] add pride student file
+ 1 file changed, 2 insertions(+)</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Push to GitHub</div>
+            <div class="step-desc">Your commits exist only on your local machine until you push. Pushing uploads your branch to GitHub so others can see it and so you can open a PR. The first push requires <code>-u origin &lt;branch&gt;</code> to link the local and remote branches.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>git push origin students/pride
+
+# After the first push, future pushes on this branch are just:
+# git push</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Branch 'students/pride' set up to track remote branch 'students/pride' from 'origin'.
+To https://github.com/.../learning-jamf-student.git
+ * [new branch]      students/pride -> students/pride</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">6</div>
+          <div>
+            <div class="step-title">Open a Pull Request</div>
+            <div class="step-desc">A PR is a request to merge your branch into main. It creates a discussion thread where changes can be reviewed before they're accepted. In the workshop, you opened PRs so the facilitator (and you) could see all student files collected in one place.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre># In GitHub UI:
+# 1. Go to the repo on github.com
+# 2. Click "Compare &amp; pull request" (banner appears after push)
+# 3. Set: base: main   ←   compare: students/pride
+# 4. Title: "Add pride student file"
+# 5. Click "Create pull request"</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">PR is created, shows as "Open" with your changes. Reviewers can comment on specific lines. Once approved → ready to merge.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">7</div>
+          <div>
+            <div class="step-title">Merge</div>
+            <div class="step-desc">Merging brings your branch's changes into main permanently. After merge, the branch can be deleted (the commits stay in main's history). Everyone else on the team can now <code>git pull</code> to get your changes.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre># In GitHub UI:
+# Click "Merge pull request" → "Confirm merge"
+
+# Locally, update your main branch:
+git checkout main
+git pull</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Pull request successfully merged and closed.
+Students/pride.txt is now in main — visible to everyone who pulls the repo.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — Git Commands <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>git status</td><td>Show what's changed, staged, and untracked — run this constantly to know where you are</td></tr>
+            <tr><td>git branch</td><td>List all local branches; the current one has a * in front</td></tr>
+            <tr><td>git branch -a</td><td>List all branches — local AND remote (remote ones show as origin/...)</td></tr>
+            <tr><td>git checkout &lt;branch&gt;</td><td>Switch to an existing branch</td></tr>
+            <tr><td>git checkout -b &lt;name&gt;</td><td>Create a new branch AND switch to it in one step</td></tr>
+            <tr><td>git add &lt;file&gt;</td><td>Stage a specific file — only this file will be in the next commit</td></tr>
+            <tr><td>git add .</td><td>Stage ALL changed files — use carefully, you might include things you didn't mean to</td></tr>
+            <tr><td>git commit -m "msg"</td><td>Save a snapshot of staged changes with a message</td></tr>
+            <tr><td>git push origin &lt;branch&gt;</td><td>Upload your branch to GitHub for the first time</td></tr>
+            <tr><td>git push</td><td>Push again after the branch is already tracking remote</td></tr>
+            <tr><td>git pull</td><td>Fetch remote changes and merge them into your current branch</td></tr>
+            <tr><td>git log --oneline</td><td>See recent commits as a compact list (hash + message)</td></tr>
+            <tr><td>git diff</td><td>Show exact line-by-line changes not yet staged</td></tr>
+            <tr><td>git diff --staged</td><td>Show changes that ARE staged — what will go into the next commit</td></tr>
+            <tr><td>git stash</td><td>Temporarily save uncommitted changes so you can switch branches cleanly</td></tr>
+            <tr><td>git stash pop</td><td>Bring back the changes you stashed</td></tr>
+            <tr><td>git remote -v</td><td>Show which remote URL your local repo is connected to (e.g., github.com/...)</td></tr>
+            <tr><td>git merge &lt;branch&gt;</td><td>Merge another branch into your current one locally (you usually do this via GitHub PR instead)</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>Workshop branch naming convention:</strong> <code>students/&lt;your-name&gt;</code> — the slash creates a "folder" in GitHub's branch view. All student branches grouped together cleanly. You can use this pattern for anything: <code>feature/name</code>, <code>fix/bug-name</code>, <code>experiment/idea</code>.
+        </div>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — Git Concepts <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Concept</th><th>Plain-English explanation</th></tr></thead>
+          <tbody>
+            <tr><td>Repository (repo)</td><td>The folder that Git tracks — contains all your files AND the full history of every change ever made</td></tr>
+            <tr><td>Branch</td><td>A parallel version of the repo — changes on your branch don't affect main until you merge</td></tr>
+            <tr><td>main</td><td>The default, "official" branch — what everyone starts from and merges back into</td></tr>
+            <tr><td>Commit</td><td>A saved snapshot — like a checkpoint in a video game. Every commit has a unique hash ID (e.g., abc1234)</td></tr>
+            <tr><td>Staging area</td><td>A holding zone between "changed" and "committed" — you decide what goes in before sealing the commit</td></tr>
+            <tr><td>Remote</td><td>The copy of your repo that lives on GitHub (online) — named "origin" by default</td></tr>
+            <tr><td>Push</td><td>Send your local commits up to GitHub (remote)</td></tr>
+            <tr><td>Pull</td><td>Bring remote changes down to your local machine</td></tr>
+            <tr><td>Pull Request (PR)</td><td>A request on GitHub to merge one branch into another — creates a review + discussion thread</td></tr>
+            <tr><td>Merge</td><td>Combine changes from one branch into another — brings your work into main permanently</td></tr>
+            <tr><td>Merge conflict</td><td>Happens when two branches changed the same line differently — Git asks you to decide which version to keep</td></tr>
+            <tr><td>Clone</td><td>Download a copy of a GitHub repo to your local machine for the first time (<code>git clone &lt;url&gt;</code>)</td></tr>
+            <tr><td>Fork</td><td>Your own copy of someone else's repo on GitHub — changes don't affect the original until you PR</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       TAB 2: Jamf API (Day 2)
+  ════════════════════════════════════════ -->
+  <div class="panel" id="panel-api">
+
+    <div class="search-wrap">
+      <input class="search-input" type="search" placeholder="Search API content..." data-panel="api" />
+    </div>
+
+    <div class="context-banner">
+      <strong>Day 2 exercise.</strong> You used Swagger UI and Terminal to authenticate to the Jamf Pro REST API, list computers, and update an Extension Attribute that triggered a Smart Group and a webhook. The API is how you automate everything you'd otherwise do manually through the Jamf Pro UI.
+    </div>
+
+    <div class="section-label">Process Flow</div>
+    <div class="flow">
+      <div class="flow-node">Credentials</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Get Token</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Make Request</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Read Response</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Update Data</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Webhook Fires</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Invalidate Token</div>
+    </div>
+
+    <div class="section-label">Step-by-Step Walkthrough</div>
+    <div class="steps">
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Know your credentials &amp; endpoints</div>
+            <div class="step-desc">The Jamf Pro REST API uses username/password to get a bearer token, which you then use for all subsequent requests. These are the workshop-only credentials — in production you'd use a dedicated API account with least-privilege permissions.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>Username:  jamfpro_api
+Password:  eap.zog.neek26
+Instance:  https://projsadp.jamfcloud.com
+Swagger:   https://projsadp.jamfcloud.com/api/doc
+
+# Two API styles:
+# Modern (v1, JSON):   /api/v1/...          ← preferred
+# Classic (XML):       /JSSResource/...     ← needed for Extension Attributes</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Why two APIs?</div>
+          <div class="output-text">Jamf is migrating from an older XML-based API to a modern JSON API. Both still work. The modern API is /api/v1. The Classic API (/JSSResource) is still needed for things like Extension Attributes that haven't been migrated yet.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Get a bearer token</div>
+            <div class="step-desc">POST your credentials to the auth endpoint. Jamf validates them and returns a JWT token. You save it as a shell variable — <code>$TOKEN</code> — and pass it in every subsequent request. Tokens expire, so always get a fresh one at the start of a script.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>TOKEN=$(curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token" \
+  | jq -r '.token')
+
+# What's happening:
+# curl -s          = silent (no progress bar)
+# -u "user:pass"   = basic auth for the initial token request
+# -X POST          = HTTP method
+# jq -r '.token'   = parse JSON response, extract just the token string</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">No visible output — $TOKEN now holds a long JWT string. Verify with: echo $TOKEN</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Verify the token is set</div>
+            <div class="step-desc">Never assume the token was captured correctly. An empty <code>$TOKEN</code> means every subsequent request will fail with 401. Check it before proceeding — this saves debugging time later.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>echo $TOKEN
+
+# If empty — common causes:
+# - jq not installed: brew install jq
+# - Wrong credentials
+# - Network issue reaching projsadp.jamfcloud.com</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">eyJhbGciOiJSUzI1NiJ9.eyJhdXRoZW50aWNhdGVkLWFwcCI6IkdFTkVSSUMi... (very long string)
+If blank → token capture failed. Re-run Step 2 and check for errors.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">List all computers</div>
+            <div class="step-desc">This is a GET request — you're reading data, not changing anything. The <code>Authorization: Bearer $TOKEN</code> header is how every authenticated request works after the initial token exchange. <code>jq .</code> formats the raw JSON so it's human-readable in Terminal.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq .
+
+# Extract just the total count:
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq '.totalCount'
+
+# Extract just the IDs and names:
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq '.results[] | {id, name: .general.name}'</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">{ "totalCount": 12, "results": [ { "id": "1", "udid": "...", "general": { "name": "MacBook-Pro", "lastContactTime": "..." } }, ... ] }</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Get a single device</div>
+            <div class="step-desc">Once you have a device ID from the list above, you can query just that one device. This is useful when you want to inspect a specific computer's details — software, hardware, group memberships — before making changes.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory/YOUR_DEVICE_ID" \
+  | jq .
+
+# Get just the computer name:
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory/YOUR_DEVICE_ID" \
+  | jq '.general.name'</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">{ "id": "5", "udid": "...", "general": { "name": "MacBook-Pro", "lastContactTime": "2025-03-06T..." }, "hardware": { ... }, ... }</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">6</div>
+          <div>
+            <div class="step-title">Update the Extension Attribute (triggers webhook)</div>
+            <div class="step-desc">This was the key Day 2 exercise — writing data back to Jamf. You used the Classic API (XML) to update Extension Attribute ID 1 (Workshop Status) with your name. Jamf evaluated the Smart Group criteria, added the device, and fired the webhook to webhook.site.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">xml</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;Pride&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'
+
+# Then go to webhook.site to watch the payload arrive in real time</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">HTTP 201 — no response body. Check the Jamf Pro UI: your name appears under Workshop Status.
+webhook.site shows a new POST with JSON payload containing device info and the event type.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">7</div>
+          <div>
+            <div class="step-title">Invalidate your token</div>
+            <div class="step-desc">Always kill the token when you're done. This is a POST to a specific endpoint that tells Jamf to blacklist this token immediately — even if it hasn't expired yet. Good security hygiene, especially important in shared environments like the workshop.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>curl -s -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"
+
+# Confirm it's dead:
+echo $TOKEN  # still in memory, but Jamf rejects it now</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">HTTP 204 No Content — no body returned. Token is now invalid server-side. Any request using it will get 401 Unauthorized.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — HTTP Methods &amp; Status Codes <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Method / Code</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>GET</td><td>Read/retrieve data — safe, makes no changes. e.g., list computers, get device details</td></tr>
+            <tr><td>POST</td><td>Create something or trigger an action. e.g., get a token, create a device record, fire an action</td></tr>
+            <tr><td>PUT</td><td>Update/replace existing data — replaces the whole resource. e.g., update Extension Attribute</td></tr>
+            <tr><td>PATCH</td><td>Partially update a resource — only sends the fields you're changing (vs PUT which replaces everything)</td></tr>
+            <tr><td>DELETE</td><td>Remove something permanently. e.g., delete a device record</td></tr>
+            <tr><td>200 OK</td><td>Request succeeded and response has data</td></tr>
+            <tr><td>201 Created</td><td>Something was created successfully (e.g., new record)</td></tr>
+            <tr><td>204 No Content</td><td>Succeeded, but nothing to return (normal for DELETE, invalidate-token)</td></tr>
+            <tr><td>400 Bad Request</td><td>Your request is malformed — check payload format, headers, or URL</td></tr>
+            <tr><td>401 Unauthorized</td><td>Token is missing, wrong, or expired — re-authenticate and get a new token</td></tr>
+            <tr><td>403 Forbidden</td><td>Authenticated but you don't have permission for this action</td></tr>
+            <tr><td>404 Not Found</td><td>The resource or endpoint doesn't exist — check your URL and device ID</td></tr>
+            <tr><td>500 Server Error</td><td>Something went wrong on Jamf's end — try again or check Jamf logs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — curl Flags &amp; jq Patterns <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Command / Flag</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>curl -s</td><td>Silent — hides progress bar and error messages (use in scripts)</td></tr>
+            <tr><td>curl -u "user:pass"</td><td>Basic authentication — sends credentials encoded in the request header</td></tr>
+            <tr><td>curl -X POST</td><td>Specify HTTP method (GET is default; specify POST, PUT, DELETE explicitly)</td></tr>
+            <tr><td>curl -H "Key: Value"</td><td>Add a custom header — use multiple times for multiple headers</td></tr>
+            <tr><td>curl -d 'data'</td><td>Send a request body (for POST/PUT)</td></tr>
+            <tr><td>curl -w "%{http_code}"</td><td>Print just the HTTP status code at the end of the output</td></tr>
+            <tr><td>| jq .</td><td>Pretty-print JSON — add color and indentation so it's readable</td></tr>
+            <tr><td>| jq '.key'</td><td>Extract a specific top-level field from JSON (e.g., .totalCount)</td></tr>
+            <tr><td>| jq -r '.token'</td><td>-r = raw output (no quotes) — essential for capturing strings into variables</td></tr>
+            <tr><td>| jq '.results[]'</td><td>Iterate over all items in a JSON array</td></tr>
+            <tr><td>| jq '.results[] | .id'</td><td>Extract just the id from every item in results array</td></tr>
+            <tr><td>| jq '.results[] | {id, name: .general.name}'</td><td>Build a custom object from nested fields</td></tr>
+            <tr><td>VAR=$(command)</td><td>Capture a command's output into a shell variable (used to store $TOKEN)</td></tr>
+            <tr><td>echo $VARIABLE</td><td>Print the value of a shell variable — use to verify it was set correctly</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>Swagger UI tip:</strong> Open <code>https://projsadp.jamfcloud.com/api/doc</code> to explore every available API endpoint interactively. You can authorize with your token and make real test calls right in the browser — without writing any curl commands. Use it to discover endpoint paths and understand request/response formats before scripting.
+        </div>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — VMs &amp; Tart (Day 2) <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Concept / Command</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Virtual Machine (VM)</td><td>A computer running inside another computer — has its own OS, files, and network, isolated from the host machine</td></tr>
+            <tr><td>Tart</td><td>Tool for running macOS VMs on Apple Silicon Macs. Open source, built for M-series Macs specifically</td></tr>
+            <tr><td>tart clone &lt;src&gt; &lt;name&gt;</td><td>Create a new VM by cloning an existing image</td></tr>
+            <tr><td>tart run &lt;name&gt;</td><td>Start and open a VM</td></tr>
+            <tr><td>tart stop &lt;name&gt;</td><td>Shut down a running VM</td></tr>
+            <tr><td>tart ip &lt;name&gt;</td><td>Get the IP address of a running VM (so you can SSH into it)</td></tr>
+            <tr><td>Snapshot</td><td>A saved point-in-time state of the VM — like a save state. "Clean install" snapshot = known good starting point</td></tr>
+            <tr><td>Packer</td><td>Tool that builds VM images from a template file (recipe) — same template = identical image every time</td></tr>
+            <tr><td>Workshop VM specs</td><td>4 CPU cores, 8 GB RAM, 50 GB disk. Source: macOS IPSW file (macOS 15 or 26)</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>Why VMs in this workshop?</strong> VMs let you run a clean, fresh macOS environment for testing Jamf enrollment and Zero Touch Deployment flows — without wiping your real Mac. You also used a Tart VM to run POST commands that placed data in the Jamf Pro API.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       TAB 3: AI Dev (Day 3)
+  ════════════════════════════════════════ -->
+  <div class="panel" id="panel-aidev">
+
+    <div class="search-wrap">
+      <input class="search-input" type="search" placeholder="Search AI Dev content..." data-panel="aidev" />
+    </div>
+
+    <div class="context-banner">
+      <strong>Day 3 exercise.</strong> You built two versions of a review site — a one-shot build (no planning) and this planned build. The difference in quality and depth between them is the whole point. The Compound Engineering Loop is the framework that makes AI-assisted development repeatable and effective.
+    </div>
+
+    <div class="section-label">Process Flow</div>
+    <div class="flow">
+      <div class="flow-node">Plan</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Work</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Review</div>
+      <div class="flow-arrow">&#x203A;</div>
+      <div class="flow-node">Compound</div>
+      <div class="flow-back">
+        <div class="flow-back-line"></div>
+        <span>context feeds the next session</span>
+      </div>
+    </div>
+
+    <div class="section-label">One-Shot vs Planned — What's the Difference?</div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num"></div>
+          <div>
+            <div class="step-title">One-Shot Build</div>
+            <div class="step-desc">You give Claude one big prompt and let it run. Fast to start, but the output reflects only what was in that first message. If your mental model of the problem was incomplete or unclear, the output will be too — and fixing it costs more time than planning would have.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre># One-shot approach:
+"Build me a review page for a 3-day Jamf Pro workshop."
+
+# Claude builds something. It might look fine. But:
+# - Did it cover all three days equally?
+# - Does it use the formats you learn best from?
+# - Does it include the actual commands you need to remember?
+# Probably not — because you didn't tell it any of that.</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Result</div>
+          <div class="output-text">Faster to start. Output is generic. Harder to fix without restarting. Good for throwaway experiments.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Step-by-Step Walkthrough — The Compound Loop</div>
+    <div class="steps">
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Plan — before you write a single line</div>
+            <div class="step-desc">Define your goal. Transfer your mental model to the agent — what you're building, who it's for, what constraints exist, and what "done" looks like. Ask the agent questions before it does anything. This is where 80% of the value comes from. The plan IS the work.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>"Look at my project and tell me what you see."
+"What are we trying to build — explain it back to me."
+"What questions do you have before we start?"
+"What could go wrong with this approach?"
+"What decisions do I need to make before you write code?"
+
+# This page was built with a plan. The plan asked:
+# - How do you learn? (examples)
+# - What topics? (all three equally)
+# - What study tools? (walkthroughs + flow diagrams)
+# - What navigation? (tabs per topic)</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Agent describes the project back to you, surfaces unknowns, asks clarifying questions. You answer them. Now it has real context — not just a task.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Work — execute within the plan</div>
+            <div class="step-desc">Let the agent build. Stay engaged — you're collaborating, not delegating. If it drifts from the plan, redirect it. If it surprises you, ask why before continuing. You should always be able to explain what the agent is doing and why.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>"Build the page we planned — start with the HTML structure."
+"Stick to what we agreed — don't add features we didn't discuss."
+"Explain what you're about to do before you do it."
+
+# Warning signs during Work phase:
+# - Solution keeps growing unexpectedly
+# - Agent says "Actually, let's try..." multiple times
+# - You can't explain what it's building or why</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">Code, files, output generated. If something surprises you — pause and ask "Why did you do it this way?" before continuing.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">Review — your eyes first, then ask</div>
+            <div class="step-desc">Open the output. Use it like a real person would — click things, read the content, scroll around. Your judgment comes first. Then ask the agent what it might have missed. This two-step review catches both visual and technical gaps.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre># Step 1: Use it yourself
+open day-3/site/planned/index.html
+
+# Step 2: Compare to the plan
+# - Does it have all 4 tabs? (Jamf Pro, Git, API, AI Dev)
+# - Do flow diagrams show correctly?
+# - Are full commands with expected output shown?
+# - Is the quick reference expanded and useful?
+
+# Step 3: Ask the agent
+"Based on our plan, what did we miss?"
+"Does this match what we agreed on?"
+"What would a new user find confusing about this?"</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">You catch things the agent can't (how it feels to use it). Agent catches things you might miss (technical gaps vs the spec). Together = thorough review.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">Compound — distill the session</div>
+            <div class="step-desc">Type <code>/compound</code> at the end of every session. Claude writes a summary of everything that happened — decisions made, dead ends hit, discoveries found. This gets stored in COMPOUND.md. The next session reads it and starts with full context instead of from zero.</div>
+          </div>
+        </div>
+        <div class="code-block">
+          <span class="code-lang">bash</span>
+          <button class="copy-btn" type="button">Copy</button>
+          <pre>/compound
+
+# What gets saved to COMPOUND.md:
+# - What we set out to build
+# - Key decisions made (and why)
+# - Dead ends encountered
+# - Discoveries and things that worked
+# - What the next session should know
+
+# Two files — different purposes:
+# CLAUDE.md     = lean project setup (agent reads this first every session)
+# COMPOUND.md   = rich session history (context compounds over time)</pre>
+        </div>
+        <div class="output-box">
+          <div class="output-label">Expect</div>
+          <div class="output-text">COMPOUND.md updated. Next session opens Claude Code → reads CLAUDE.md + COMPOUND.md → starts with full context. No re-explaining needed.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — 7 Principles <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Principle</th><th>What it means in practice</th></tr></thead>
+          <tbody>
+            <tr><td>Context is everything</td><td>Output quality = context quality. Agent only knows what you tell it. Share your mental model, project history, constraints, and definition of "done".</td></tr>
+            <tr><td>Planning &gt; building</td><td>80% planning, 20% building. The plan IS the work. Execution is just confirmation. If you're watching code generate most of the time, you skipped the important part.</td></tr>
+            <tr><td>Share your mental model</td><td>The agent doesn't have your picture of the problem. Transfer it: "Here's how I'm thinking about this..." / "The most important thing is..." / "The pattern we use is..."</td></tr>
+            <tr><td>Know when to quit</td><td>Sunk cost is a trap. Starting fresh with better context is faster than pushing through a bad path. Signs: solution keeps growing, agent keeps changing direction, you're confused.</td></tr>
+            <tr><td>It's a conversation</td><td>Collaboration, not delegation. Back-and-forth: you share context → agent explores → agent proposes → you refine. Treat it like pairing with a smart colleague who needs your context.</td></tr>
+            <tr><td>Review against the plan</td><td>Your eyes and judgment are the primary review tool. Open output and use it like a real user. Then ask: "Based on our plan, what did we miss?"</td></tr>
+            <tr><td>Compound your sessions</td><td>Distill every session with /compound. COMPOUND.md = rich session history. CLAUDE.md = lean project setup. Next session inherits everything instead of starting from zero.</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>The paradigm shift from Day 3:</strong> Before AI tools — planning was easy, coding was hard. Now — planning is hard, execution is trivial. The bottleneck moved. Your value as a developer is now in the quality of your thinking and context, not in your typing speed.
+        </div>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — Effective Prompts <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Prompt</th><th>When to use it</th></tr></thead>
+          <tbody>
+            <tr><td>"Look at my project and tell me what you see"</td><td>Start of every session — lets the agent orient itself before you give it tasks</td></tr>
+            <tr><td>"What are we trying to build — in your own words?"</td><td>After explaining the goal — verifies the agent understood before it acts</td></tr>
+            <tr><td>"What questions do you have before we start?"</td><td>Before any build — surfaces unknowns and assumptions that would cause problems later</td></tr>
+            <tr><td>"What could go wrong with this approach?"</td><td>During planning — gets the agent to think adversarially about your plan</td></tr>
+            <tr><td>"Walk me through how this works"</td><td>When you don't understand something the agent built — never skip this</td></tr>
+            <tr><td>"Are there edge cases we're missing?"</td><td>After a plan is drafted — catches gaps before they become bugs</td></tr>
+            <tr><td>"Based on our plan, what did we miss?"</td><td>After review — structured gap analysis against the original spec</td></tr>
+            <tr><td>"Explain back to me what we're trying to do"</td><td>When conversation has gone long and you want to re-sync</td></tr>
+            <tr><td>"Let's start over. Here's what I've learned..."</td><td>When the path is bad — reset with better context instead of patching a bad approach</td></tr>
+            <tr><td>/compound</td><td>End of every session — distills everything into COMPOUND.md</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — AI &amp; Claude Code Glossary <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Term</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Agent</td><td>An AI assistant that can take actions on your behalf — read files, write code, run commands, search the web</td></tr>
+            <tr><td>Context</td><td>Everything the agent knows about what you're trying to do — your project, history, constraints, goal</td></tr>
+            <tr><td>Context window</td><td>The maximum amount of text an agent can "see" at once — like short-term memory. When it fills up, early parts are forgotten.</td></tr>
+            <tr><td>Token</td><td>Small chunk of text (~1 word) the agent reads/writes. Context windows are measured in tokens (e.g., 200k tokens ≈ 150k words)</td></tr>
+            <tr><td>Prompt</td><td>What you type to the agent — your instruction, question, or context. Quality of prompt = quality of output.</td></tr>
+            <tr><td>Hallucination</td><td>When the agent says something that sounds confident but is wrong or made up. Always verify factual claims.</td></tr>
+            <tr><td>Plan mode</td><td>Claude Code feature: agent shows you exactly what it plans to do before doing it. You approve or reject.</td></tr>
+            <tr><td>Mental model</td><td>Your internal picture of the problem — what you understand about it. Transferring this to the agent is the key skill.</td></tr>
+            <tr><td>One-shot prompting</td><td>Giving the agent a single big prompt with no back-and-forth planning. Fast but context-thin.</td></tr>
+            <tr><td>Iteration</td><td>Going back and forth with the agent — refine, review, adjust, refine again. Better output than one-shot.</td></tr>
+            <tr><td>CLAUDE.md</td><td>Project setup file the agent reads first every session — keeps it lean: environment, commands, structure</td></tr>
+            <tr><td>COMPOUND.md</td><td>Session history file built by /compound — gets richer over time, gives next session full context</td></tr>
+            <tr><td>Compounding</td><td>Each session builds on the last. Context accumulates instead of resetting. Like compound interest — slow at first, then very powerful.</td></tr>
+          </tbody>
+        </table>
+        <div class="qref-note">
+          <strong>Warning signs — when to quit and start fresh:</strong><br/>
+          Overcomplicated: solution keeps growing — more files, more steps, harder to follow<br/>
+          Context full: conversation is long, agent repeats itself or forgets earlier details<br/>
+          Direction changing: "Actually, let's try..." with no confident answer<br/>
+          You're confused: you can't explain what the agent is doing or why<br/>
+          Gut check: something feels off, even if you can't articulate it<br/><br/>
+          <strong>Starting fresh with better context is always faster than pushing through a bad path.</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="qref">
+      <button class="qref-toggle" onclick="toggleQref(this)">
+        Quick Reference — Claude Code Setup <span>click to expand</span>
+      </button>
+      <div class="qref-body">
+        <table class="qref-table">
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>node --version</td><td>Verify Node.js is installed (workshop requires v20)</td></tr>
+            <tr><td>brew install node@20</td><td>Install Node.js v20 via Homebrew if not present</td></tr>
+            <tr><td>claude --version</td><td>Verify Claude Code CLI is installed</td></tr>
+            <tr><td>export ANTHROPIC_API_KEY=sk-ant-...</td><td>Set your API key for the current Terminal session (not persistent — must re-run on new session)</td></tr>
+            <tr><td>echo $ANTHROPIC_API_KEY</td><td>Verify the API key is set correctly in current session</td></tr>
+            <tr><td>source ~/.zshrc</td><td>Reload shell config — run after installing tools via Homebrew</td></tr>
+            <tr><td>claude "What is 2+2?"</td><td>Quick test that Claude Code is working and authenticated</td></tr>
+            <tr><td>claude /init</td><td>Initialize Claude Code in your project — creates CLAUDE.md with project context</td></tr>
+            <tr><td>/plan</td><td>Enter plan mode — Claude shows its plan before acting. Approve or reject.</td></tr>
+            <tr><td>/compound</td><td>Distill the current session into COMPOUND.md</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scroll to top -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&#x2191;</button>
+
+  <script>
+    // ── Theme switcher ──
+    const themeBtns = document.querySelectorAll('.theme-btn');
+    const savedTheme = localStorage.getItem('wsTheme') || 'default';
+    applyTheme(savedTheme);
+
+    function applyTheme(t) {
+      document.documentElement.dataset.theme = t === 'default' ? '' : t;
+      themeBtns.forEach(b => b.classList.toggle('active', b.dataset.target === t));
+    }
+
+    themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = btn.dataset.target;
+        applyTheme(t);
+        localStorage.setItem('wsTheme', t);
+      });
+    });
+
+    // ── Tab switching ──
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panels  = document.querySelectorAll('.panel');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        tabBtns.forEach(b => b.classList.remove('active'));
+        panels.forEach(p  => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + target).classList.add('active');
+        // Clear search on tab switch
+        const inp = document.querySelector(`[data-panel="${target}"]`);
+        if (inp) { inp.value = ''; filterContent(target, ''); }
+      });
+    });
+
+    // ── Quick ref toggle ──
+    function toggleQref(btn) {
+      const body   = btn.nextElementSibling;
+      const isOpen = body.classList.toggle('open');
+      btn.querySelector('span').textContent = isOpen ? 'click to collapse' : 'click to expand';
+    }
+
+    // ── Copy to clipboard ──
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pre  = btn.nextElementSibling;
+        const text = pre.textContent;
+        const done = () => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+        };
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        } else {
+          fallbackCopy(text, done);
+        }
+      });
+    });
+
+    function fallbackCopy(text, done) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+
+    // ── Search / filter ──
+    document.querySelectorAll('.search-input').forEach(input => {
+      input.addEventListener('input', e => {
+        filterContent(e.target.dataset.panel, e.target.value.toLowerCase().trim());
+      });
+    });
+
+    function filterContent(panelId, query) {
+      const panel = document.getElementById('panel-' + panelId);
+      if (!panel) return;
+
+      panel.querySelectorAll('.step-card').forEach(card => {
+        card.classList.toggle('hidden', query && !card.textContent.toLowerCase().includes(query));
+      });
+
+      panel.querySelectorAll('.qref-table tbody tr').forEach(row => {
+        row.classList.toggle('hidden-row', query && !row.textContent.toLowerCase().includes(query));
+      });
+    }
+
+    // ── Scroll to top ──
+    const scrollBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      scrollBtn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    scrollBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+</body>
+</html>
