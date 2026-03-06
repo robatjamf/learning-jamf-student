@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Octavia's Workshop Review</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0a0a; color: #f1f5f9; }
+
+    /* Chess pattern hero */
+    .chess-bg {
+      background-color: #0a0a0a;
+      background-image: repeating-conic-gradient(#111 0% 25%, #0a0a0a 0% 50%);
+      background-size: 40px 40px;
+    }
+
+    nav { background: rgba(10,10,10,0.92); backdrop-filter: blur(10px); }
+    .nav-link { color: #94a3b8; transition: color 0.2s; }
+    .nav-link:hover { color: #60a5fa; }
+
+    .card {
+      background: #111; border: 1px solid #1e1e1e; border-radius: 14px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,130,246,0.15); }
+
+    .bunny-wm { fill: white; opacity: 0.07; }
+
+    .leaf { display: inline-block; width: 10px; height: 16px; background: #22c55e; border-radius: 50% 0 50% 0; opacity: 0.5; margin: 0 3px; }
+    .leaf.sm { width: 7px; height: 11px; opacity: 0.35; }
+
+    .day-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 12px; border-radius: 999px; }
+
+    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .accordion-content.open { max-height: 800px; }
+    .acc-icon { transition: transform 0.3s; }
+    .acc-icon.open { transform: rotate(180deg); }
+
+    .flashcard { perspective: 700px; cursor: pointer; }
+    .flashcard-inner { position: relative; width: 100%; height: 165px; transition: transform 0.55s; transform-style: preserve-3d; }
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+    .fc-front, .fc-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 1.25rem; text-align: center; }
+    .fc-front { background: #111; border: 1px solid #2a2a2a; }
+    .fc-back { background: #1e3a8a; border: 1px solid #3b82f6; transform: rotateY(180deg); }
+
+    .q-btn { border: 1px solid #2a2a2a; border-radius: 10px; padding: 11px 16px; text-align: left; width: 100%; background: transparent; color: #e2e8f0; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .q-btn:hover:not(:disabled) { border-color: #3b82f6; background: rgba(59,130,246,0.07); }
+    .q-btn.correct { border-color: #22c55e !important; background: rgba(34,197,94,0.1) !important; color: #86efac; }
+    .q-btn.wrong { border-color: #ef4444 !important; background: rgba(239,68,68,0.1) !important; color: #fca5a5; }
+
+    .code-block { background: #060606; border: 1px solid #1a1a1a; border-radius: 10px; padding: 14px 16px; font-family: 'Menlo', monospace; font-size: 12px; color: #4ade80; line-height: 1.8; }
+
+    .divider { display: flex; align-items: center; gap: 8px; margin-bottom: 1.75rem; color: #22c55e; font-size: 13px; font-weight: 600; }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(34,197,94,0.2), transparent); }
+
+    :target { scroll-margin-top: 72px; }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="sticky top-0 z-50 border-b border-white/5 px-6 py-3">
+  <div class="max-w-5xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="22" height="22" viewBox="0 0 100 100">
+        <ellipse cx="35" cy="22" rx="10" ry="22" fill="#3b82f6" transform="rotate(-14 35 22)"/>
+        <ellipse cx="65" cy="22" rx="10" ry="22" fill="#3b82f6" transform="rotate(14 65 22)"/>
+        <ellipse cx="50" cy="63" rx="28" ry="26" fill="white"/>
+        <circle cx="42" cy="57" r="4" fill="#0a0a0a"/>
+        <circle cx="58" cy="57" r="4" fill="#0a0a0a"/>
+        <ellipse cx="50" cy="68" rx="5" ry="3" fill="#fbcfe8"/>
+      </svg>
+      <span class="text-white font-bold">octavia</span>
+    </div>
+    <div class="flex gap-5 text-sm">
+      <a href="#day1" class="nav-link">Day 1</a>
+      <a href="#day2" class="nav-link">Day 2</a>
+      <a href="#day3" class="nav-link">Day 3</a>
+      <a href="#quiz" class="nav-link">Quiz</a>
+      <a href="#flashcards" class="nav-link">Flashcards</a>
+      <a href="#commands" class="nav-link">Commands</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="chess-bg relative overflow-hidden">
+  <!-- Bunny watermark -->
+  <div class="absolute inset-0 flex items-center justify-end pr-12 pointer-events-none">
+    <svg width="360" height="360" viewBox="0 0 100 100">
+      <ellipse cx="35" cy="20" rx="10" ry="24" class="bunny-wm" transform="rotate(-12 35 20)"/>
+      <ellipse cx="65" cy="20" rx="10" ry="24" class="bunny-wm" transform="rotate(12 65 20)"/>
+      <ellipse cx="50" cy="65" rx="30" ry="28" class="bunny-wm"/>
+      <ellipse cx="50" cy="90" rx="18" ry="8" class="bunny-wm"/>
+    </svg>
+  </div>
+  <div class="relative max-w-5xl mx-auto px-6 py-20">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="leaf sm"></span>
+      <span class="text-blue-400 text-xs uppercase tracking-widest font-semibold">3-Day Workshop</span>
+      <span class="leaf sm"></span>
+    </div>
+    <h1 class="text-5xl font-bold text-white mb-3 leading-tight">
+      Octavia's<br/><span class="text-blue-400">Workshop Review</span>
+    </h1>
+    <p class="text-slate-400 text-base max-w-md mb-8">Git. Jamf Pro. APIs. VMs. Webhooks. AI development.<br/>Three days of learning — in my own words.</p>
+    <div class="flex gap-3 flex-wrap">
+      <a href="#quiz" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition">Test yourself</a>
+      <a href="#day1" class="border border-white/15 hover:border-blue-500 text-slate-300 px-5 py-2.5 rounded-xl text-sm font-semibold transition">Read my notes</a>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-8">
+      <span class="bg-white/5 border border-white/10 text-slate-400 text-xs px-3 py-1 rounded-full">Bunnies</span>
+      <span class="bg-white/5 border border-white/10 text-slate-400 text-xs px-3 py-1 rounded-full">Plants</span>
+      <span class="bg-white/5 border border-white/10 text-slate-400 text-xs px-3 py-1 rounded-full">Chess</span>
+      <span class="bg-white/5 border border-white/10 text-slate-400 text-xs px-3 py-1 rounded-full">Football</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 pb-24 space-y-20 pt-16">
+
+  <!-- DAY 1 -->
+  <section id="day1">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Day 1<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-6">
+      <span class="day-badge bg-blue-950 text-blue-400">Day 1</span>
+      <h2 class="text-2xl font-bold text-white">Git + Jamf Personas</h2>
+    </div>
+
+    <!-- Icebreakers accordion -->
+    <div class="card p-0 overflow-hidden mb-4">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d1a')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">Icebreakers &amp; Cultural Exchange</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d1a" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d1a">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What stood out from the icebreakers?</p>
+            <p>From the icebreakers what stood out to me is that I learnt that people have different perspectives especially when we did the duck drawing exercise. The task was to draw a duck but at the end each person had their own story behind their duck and different drawings. This proves that we have different ways of seeing things and thinking.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Global Tech Traditions — what did I share?</p>
+            <p>I shared how I became interested in Tech. What I learnt from other people's stories is that though we are in the same group we have different interests. The exchange showed that while technology connects us globally, it is our unique, locally rooted stories that make those connections meaningful.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What is Jamf accordion -->
+    <div class="card p-0 overflow-hidden mb-4">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d1b')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">What Is Jamf?</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d1b" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d1b">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">In my own words</p>
+            <p>Jamf manages Apple devices for different organisations and ensures that they are secured. They manage a large device fleet of Apple devices like macOS, iOS, iPadOS, tvOS by utilizing zero-touch workflows.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What surprised me</p>
+            <p>Zero-Touch deployment really stood out to me — Jamf allows automated enrollment configuration, meaning IT can ship a Mac directly from Apple to a user, who can then log in and have it fully secured and configured without IT physically touching the device.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona accordion -->
+    <div class="card p-0 overflow-hidden mb-6">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d1c')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">Persona Mapping — Security Analyst</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d1c" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d1c">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Biggest pain points</p>
+            <p>CIS benchmarks, Reporting, Interruptions and distractions, Manual ways of doing things.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What I would build for them</p>
+            <p>A system that will automatically detect an issue like cyber attacks and prevent it for them immediately. Since some issues might take place whilst they are handling something else, the system will do all the work for them.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference grid -->
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Git Workflow</h3>
+        <ol class="space-y-1.5 text-sm text-slate-300 list-decimal list-inside">
+          <li>Clone the repo</li><li>Create a branch</li><li>Make changes</li>
+          <li>Stage &amp; commit</li><li>Push your branch</li><li>Open a Pull Request</li>
+        </ol>
+        <div class="code-block mt-4">
+          <div>git checkout -b students/octavia</div>
+          <div>git add .</div>
+          <div>git commit -m "add profile"</div>
+          <div>git push origin students/octavia</div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">The 4 Personas</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex gap-2 text-slate-300"><span class="text-blue-400 font-bold w-5">1.</span><span><span class="text-white font-medium">Enterprise IT Admin</span> — 10,000+ devices</span></div>
+          <div class="flex gap-2 text-slate-300"><span class="text-blue-400 font-bold w-5">2.</span><span><span class="text-white font-medium">K-12 IT Coordinator</span> — shared iPads, multiple schools</span></div>
+          <div class="flex gap-2 bg-blue-950/50 border border-blue-900/40 rounded-lg p-2"><span class="text-blue-400 font-bold w-5">3.</span><span class="text-slate-300"><span class="text-white font-medium">Security Analyst</span> — 1,000 alerts/day <span class="text-blue-400 text-xs">(my persona)</span></span></div>
+          <div class="flex gap-2 text-slate-300"><span class="text-blue-400 font-bold w-5">4.</span><span><span class="text-white font-medium">Help Desk Technician</span> — remote troubleshooting</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section id="day2">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Day 2<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-6">
+      <span class="day-badge bg-blue-950 text-blue-400">Day 2</span>
+      <h2 class="text-2xl font-bold text-white">APIs, VMs &amp; Webhooks</h2>
+    </div>
+
+    <!-- Claude Code accordion -->
+    <div class="card p-0 overflow-hidden mb-4">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d2cc')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">Claude Code &amp; /init</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d2cc" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d2cc">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">First impression of Claude Code</p>
+            <p>The most fascinating thing I experienced in Claude Code is how I was able to create a page in few minutes.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">When I ran /init — what surprised me</p>
+            <p>Claude created a CLAUDE.md file at the root of my repository. What surprised me the most is how it consumed too many tokens and how it could generate a working prototype in minutes just by following the context provided in CLAUDE.md.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My analogy cards -->
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      <div class="card p-5">
+        <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-2">My Notes — VMs</p>
+        <p class="text-white font-medium text-sm mb-2">"A rented room in a house"</p>
+        <p class="text-slate-400 text-sm">Think of it as a rented room in a house. The room (Virtual Machine) and the house is a physical computer. In simple terms your real computer (the house) uses software to carve out a slice of its power to run a pretend computer (the rented room) that acts just like a real one.</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-2">My Notes — APIs</p>
+        <p class="text-white font-medium text-sm mb-2">"You don't need to know how the kitchen works"</p>
+        <p class="text-slate-400 text-sm">The restaurant analogy makes perfect sense! Client = you asking. API = the waiter (the messenger). Server = the kitchen doing the actual work. The API lets two systems talk without needing to know how the other works.</p>
+      </div>
+    </div>
+
+    <!-- Webhooks accordion -->
+    <div class="card p-0 overflow-hidden mb-6">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d2a')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">Webhooks &amp; What I Built</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d2a" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d2a">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Push vs Pull — in my own words</p>
+            <p><span class="text-white font-medium">Pull:</span> You keep checking to see if something has changed.<br/><span class="text-white font-medium">Push:</span> You get notified only when something has changed.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What I created with a POST request</p>
+            <p>A Category request using a POST request in Jamf Pro.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What the webhook payload looked like</p>
+            <p>A URL that receives data when something happens. The server tells you — you don't keep asking.<br/><br/>
+            <span class="text-white font-medium">Polling:</span> "Are we there yet?" — repeated<br/>
+            <span class="text-white font-medium">Pushing:</span> "I'll tell you when we arrive"<br/><br/>
+            EA update &rarr; Smart Group &rarr; Webhook &rarr; JSON payload fires</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End of Day 2 accordion -->
+    <div class="card p-0 overflow-hidden mb-6">
+      <button class="w-full p-5 border-b border-white/5 flex items-center justify-between text-left" onclick="toggle('d2end')">
+        <div>
+          <p class="text-xs text-blue-400 uppercase tracking-wider font-semibold mb-0.5">My Notes</p>
+          <p class="text-white font-medium">End of Day 2</p>
+        </div>
+        <svg class="acc-icon w-5 h-5 text-slate-500" id="ic-d2end" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+      </button>
+      <div class="accordion-content" id="d2end">
+        <div class="p-5 space-y-4 text-sm text-slate-300">
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What clicked for me today</p>
+            <p>How we were able to create the VMs — I thought it was something hard to create but after doing it I realized that you have to try something out before jumping to a conclusion.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What is still fuzzy or confusing?</p>
+            <p>Everything was well explained so no complaints.</p>
+          </div>
+          <div class="border-l-2 border-blue-700 pl-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">What I wanted to explore on Day 3</p>
+            <p>More on AI.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference grid -->
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">REST Verbs</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-green-400 font-bold font-mono">GET</span><span class="text-slate-400">Read data</span></div>
+          <div class="flex justify-between"><span class="text-blue-400 font-bold font-mono">POST</span><span class="text-slate-400">Create</span></div>
+          <div class="flex justify-between"><span class="text-yellow-400 font-bold font-mono">PUT</span><span class="text-slate-400">Update</span></div>
+          <div class="flex justify-between"><span class="text-red-400 font-bold font-mono">DELETE</span><span class="text-slate-400">Remove</span></div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Tart (VMs)</h3>
+        <div class="code-block text-xs">
+          <div>tart clone &lt;img&gt; &lt;nm&gt;</div>
+          <div>tart run &lt;name&gt;</div>
+          <div>tart stop &lt;name&gt;</div>
+          <div>tart ip &lt;name&gt;</div>
+          <div>tart list</div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Webhooks</h3>
+        <p class="text-slate-300 text-sm mb-2">EA update &rarr; Smart Group &rarr; Webhook fires &rarr; JSON payload delivered in real time.</p>
+        <p class="text-slate-500 text-xs italic">"A doorbell — you don't check every 5 minutes, it rings when someone arrives."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section id="day3">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Day 3<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-6">
+      <span class="day-badge bg-blue-950 text-blue-400">Day 3</span>
+      <h2 class="text-2xl font-bold text-white">Compound Engineering</h2>
+    </div>
+
+    <!-- Loop -->
+    <div class="card p-6 mb-5">
+      <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-5">The 4-Step Loop</h3>
+      <div class="grid grid-cols-4 gap-3 text-center">
+        <div class="bg-black/50 border border-white/5 rounded-xl p-4"><div class="text-3xl font-bold text-blue-400 mb-1">1</div><div class="text-white font-medium text-sm">Plan</div><div class="text-slate-500 text-xs mt-1">Define requirements. Surface unknowns.</div></div>
+        <div class="bg-black/50 border border-white/5 rounded-xl p-4"><div class="text-3xl font-bold text-blue-400 mb-1">2</div><div class="text-white font-medium text-sm">Work</div><div class="text-slate-500 text-xs mt-1">Build with AI. Stay in the plan.</div></div>
+        <div class="bg-black/50 border border-white/5 rounded-xl p-4"><div class="text-3xl font-bold text-blue-400 mb-1">3</div><div class="text-white font-medium text-sm">Review</div><div class="text-slate-500 text-xs mt-1">Your eyes first. Then ask Claude for gaps.</div></div>
+        <div class="bg-black/50 border border-white/5 rounded-xl p-4"><div class="text-3xl font-bold text-blue-400 mb-1">4</div><div class="text-white font-medium text-sm">Compound</div><div class="text-slate-500 text-xs mt-1">Distill into COMPOUND.md.</div></div>
+      </div>
+    </div>
+
+    <!-- 7 Principles -->
+    <div class="grid md:grid-cols-2 gap-3">
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">1</span><div><p class="text-white font-medium text-sm">Context Is Everything</p><p class="text-slate-500 text-xs mt-1">Quality of output = quality of context. The agent only knows what you tell it.</p></div></div>
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">2</span><div><p class="text-white font-medium text-sm">Planning &gt; Building</p><p class="text-slate-500 text-xs mt-1">80% plan, 20% execute. If you're mostly watching code get written, you skipped the hard part.</p></div></div>
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">3</span><div><p class="text-white font-medium text-sm">Share Your Mental Model</p><p class="text-slate-500 text-xs mt-1">The agent starts from zero. Transfer your picture of the problem to it.</p></div></div>
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">4</span><div><p class="text-white font-medium text-sm">Recognize When to Quit</p><p class="text-slate-500 text-xs mt-1">Sunk cost is a trap. Starting over with better context is a skill, not failure.</p></div></div>
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">5</span><div><p class="text-white font-medium text-sm">It's a Conversation, Not a Command</p><p class="text-slate-500 text-xs mt-1">Collaboration, not delegation. Back-and-forth beats one-shot prompts.</p></div></div>
+      <div class="card p-4 flex gap-3"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">6</span><div><p class="text-white font-medium text-sm">Review Against Your Plan</p><p class="text-slate-500 text-xs mt-1">Open it. Use it. Your judgment comes first — then ask Claude for gaps.</p></div></div>
+      <div class="card p-4 flex gap-3 md:col-span-2"><span class="text-blue-400 font-bold text-lg w-6 shrink-0">7</span><div><p class="text-white font-medium text-sm">Compound Your Sessions</p><p class="text-slate-500 text-xs mt-1">Distill reasoning, not just outcomes. CLAUDE.md stays lean; COMPOUND.md captures everything — decisions, tradeoffs, dead ends, and why. Every session inherits everything figured out before.</p></div></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Quiz<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-6">
+      <span class="day-badge bg-blue-950 text-blue-400">Test yourself</span>
+      <h2 class="text-2xl font-bold text-white">Knowledge Check</h2>
+    </div>
+    <div class="card p-6">
+      <div id="qwrap">
+        <p class="text-xs text-slate-500 mb-1" id="qprog">Question 1 of 8</p>
+        <p class="text-white text-lg font-medium mb-5" id="qtext"></p>
+        <div class="space-y-2" id="qopts"></div>
+        <p class="text-sm mt-4 hidden" id="qfb"></p>
+        <button class="mt-5 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl text-sm font-semibold transition hidden" id="qnext">Next</button>
+      </div>
+      <div class="hidden text-center py-10" id="qend">
+        <svg width="72" height="72" viewBox="0 0 100 100" class="mx-auto mb-4">
+          <ellipse cx="35" cy="22" rx="10" ry="22" fill="#3b82f6" transform="rotate(-14 35 22)"/>
+          <ellipse cx="65" cy="22" rx="10" ry="22" fill="#3b82f6" transform="rotate(14 65 22)"/>
+          <ellipse cx="50" cy="63" rx="28" ry="26" fill="white"/>
+          <circle cx="42" cy="57" r="4" fill="#0a0a0a"/>
+          <circle cx="58" cy="57" r="4" fill="#0a0a0a"/>
+          <ellipse cx="50" cy="68" rx="5" ry="3" fill="#fbcfe8"/>
+        </svg>
+        <div class="text-5xl font-bold text-white mb-1" id="qscore"></div>
+        <div class="text-slate-400 mb-6">questions correct</div>
+        <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition">Try again</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Flashcards<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-2">
+      <span class="day-badge bg-blue-950 text-blue-400">Flip to reveal</span>
+      <h2 class="text-2xl font-bold text-white">Key Terms</h2>
+    </div>
+    <p class="text-slate-500 text-sm mb-6">Click any card to flip it.</p>
+    <div class="grid md:grid-cols-3 gap-4" id="fcgrid"></div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <div class="divider"><span class="divider-line"></span><span class="leaf sm"></span>Commands<span class="leaf sm"></span><span class="divider-line"></span></div>
+    <div class="flex items-center gap-3 mb-6">
+      <span class="day-badge bg-blue-950 text-blue-400">Reference</span>
+      <h2 class="text-2xl font-bold text-white">Key Commands</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Git</h3>
+        <div class="code-block">
+          <div>git checkout -b students/name</div>
+          <div>git add .</div>
+          <div>git commit -m "message"</div>
+          <div>git push origin branch-name</div>
+          <div>git pull origin main</div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Tart (VMs)</h3>
+        <div class="code-block">
+          <div>tart clone &lt;image&gt; &lt;name&gt;</div>
+          <div>tart run &lt;name&gt;</div>
+          <div>tart stop &lt;name&gt;</div>
+          <div>tart ip &lt;name&gt;</div>
+          <div>tart list</div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Jamf API (curl)</h3>
+        <div class="code-block text-xs">
+          <div class="text-slate-600"># Get token</div>
+          <div>TOKEN=$(curl -s -u "user:pass" \</div>
+          <div>  -X POST ".../v1/auth/token" \</div>
+          <div>  | jq -r '.token')</div>
+          <div class="mt-2 text-slate-600"># List computers</div>
+          <div>curl -H "Authorization: Bearer $TOKEN" \</div>
+          <div>  ".../v1/computers-inventory" | jq .</div>
+          <div class="mt-2 text-slate-600"># Invalidate token</div>
+          <div>curl -X POST \</div>
+          <div>  -H "Authorization: Bearer $TOKEN" \</div>
+          <div>  ".../v1/auth/invalidate-token"</div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-blue-400 font-semibold text-xs uppercase tracking-wider mb-3">Claude Code</h3>
+        <div class="code-block">
+          <div>claude              <span class="text-slate-600"># start</span></div>
+          <div>claude --version</div>
+          <div>/init               <span class="text-slate-600"># create CLAUDE.md</span></div>
+          <div>/compound           <span class="text-slate-600"># distill session</span></div>
+          <div>Shift+Tab           <span class="text-slate-600"># plan mode</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-white/5 py-10">
+  <div class="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-slate-600">
+    <span>Jamf Pro Workshop &mdash; Days 1, 2 &amp; 3 &mdash; Octavia</span>
+    <div class="flex items-center gap-3">
+      <span title="Football">&#9917;</span>
+      <span title="Chess">&#9822;</span>
+      <span title="Plants">&#127807;</span>
+      <svg width="16" height="16" viewBox="0 0 100 100" title="Bunnies" opacity="0.4">
+        <ellipse cx="35" cy="22" rx="9" ry="21" fill="#94a3b8" transform="rotate(-12 35 22)"/>
+        <ellipse cx="65" cy="22" rx="9" ry="21" fill="#94a3b8" transform="rotate(12 65 22)"/>
+        <ellipse cx="50" cy="64" rx="27" ry="25" fill="#94a3b8"/>
+      </svg>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Accordion
+  function toggle(id) {
+    document.getElementById(id).classList.toggle('open');
+    document.getElementById('ic-' + id).classList.toggle('open');
+  }
+
+  // Quiz
+  const Qs = [
+    { q: "What does MDM stand for?", o: ["Mobile Device Management","Managed Desktop Module","macOS Device Monitor","Multi-Device Mode"], a: 0 },
+    { q: "Which persona did Octavia map on Day 1?", o: ["Enterprise IT Admin","K-12 IT Coordinator","Security Analyst","Help Desk Technician"], a: 2 },
+    { q: "In the Compound Engineering loop, what comes AFTER 'Work'?", o: ["Plan","Compound","Review","Deploy"], a: 2 },
+    { q: "What is a webhook most like?", o: ["Polling every 5 minutes","A doorbell that rings when something happens","A GET request you run manually","A VM snapshot"], a: 1 },
+    { q: "Which HTTP method creates a new resource?", o: ["GET","PUT","DELETE","POST"], a: 3 },
+    { q: "What analogy did Octavia use for a Virtual Machine?", o: ["A snow globe","A rented room in a house","A TV inside a cinema","A tent at a festival"], a: 1 },
+    { q: "What is Tart used for?", o: ["Testing REST APIs","Running macOS VMs on Apple Silicon","Monitoring webhooks","Managing Jamf profiles"], a: 1 },
+    { q: "Which principle says 'sunk cost is a trap'?", o: ["Context Is Everything","Planning > Building","Recognize When to Quit","Compound Your Sessions"], a: 2 }
+  ];
+
+  let cur = 0, score = 0, answered = false;
+
+  function startQuiz() {
+    cur = 0; score = 0; answered = false;
+    document.getElementById('qend').classList.add('hidden');
+    document.getElementById('qwrap').classList.remove('hidden');
+    renderQ();
+  }
+
+  function renderQ() {
+    const q = Qs[cur];
+    document.getElementById('qprog').textContent = `Question ${cur + 1} of ${Qs.length}`;
+    document.getElementById('qtext').textContent = q.q;
+    document.getElementById('qfb').classList.add('hidden');
+    document.getElementById('qnext').classList.add('hidden');
+    answered = false;
+    const opts = document.getElementById('qopts');
+    opts.innerHTML = '';
+    q.o.forEach((o, i) => {
+      const b = document.createElement('button');
+      b.className = 'q-btn';
+      b.textContent = o;
+      b.onclick = () => pick(i);
+      opts.appendChild(b);
+    });
+  }
+
+  function pick(i) {
+    if (answered) return;
+    answered = true;
+    const q = Qs[cur];
+    const btns = document.querySelectorAll('.q-btn');
+    btns[i].classList.add(i === q.a ? 'correct' : 'wrong');
+    if (i !== q.a) btns[q.a].classList.add('correct');
+    btns.forEach(b => b.disabled = true);
+    if (i === q.a) score++;
+    const fb = document.getElementById('qfb');
+    fb.classList.remove('hidden');
+    fb.className = `text-sm mt-4 ${i === q.a ? 'text-green-400' : 'text-red-400'}`;
+    fb.textContent = i === q.a ? 'Correct!' : `Not quite — the answer is: "${q.o[q.a]}"`;
+    const nxt = document.getElementById('qnext');
+    nxt.classList.remove('hidden');
+    nxt.textContent = cur < Qs.length - 1 ? 'Next' : 'See results';
+    nxt.onclick = () => {
+      cur++;
+      if (cur < Qs.length) renderQ();
+      else {
+        document.getElementById('qwrap').classList.add('hidden');
+        document.getElementById('qend').classList.remove('hidden');
+        document.getElementById('qscore').textContent = `${score} / ${Qs.length}`;
+      }
+    };
+  }
+
+  startQuiz();
+
+  // Flashcards
+  const FC = [
+    { f: "API", b: "A way for software to talk to other software.\n\nClient = you. Waiter = API. Kitchen = server." },
+    { f: "Bearer Token", b: "Proves you've already logged in. Like a wristband — show ID once, flash it everywhere else." },
+    { f: "Webhook", b: "A URL that receives data when something happens. The server tells you — you don't have to keep asking." },
+    { f: "Virtual Machine", b: "A computer inside a computer.\n\nOctavia's analogy: \"A rented room in a house.\"" },
+    { f: "MDM", b: "Mobile Device Management. Manage many devices from one place — push settings, install apps, enforce security." },
+    { f: "Zero-Touch Deployment", b: "Ship a Mac from Apple directly to a user. They log in, it's fully configured. IT never physically touches it." },
+    { f: "Context Window", b: "How much the agent remembers in one conversation. Like a whiteboard — runs out of space eventually." },
+    { f: "Compounding", b: "Distilling decisions, tradeoffs, and dead ends into COMPOUND.md so the next session starts smarter." },
+    { f: "Polling vs Pushing", b: "Polling = you keep asking \"anything new?\"\nPushing = the system tells you when there is." },
+  ];
+
+  const grid = document.getElementById('fcgrid');
+  FC.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'flashcard';
+    el.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="fc-front">
+          <div>
+            <p class="text-xs text-blue-400 uppercase tracking-widest mb-2">Term</p>
+            <p class="text-white font-bold text-base">${c.f}</p>
+          </div>
+        </div>
+        <div class="fc-back">
+          <p class="text-sm text-white whitespace-pre-line leading-relaxed">${c.b}</p>
+        </div>
+      </div>`;
+    el.addEventListener('click', () => el.classList.toggle('flipped'));
+    grid.appendChild(el);
+  });
+</script>
+</body>
+</html>
