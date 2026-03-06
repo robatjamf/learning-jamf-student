@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarah Chidzanga — Workshop Review</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: #888;
+      font-size: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 1rem;
+      background: #1a6ef7;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .card.highlight {
+      border-color: #1a6ef7;
+    }
+
+    .card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a6ef7;
+      margin-bottom: 0.6rem;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: #bbb;
+    }
+
+    .insight {
+      background: #111e35;
+      border-left: 3px solid #1a6ef7;
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      margin-top: 0.75rem;
+    }
+
+    .insight p {
+      font-size: 0.9rem;
+      color: #c8d8f0;
+      line-height: 1.6;
+    }
+
+    .pain-list {
+      list-style: none;
+      margin-top: 0.75rem;
+    }
+
+    .pain-list li {
+      font-size: 0.88rem;
+      color: #bbb;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #222;
+      line-height: 1.5;
+    }
+
+    .pain-list li:last-child { border-bottom: none; }
+
+    .pain-list li::before {
+      content: "— ";
+      color: #555;
+    }
+
+    .takeaway-box {
+      background: linear-gradient(135deg, #12192a, #1a1a2e);
+      border: 1px solid #1a6ef7;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .takeaway-box .card-label { text-align: center; }
+
+    .takeaway-box p {
+      font-size: 1rem;
+      color: #d0e4ff;
+      line-height: 1.7;
+    }
+
+    .curious-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #444;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sarah Chidzanga</h1>
+    <p>Jamf Pro Workshop — Personal Review</p>
+    <span class="badge">Day 1</span>
+  </header>
+
+  <div class="grid">
+
+    <!-- Duck Drawing -->
+    <div class="card highlight">
+      <div class="card-label">Block 1 — Welcome</div>
+      <h2>The Duck Exercise</h2>
+      <p>The duck drawing was a standout moment — same instructions, completely different ducks. A reminder that every person brings their own understanding, imagination, and thinking to the same task.</p>
+    </div>
+
+    <!-- Tech story -->
+    <div class="card">
+      <div class="card-label">Block 1 — Global Tech Traditions</div>
+      <h2>How I Got Into Tech</h2>
+      <p>Sparked by watching people on terminals in movies. Shared that story — and discovered DIA, a browser AI that simplifies complex tools. Walked away with a handful of new tools from the group.</p>
+    </div>
+
+    <!-- What is Jamf -->
+    <div class="card">
+      <div class="card-label">Block 2 — What Is Jamf?</div>
+      <h2>Jamf in My Own Words</h2>
+      <p>Jamf makes it easier for organizations to manage and handle their Apple devices — from schools to enterprises around the world.</p>
+      <div class="insight">
+        <p>Surprising: some companies keep their Jamf partnership quiet, while others proudly promote it.</p>
+      </div>
+    </div>
+
+    <!-- Persona -->
+    <div class="card">
+      <div class="card-label">Block 3 — Persona Mapping</div>
+      <h2>Help Desk Technician</h2>
+      <p>My group mapped the pain points of a Help Desk tech drowning in tickets:</p>
+      <ul class="pain-list">
+        <li>6 similar tickets with no way to batch-resolve them</li>
+        <li>iPad issue with no screenshot, no details</li>
+        <li>Multitasking across multiple open cases</li>
+        <li>8 tickets resolved — 15 more arrive immediately</li>
+        <li>Missing Jamf Pro permissions to fix certain issues</li>
+      </ul>
+    </div>
+
+    <!-- Build idea -->
+    <div class="card highlight">
+      <div class="card-label">If I Could Build One Thing</div>
+      <h2>Smart Ticket Grouping</h2>
+      <p>A tool that automatically groups tickets by device type and problem — so a technician can see patterns, batch similar issues, and clear the queue faster without context-switching constantly.</p>
+    </div>
+
+    <!-- Takeaway -->
+    <div class="takeaway-box full-width">
+      <div class="card-label">Biggest Takeaway</div>
+      <p>Jamf is not only for large organizations — it also helps schools and individuals manage their Apple devices. The reach is wider than I expected.</p>
+    </div>
+
+    <!-- Curious -->
+    <div class="curious-box full-width">
+      <div class="card-label">Going Into Day 2 — I'm Curious About...</div>
+      <p style="font-size:0.95rem; color:#aaa; line-height:1.7;">
+        How everything we covered today connects to Claude AI — and how AI is going to make life and work easier for organizations and IT teams.
+      </p>
+    </div>
+
+  </div>
+
+  <footer>Built with Claude Code &middot; Jamf Pro Workshop 2026</footer>
+
+</body>
+</html>

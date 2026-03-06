@@ -43,7 +43,7 @@ All four covered → move to Work. Something missing → keep planning or restar
 
 | When You Want To... | Try Saying... |
 |---------------------|---------------|
-| Build shared understanding | "Look at my project and tell me what you see" |
+| Build shared understanding | "Look at my projet and tell me what you see" |
 | Explore the problem | "Walk me through how this works" |
 | Surface risks early | "What could go wrong with this approach?" |
 | Get the agent's questions | "What questions do you have before we start?" |
