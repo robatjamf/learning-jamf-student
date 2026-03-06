@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROB POTVIN // ZIM EDITION // JAMF WARRIOR</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+:root{--red:#CE1126;--gold:#FFD200;--green:#007A5E;--bg:#050505;--sunset:#FF6B35;--cyan:#00FFFF;--mag:#FF00FF;--lime:#39FF14;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--gold);font-family:'Share Tech Mono','Courier New',monospace;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;z-index:9999;}
+
+@keyframes blink-border{
+  0%  {border-color:var(--red); box-shadow:0 0 12px var(--red);}
+  25% {border-color:var(--gold);box-shadow:0 0 12px var(--gold);}
+  50% {border-color:var(--cyan);box-shadow:0 0 12px var(--cyan);}
+  75% {border-color:var(--green);box-shadow:0 0 12px var(--green);}
+  100%{border-color:var(--red); box-shadow:0 0 12px var(--red);}
+}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes glow{0%,100%{text-shadow:0 0 6px var(--gold),0 0 12px var(--gold)}50%{text-shadow:0 0 20px var(--gold),0 0 40px var(--sunset),0 0 60px var(--red)}}
+@keyframes scroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+@keyframes cycle{0%{color:var(--red)}25%{color:var(--gold)}50%{color:var(--cyan)}75%{color:var(--lime)}100%{color:var(--red)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.ticker{background:var(--red);padding:8px 0;overflow:hidden;white-space:nowrap;border-bottom:2px solid var(--gold);}
+.ticker span{display:inline-block;animation:scroll 30s linear infinite;font-family:'VT323',monospace;font-size:1.3rem;letter-spacing:3px;color:var(--gold);}
+
+header{text-align:center;padding:2rem 1rem;border-bottom:3px solid var(--gold);background:linear-gradient(180deg,#0d0000,var(--bg));min-height:33vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+pre.header-art{font-family:'Share Tech Mono','Courier New',monospace;font-size:clamp(0.45rem,1.1vw,0.9rem);line-height:1.3;white-space:pre;display:block;animation:cycle 5s linear infinite;}
+h1{font-family:'VT323',monospace;font-size:clamp(2rem,7vw,4.5rem);color:var(--gold);animation:glow 2s ease-in-out infinite;letter-spacing:6px;}
+h2{font-family:'VT323',monospace;font-size:clamp(1.4rem,4vw,2.4rem);letter-spacing:3px;}
+.sub{font-family:'VT323',monospace;font-size:clamp(1rem,3vw,1.4rem);color:var(--cyan);letter-spacing:3px;margin:.4rem 0;}
+.blink{animation:blink 1s step-end infinite;}
+
+main{max-width:1100px;margin:0 auto;padding:2rem 1rem;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.grid-about{display:grid;grid-template-columns:1fr 2fr;gap:2rem;align-items:start;}
+@media(max-width:700px){.grid,.grid-about{grid-template-columns:1fr}.ansi{font-size:.4rem!important}}
+
+.card{border:3px solid var(--red);padding:1.5rem;margin:2rem 0;animation:blink-border 3s linear infinite;position:relative;background:rgba(0,0,0,.3);}
+.card::before{content:attr(data-label);position:absolute;top:-1.1rem;left:1rem;background:var(--bg);padding:0 .5rem;font-family:'VT323',monospace;font-size:1.2rem;color:var(--gold);}
+.c1{animation-delay:0s}.c2{animation-delay:.75s}.c3{animation-delay:1.5s}.c4{animation-delay:2.25s}
+
+.sec{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.sec::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);}
+
+pre.ansi{font-family:'Share Tech Mono','Courier New',monospace;font-size:.62rem;line-height:1.25;white-space:pre;display:inline-block;}
+.anim{animation:cycle 4s linear infinite;}
+.float{animation:float 3s ease-in-out infinite;display:inline-block;}
+
+.stat{display:flex;gap:1rem;margin:.5rem 0;}
+.sl{color:var(--red);min-width:130px;font-size:.78rem;text-transform:uppercase;}
+.sv{color:var(--gold);font-size:.86rem;}
+
+.bar{background:#111;border:1px solid var(--green);height:12px;margin:.2rem 0 .8rem;overflow:hidden;}
+.fill{height:100%;background:linear-gradient(90deg,var(--green),var(--lime));animation:glow 1.5s ease-in-out infinite;}
+
+.item{margin:1rem 0;padding-left:1rem;border-left:3px solid var(--sunset);}
+.q{color:var(--cyan);font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;}
+.a{color:#ddd;font-size:.84rem;line-height:1.7;}
+
+.badge{display:inline-block;border:2px solid currentColor;padding:2px 8px;font-family:'VT323',monospace;font-size:1rem;margin:3px;}
+.br{color:var(--red)}.bg{color:var(--gold)}.bc{color:var(--cyan)}.bl{color:var(--lime)}.bm{color:var(--mag)}
+
+.div{text-align:center;padding:1rem 0;letter-spacing:4px;animation:cycle 6s linear infinite;overflow:hidden;}
+code{color:var(--lime);}
+footer{text-align:center;padding:2rem;border-top:3px solid var(--gold);font-family:'VT323',monospace;font-size:1.2rem;color:var(--green);margin-top:3rem;}
+.cur{animation:blink .8s step-end infinite;color:var(--gold);}
+
+/* ---- DIAL-UP LOAD EFFECT ---- */
+/* everything starts invisible */
+.ticker,header,main>*,footer{opacity:0;}
+.reveal{opacity:1!important;transition:opacity 0.5s ease;}
+.reveal-fast{opacity:1!important;transition:opacity 0.2s ease;}
+
+/* modem overlay */
+#modem-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:var(--bg);z-index:10000;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  transition:opacity 0.6s ease;
+}
+#modem-box{
+  border:2px solid var(--lime);
+  padding:2rem 3rem;
+  min-width:420px;
+  max-width:90vw;
+  box-shadow:0 0 20px var(--lime);
+}
+#modem-title{
+  font-family:'VT323',monospace;
+  font-size:1.8rem;
+  color:var(--lime);
+  letter-spacing:4px;
+  margin-bottom:1rem;
+  border-bottom:1px solid var(--lime);
+  padding-bottom:.5rem;
+}
+#modem-lines{
+  font-size:.8rem;
+  line-height:1.8;
+  min-height:200px;
+}
+#modem-lines .ok{color:var(--lime);}
+#modem-lines .noise{color:var(--cyan);animation:cycle .3s linear infinite;}
+#modem-lines .err{color:var(--red);}
+#modem-lines .dim{color:#555;}
+#modem-cursor{
+  display:inline-block;
+  animation:blink .6s step-end infinite;
+  color:var(--lime);
+}
+#modem-progress-bar{
+  margin-top:1rem;
+  height:8px;
+  background:#111;
+  border:1px solid var(--lime);
+  overflow:hidden;
+}
+#modem-progress-fill{
+  height:100%;
+  width:0%;
+  background:var(--lime);
+  transition:width 0.3s linear;
+  box-shadow:0 0 8px var(--lime);
+}
+</style>
+</head>
+<body>
+
+<audio id="modem-sfx" src="dial-up-modem-02.mp3" preload="auto"></audio>
+
+<!-- DIAL-UP MODEM OVERLAY -->
+<div id="modem-overlay">
+  <div id="modem-box">
+    <div id="modem-title">&#9608; HAYES COMPATIBLE MODEM v2.0 &#9608;</div>
+    <div id="modem-lines"><span id="modem-cursor">&#9608;</span></div>
+    <div id="modem-progress-bar"><div id="modem-progress-fill"></div></div>
+    <div id="connect-prompt" style="margin-top:1.5rem;text-align:center;font-family:'VT323',monospace;font-size:1.6rem;color:var(--lime);cursor:pointer;animation:blink 1s step-end infinite;letter-spacing:4px;">[ CLICK TO CONNECT ]</div>
+  </div>
+</div>
+
+<div class="ticker"><span>&nbsp; &#9733; ROB POTVIN :: 46 YRS :: CANADA 🇨🇦 :: JAMF INSTRUCTOR :: MUSIC LOVER :: FLYING CAR PILOT :: UNICORN BELIEVER :: HONEY BADGER DAD :: VISITING VICTORIA FALLS ZIM &#9733; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9733; ROB POTVIN :: 46 YRS :: CANADA 🇨🇦 :: JAMF INSTRUCTOR :: MUSIC LOVER :: FLYING CAR PILOT :: UNICORN BELIEVER :: HONEY BADGER DAD :: VISITING VICTORIA FALLS ZIM &#9733; &nbsp;</span></div>
+
+<header>
+<pre id="elephant-art" class="header-art" style="text-align:center;line-height:1.2;"></pre>
+<pre class="header-art" style="animation:cycle 5s linear infinite;text-align:center;">
+  ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇
+
+ ██████╗  ██████╗ ██████╗     ██████╗  ██████╗ ████████╗██╗   ██╗██╗███╗   ██╗
+ ██╔══██╗██╔═══██╗██╔══██╗    ██╔══██╗██╔═══██╗╚══██╔══╝██║   ██║██║████╗  ██║
+ ██████╔╝██║   ██║██████╔╝    ██████╔╝██║   ██║   ██║   ██║   ██║██║██╔██╗ ██║
+ ██╔══██╗██║   ██║██╔══██╗    ██╔═══╝ ██║   ██║   ██║   ╚██╗ ██╔╝██║██║╚██╗██║
+ ██║  ██║╚██████╔╝██████╔╝    ██║      ╚██████╔╝   ██║    ╚████╔╝ ██║██║ ╚████║
+ ╚═╝  ╚═╝ ╚═════╝ ╚═════╝     ╚═╝       ╚═════╝    ╚═╝     ╚═══╝  ╚═╝╚═╝  ╚═══╝
+
+     [ JAMF WARRIOR  ::  CLASS OF 2026  ::  ZIM EDITION  ::  CANADA 🇨🇦 ]
+   « TEACHING  •  VICTORIA FALLS  •  APPLE MDM  •  APIS  •  AI  •  CHOMPS »
+
+  ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇
+</pre>
+</header>
+
+<main>
+
+<div class="div">&#9619;&#9618;&#9617; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9617;&#9618;&#9619; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9619;&#9618;&#9617;</div>
+
+<!-- ABOUT -->
+<div class="card c2" data-label="[ ABOUT.EXE ]">
+<div class="sec"><h2 style="color:var(--gold);">WHO IS THIS GUY?</h2></div>
+<div class="grid-about">
+<div style="text-align:center;">
+<pre class="ansi float" style="color:#FFD200;">
+ ╔════════════╗
+ ║  R O B :) ║
+ ╠════════════╣
+ ║ .--------. ║
+ ║/ ◉      ◉ \║
+ ║|    __    |║
+ ║|   \__/   |║
+ ║ \        / ║
+ ║  `------'  ║
+ ╚════════════╝
+  ZIM PRIDE ◆ 46
+</pre>
+<pre class="ansi" style="color:#FF6B35;margin-top:.8rem;">
+ ╔═══════════╗
+ ║  CHOMPS   ║
+ ╚═══════════╝
+   ▄▄▄▄▄▄▄▄▄
+  ▐ ◉       ◉▌
+  ▐   /---\  ▌
+   ▀▀▀▀▀▀▀▀▀
+   | | | | |
+ oooooooooooo
+ HONEY BADGER
+  DON'T CARE
+</pre>
+</div>
+<div>
+<div class="stat"><span class="sl">NAME</span><span class="sv">Rob Potvin</span></div>
+<div class="stat"><span class="sl">AGE</span><span class="sv">46 years old</span></div>
+<div class="stat"><span class="sl">FROM</span><span class="sv">Canada &#127464;&#127462;</span></div>
+<div class="stat"><span class="sl">CURRENTLY</span><span class="sv">Victoria Falls, Zimbabwe &mdash; teaching the Jamf 3-Day Workshop</span></div>
+<div class="stat"><span class="sl">TRANSPORT</span><span class="sv">Flying Car (fleet: 1, vibe: 100%)</span></div>
+<div class="stat"><span class="sl">PASSION</span><span class="sv">Music Production</span></div>
+<div class="stat"><span class="sl">PET</span><span class="sv">Chomps &mdash; Honey Badger &mdash; Attitude: Maximum</span></div>
+<div class="stat"><span class="sl">FAVE ANIMAL</span><span class="sv">Unicorns (non-negotiable)</span></div>
+<div class="stat"><span class="sl">TRAINING</span><span class="sv" style="color:var(--lime);">Jamf 3-Day Bootcamp COMPLETE <span class="blink">&#9632;</span></span></div>
+<br>
+<p style="color:#ccc;font-size:.85rem;line-height:1.8;">I am a 46-year-old from Canada &#127464;&#127462; currently visiting Victoria Falls, Zimbabwe to teach the Jamf 3-Day Workshop to a group of absolutely amazing people. Mornings I fly over traffic blasting Afrobeats at full volume, afternoons I produce beats, and evenings I walk my pet honey badger Chomps through the mist at the Falls. I believe unicorns are real, APIs are magic, and Chomps is proof that small and relentless beats everything. Three days of Jamf training delivered &mdash; and my brain is absolutely full.</p>
+<br>
+<span class="badge br">MUSIC PRODUCER</span>
+<span class="badge bc">FLYING CAR PILOT</span>
+<span class="badge bl">HONEY BADGER DAD</span>
+<span class="badge bm">UNICORN BELIEVER</span>
+<span class="badge bg">JAMF STUDENT</span>
+<span class="badge br">ZIM PRIDE</span>
+</div>
+</div>
+</div>
+
+<!-- ANSI GALLERY -->
+<div class="div">&#9619;&#9618;&#9617; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9617;&#9618;&#9619; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9619;&#9618;&#9617;</div>
+
+<div class="card c1" data-label="[ ANSI.GALLERY :: ZIM EDITION ]">
+<div class="sec"><h2 style="color:var(--red);">ZIM ANSI ART GALLERY</h2></div>
+<div class="grid">
+
+<div style="text-align:center;">
+<div style="display:inline-block;background:var(--red);color:var(--gold);font-family:'VT323',monospace;padding:2px 10px;margin-bottom:.5rem;">VICTORIA FALLS</div>
+<pre class="ansi float" style="color:#00FFFF;">
+&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;&#8776;
+&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;
+&#9553;  &#9553;  &#9553;  &#9553;  &#9553;  &#9553;  &#9553;  &#9553;  &#9553;  &#9553;
+&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;&#9552;&#9552;&#9580;
+&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;&#9618;
+&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;
+~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+&#9617; MOSI-OA-TUNYA &#9617; VIC FALLS &#9617;
+&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;&#9619;
+</pre>
+</div>
+
+<div style="text-align:center;">
+<div style="display:inline-block;background:var(--red);color:var(--gold);font-family:'VT323',monospace;padding:2px 10px;margin-bottom:.5rem;">ROB'S FLYING CAR</div>
+<pre class="ansi float" style="color:#FFD200;animation-delay:.5s;">
+   * . &#9835; &#9834; &#9835; &#9834; &#9835; . *   &#9733;
+  ___________________________
+ /  &#9835;   R  O  B   &#9834;    &#9733;     \
+/  &#9834; [&#9679;]          [&#9679;] &#9835;  \
+\__________________________/
+ ~~~ &#9678; ~~~~~~~~~~~~~~~~~~~ &#9678; ~~~
+       &#8593;&#8593;&#8593;           &#8593;&#8593;&#8593;
+ &#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;&#8593;
+ [ T R A F F I C   B E L O W ]
+</pre>
+</div>
+
+<div style="text-align:center;">
+<div style="display:inline-block;background:var(--red);color:var(--gold);font-family:'VT323',monospace;padding:2px 10px;margin-bottom:.5rem;">CHOMPS</div>
+<pre class="ansi" style="color:#FF6B35;">
+ ╔══════════════════╗
+ ║  C H O M P S    ║
+ ╚══════════════════╝
+      ▄▄▄▄▄▄▄▄▄▄▄
+     ▐ ◉         ◉▌ &lt;-- BITES
+     ▐   /-----\  ▌
+      ▀▀▀▀▀▀▀▀▀▀▀
+      | | | | | |
+   oooooooooooooo
+ "HONEY BADGER DON'T
+  CARE ABOUT YOUR
+  MERGE CONFLICT"
+</pre>
+</div>
+
+<div style="text-align:center;">
+<div style="display:inline-block;background:var(--red);color:var(--gold);font-family:'VT323',monospace;padding:2px 10px;margin-bottom:.5rem;">SPARKLES THE UNICORN</div>
+<pre class="ansi float" style="color:#FF00FF;animation-delay:1s;">
+         /|
+        / | &#9733;
+    &#9733;  /  /
+      /  / &#9733;     &#9733;
+  &#9733; /  /\_____/\
+   /  ( &#9670;  &#9670;  )
+   \   \ /\_/ \ &#9733;
+    \   V       V
+  SPARKLES IS REAL.
+  SAW ONE AT VIC FALLS.
+  CHOMPS TRIED TO BITE IT.
+</pre>
+</div>
+
+</div>
+</div>
+
+<!-- GREAT ZIMBABWE PATTERN -->
+<div style="text-align:center;margin:1.5rem 0;overflow:hidden;">
+<pre class="ansi" style="color:#CE1126;display:block;text-align:center;animation:cycle 8s linear infinite;">
+&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;
+&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;
+    &#9552;&#9552;&#9552;&#9552;&#9552;[ GREAT ZIMBABWE STONE WALLS PATTERN ]&#9552;&#9552;&#9552;&#9552;&#9552;
+&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;&#9660;&#9651;
+&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;&#9670;&#9674;
+</pre>
+</div>
+
+<!-- DAY 1 -->
+<div class="card c3" data-label="[ DAY 1 :: WELCOME TO JAMF ]">
+<div class="sec"><h2 style="color:var(--red);">DAY 1 &mdash; WELCOME &amp; DISCOVERY</h2></div>
+
+<div class="item">
+<div class="q">Icebreakers &amp; Cultural Exchange</div>
+<div class="a">Told the whole room I fly my car over traffic blasting Afrobeats. Silence for 10 seconds. Then questions. Best icebreaker of my life. Shared the story of morning walks with Chomps at Victoria Falls &mdash; honey badger walking is apparently not a common hobby. Met people from everywhere. Felt like a music festival with more laptops.</div>
+</div>
+
+<div class="item">
+<div class="q">What is Jamf?</div>
+<div class="a">Jamf is the ultimate remote control for Apple devices. 10,000 Macs running wild? Jamf whistles and they all line up. Like training Chomps &mdash; except Jamf actually listens. It's the backstage crew making sure the whole concert runs smooth while everyone else enjoys the show.</div>
+</div>
+
+<div class="item">
+<div class="q">Persona Mapping &mdash; K-12 IT Coordinator</div>
+<div class="a">We mapped Ms. Rivera &mdash; one IT person, 400 students, zero budget, infinite chaos. Biggest pain: devices going missing and students installing Minecraft on school iPads. My solution: a one-tap "exam mode" button with a cinematic bass drop. I would score the audio myself.</div>
+</div>
+
+<div style="margin-top:1.5rem;">
+<span class="badge br">Apple MDM</span>
+<span class="badge bc">Jamf Products</span>
+<span class="badge bl">Persona Mapping</span>
+<span class="badge bm">Cultural Exchange</span>
+</div>
+</div>
+
+<!-- DAY 2 -->
+<div class="card c4" data-label="[ DAY 2 :: APIs, VMs &amp; WEBHOOKS ]">
+<div class="sec"><h2 style="color:var(--lime);">DAY 2 &mdash; APIs, VMs &amp; WEBHOOKS</h2></div>
+<div class="grid">
+<div>
+<div class="item">
+<div class="q">Claude Code</div>
+<div class="a">Expected fancy autocomplete. Got a co-pilot who knows every instrument and never complains. Ran <code>/init</code> &mdash; it read the whole project and summarised it better than I could. Like jamming with a musician who can play everything. Chomps could never.</div>
+</div>
+<div class="item">
+<div class="q">VMs &mdash; Computer Inside a Computer</div>
+<div class="a">Imagine your flying car has a mini flying car in the glove box. Same engine, own GPS, own playlist. You crash the mini car &mdash; your real car keeps flying. That's a Tart VM. Commands: <code>tart run</code>, <code>tart list</code>, SSH.</div>
+</div>
+</div>
+<div>
+<div class="item">
+<div class="q">APIs &mdash; Music Streaming Analogy</div>
+<div class="a">API = music streaming service. I request a track (data). Platform fetches from the catalogue. I don't need to know where the studio is. POST requests are like submitting a demo &mdash; sending something new and hoping it gets accepted.</div>
+</div>
+<div class="item">
+<div class="q">Webhooks &mdash; Push vs Pull</div>
+<div class="a">Pull = refreshing my feed hoping a new album dropped. Push = getting a text the SECOND it drops. Webhooks are push. Payload arrived as clean JSON: event, device, timestamp. Chomps delivers messages faster but with more bite marks.</div>
+</div>
+</div>
+</div>
+<div style="margin-top:1.5rem;">
+<span class="badge br">API GET/POST</span>
+<span class="badge bc">Postman</span>
+<span class="badge bl">Tart VMs</span>
+<span class="badge bm">Webhooks</span>
+<span class="badge bg">Claude Code</span>
+<span class="badge br">JSON Whisperer</span>
+</div>
+</div>
+
+<!-- DAY 3 -->
+<div class="card c1" data-label="[ DAY 3 :: BUILDING WITH AI ]">
+<div class="sec"><h2 style="color:var(--mag);">DAY 3 &mdash; BUILDING WITH AI</h2></div>
+
+<div class="item">
+<div class="q">The One-Shot Build</div>
+<div class="a">A unicorn born already knowing how to trot. Looked decent, had the right bones, but was missing things I never said out loud. The AI built what I described &mdash; not what I imagined. The gap between "good enough" and "what I actually meant" was the whole lesson.</div>
+</div>
+
+<div class="item">
+<div class="q">The Planned Build</div>
+<div class="a">Spent the most time writing the brief. Felt unnatural &mdash; like planning a route through Victoria Falls mist before Chomps starts pulling the leash. But the planned build was smoother. Every section had a reason. Planning forces decisions before they bite you.</div>
+</div>
+
+<div class="item">
+<div class="q">The Big Takeaway</div>
+<div class="a" style="color:var(--mag);font-size:1rem;">"The more clearly you think, the more powerful the tool becomes. AI is a fast collaborator that needs you to bring the vision. You're still the artist. AI is just the producer who can lay down any track instantly."</div>
+</div>
+
+<div style="margin-top:1.5rem;">
+<span class="badge br">AI Collaboration</span>
+<span class="badge bc">One-Shot Prompting</span>
+<span class="badge bl">Planned Builds</span>
+<span class="badge bm">Review Loops</span>
+<span class="badge bg">Full Site Builder</span>
+</div>
+</div>
+
+<!-- SKILL TREE -->
+<div class="div">&#9619;&#9618;&#9617; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9617;&#9618;&#9619; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9619;&#9618;&#9617;</div>
+
+<div class="card c2" data-label="[ SKILL.TREE ]">
+<div class="sec"><h2>3-DAY SKILL TREE</h2></div>
+<div class="grid">
+<div>
+<div style="color:var(--cyan);font-size:.78rem;">Apple MDM Concepts</div><div class="bar"><div class="fill" style="width:85%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">Jamf Product Knowledge</div><div class="bar"><div class="fill" style="width:80%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">API / REST Calls</div><div class="bar"><div class="fill" style="width:75%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">Postman</div><div class="bar"><div class="fill" style="width:78%"></div></div>
+</div>
+<div>
+<div style="color:var(--cyan);font-size:.78rem;">Webhooks</div><div class="bar"><div class="fill" style="width:70%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">Claude Code / AI Collab</div><div class="bar"><div class="fill" style="width:92%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">VM / Infrastructure</div><div class="bar"><div class="fill" style="width:65%"></div></div>
+<div style="color:var(--cyan);font-size:.78rem;">Honey Badger Training</div><div class="bar"><div class="fill" style="width:99%"></div></div>
+</div>
+</div>
+</div>
+
+<!-- FINAL BANNER -->
+<div class="div">&#9619;&#9618;&#9617; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9617;&#9618;&#9619; &#9670;&#9670;&#9670; &#9650;&#9650;&#9650; &#9670;&#9670;&#9670; &#9619;&#9618;&#9617;</div>
+<div style="text-align:center;margin:2rem 0;">
+<pre class="ansi" style="color:#FFD200;display:block;text-align:center;animation:cycle 10s linear infinite;">
+  &#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;&#9604;
+  &#9608;                                                       &#9608;
+  &#9608;  &#9733; TRAINED. TESTED. API-CERTIFIED. CHOMPS-APPROVED &#9733;  &#9608;
+  &#9608;                                                       &#9608;
+  &#9608;     "CLARITY IS EVERYTHING." -- ROB POTVIN, 2026     &#9608;
+  &#9608;                                                       &#9608;
+  &#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;&#9600;
+</pre>
+</div>
+
+</main>
+
+<footer>
+<div>[ ROB POTVIN &nbsp;::&nbsp; JAMF STUDENT &nbsp;::&nbsp; VISITING VICTORIA FALLS, ZIMBABWE ]</div>
+<div style="margin:.5rem 0;color:var(--red);">Made with music, honey badger energy, API calls &amp; a flying car</div>
+<div style="color:var(--cyan);">Chomps approved this message.</div>
+<div style="margin-top:1rem;color:#444;font-size:.9rem;">&copy; 2026 Rob Potvin &nbsp;|&nbsp; All unicorns are real &nbsp;|&nbsp; Honey badgers bite &nbsp;|&nbsp; APIs don't lie</div>
+<div style="margin-top:.5rem;">C:\ROB\JAMF\COMPLETE&gt; <span class="cur">&#9608;</span></div>
+</footer>
+
+<script>
+(function(){
+  /* ---- ELEPHANT DATA ---- */
+  var C={l:'#d0d0d0',s:'#585858',w:'#f0f0f0',e:'#FFD200',t:'#b0b0b0'};
+  var rows=[
+    '....................lllllll...................',
+    '...............lllllllllllllll...............',
+    '............lllllllllllllllllllll............',
+    '..........lllllllllllllllllllllllll..........',
+    '.........lllllllllllllllllllllllllll.........',
+    '........lllllsssssllllllllllllllllllll.......',
+    '.......lllllssssssssllllllllllllllllllll.....',
+    '......lllllssssssssss.llllllllllllllllllll...',
+    '......llllssssssss.e..llllllllllllllllllll...',
+    '.....lllllsssssss.....llllllllllllllllllll...',
+    '.....lllllssssss......llllllllllllllllllll...',
+    '.....lllll............llllllllllllllllllll...',
+    '.....llll.....ww......llllllllllllllllllll...',
+    '.....llll....wwww.....llllllllllllllllllll...',
+    '.....llllt...ww.....llllllllllllllllllllll...',
+    '......lltttt.......llllllllllllllllllllllll..',
+    '.......ttttt......llllllllllll..llllll.lllll.',
+    '.......ttttt......lllllllllll...lllll..lllll.',
+    '.......ttttt......lllllllllll...lllll..lllll.',
+    '.......ttttt......lllllllllll...lllll..lllll.',
+    '.......llllllllllllllllllllllllllllllllllll..'
+  ];
+
+  function rowToHtml(row){
+    var h='';
+    for(var i=0;i<row.length;i++){
+      var ch=row[i];
+      if(ch==='.') h+=' ';
+      else h+='<span style="color:'+C[ch]+'">&#9608;</span>';
+    }
+    return h;
+  }
+
+  /* ---- MODEM SEQUENCE ---- */
+  var seq=[
+    {t:0,   cls:'dim',  txt:'HAYES COMPATIBLE MODEM READY'},
+    {t:400, cls:'ok',   txt:'ATZ'},
+    {t:900, cls:'ok',   txt:'OK'},
+    {t:1200,cls:'ok',   txt:'ATDT 263-13-5263 (VIC FALLS ZIM)'},
+    {t:1700,cls:'dim',  txt:'DIALING...'},
+    {t:2200,cls:'dim',  txt:'RING... RING...'},
+    {t:2800,cls:'noise',txt:'&#9619;&#9618;&#9617;&#9618;&#9619; SCREEEEEEEEE &#9619;&#9618;&#9617;&#9618;&#9619;'},
+    {t:3100,cls:'noise',txt:'&#9617;&#9618;&#9619; KSSSSHHHHHHH &#9619;&#9618;&#9617;'},
+    {t:3500,cls:'ok',   txt:'CONNECT 28800 BAUD'},
+    {t:3700,cls:'ok',   txt:'PROTOCOL: V.34 / COMPRESSION: V.42BIS'},
+    {t:3900,cls:'ok',   txt:'CARRIER DETECTED'},
+    {t:4100,cls:'ok',   txt:'IP: 196.26.44.1  HOST: rob-potvin.zim'},
+    {t:4400,cls:'dim',  txt:'REQUESTING: /rob-potvin.htm'},
+    {t:4700,cls:'ok',   txt:'200 OK — CONTENT-LENGTH: LEGENDARY'},
+    {t:4900,cls:'dim',  txt:'DOWNLOADING...'},
+  ];
+
+  var modemSfx=document.getElementById('modem-sfx');
+  var overlay=document.getElementById('modem-overlay');
+  var linesEl=document.getElementById('modem-lines');
+  var cursor=document.getElementById('modem-cursor');
+  var progressFill=document.getElementById('modem-progress-fill');
+  var connectPrompt=document.getElementById('connect-prompt');
+
+  overlay.addEventListener('click',function startSeq(){
+    overlay.removeEventListener('click',startSeq);
+    connectPrompt.style.display='none';
+    modemSfx.play();
+
+  seq.forEach(function(item){
+    setTimeout(function(){
+      var d=document.createElement('div');
+      d.className=item.cls;
+      d.innerHTML=item.txt;
+      linesEl.insertBefore(d,cursor);
+      linesEl.scrollTop=linesEl.scrollHeight;
+    },item.t);
+  });
+
+  /* progress bar fills during download */
+  var prog=0;
+  var progInterval=setInterval(function(){
+    prog=Math.min(prog+2,100);
+    progressFill.style.width=prog+'%';
+    if(prog>=100) clearInterval(progInterval);
+  },80);
+
+  /* ---- REVEAL PAGE ---- */
+  var revealStart=5800;
+
+  setTimeout(function(){
+    /* fade out overlay */
+    overlay.style.opacity='0';
+    setTimeout(function(){ overlay.style.display='none'; },600);
+
+    /* ticker */
+    setTimeout(function(){
+      document.querySelector('.ticker').classList.add('reveal');
+    },200);
+
+    /* header — elephant row by row */
+    var el=document.getElementById('elephant-art');
+    var headerPre=document.querySelector('header pre:not(#elephant-art)');
+    var rowDelay=55;
+    rows.forEach(function(row,i){
+      setTimeout(function(){
+        el.innerHTML=(el.innerHTML||'')+rowToHtml(row)+'\n';
+        /* reveal header text block after last row */
+        if(i===rows.length-1){
+          setTimeout(function(){
+            document.querySelector('header').classList.add('reveal');
+            headerPre.classList.add('reveal');
+          },200);
+        }
+      }, 300 + i*rowDelay);
+    });
+
+    /* stagger each card + divider */
+    var elephantDone=300+rows.length*rowDelay+600;
+    var els=document.querySelectorAll('main > *');
+    els.forEach(function(el,i){
+      setTimeout(function(){ el.classList.add('reveal'); },elephantDone+i*70);
+    });
+
+    /* footer */
+    setTimeout(function(){
+      document.querySelector('footer').classList.add('reveal');
+    }, elephantDone+els.length*280+200);
+
+  }, revealStart);
+
+  }); /* end overlay click handler */
+
+})();
+</script>
+</body>
+</html>
