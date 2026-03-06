@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucile — Jamf Training Journey</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brown:   #5c3d2e;
+      --tan:     #c9a87c;
+      --cream:   #f5efe6;
+      --dark:    #1e1410;
+      --accent:  #e07b39;
+      --muted:   #8a7060;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--cream);
+      color: var(--dark);
+      line-height: 1.7;
+    }
+
+    .watermark {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .watermark::after {
+      content: '🦬';
+      font-size: min(70vw, 600px);
+      opacity: 0.035;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      background: var(--brown);
+      color: var(--cream);
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(224,123,57,.25) 0%, transparent 70%);
+    }
+
+    .buffalo-icon {
+      font-size: 90px;
+      line-height: 1;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.4));
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 span {
+      color: var(--tan);
+    }
+
+    .hero .subtitle {
+      font-size: 1.1rem;
+      color: var(--tan);
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+
+    .spirit-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(201,168,124,.4);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      color: var(--tan);
+    }
+
+    /* ---- CONTAINER ---- */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ---- SECTION TITLE ---- */
+    .section-title {
+      font-size: 0.75rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+      color: var(--brown);
+      margin-bottom: 32px;
+      border-bottom: 2px solid var(--tan);
+      padding-bottom: 8px;
+    }
+
+    /* ---- TIMELINE ---- */
+    .timeline {
+      margin-top: 56px;
+    }
+
+    .day-block {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 0 28px;
+      margin-bottom: 48px;
+    }
+
+    .day-label {
+      text-align: right;
+      padding-top: 4px;
+    }
+
+    .day-label .num {
+      display: block;
+      font-size: 2.4rem;
+      font-weight: bold;
+      color: var(--tan);
+      line-height: 1;
+    }
+
+    .day-label .word {
+      font-size: 0.7rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .day-line {
+      border-left: 3px solid var(--tan);
+      padding-left: 28px;
+    }
+
+    .day-line h3 {
+      font-size: 1.1rem;
+      color: var(--brown);
+      margin-bottom: 12px;
+    }
+
+    .day-line p {
+      color: #3a2a20;
+      margin-bottom: 10px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      background: var(--brown);
+      color: var(--tan);
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ---- QUOTE CARDS ---- */
+    .quotes {
+      margin-top: 56px;
+    }
+
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .quote-card {
+      background: white;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(92,61,46,.08);
+    }
+
+    .quote-card .label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .quote-card blockquote {
+      font-style: italic;
+      color: var(--brown);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ---- SPIRIT ANIMAL SECTION ---- */
+    .spirit {
+      margin-top: 56px;
+      background: var(--brown);
+      color: var(--cream);
+      border-radius: 16px;
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .spirit .big {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .spirit h2 {
+      color: var(--tan);
+      border-color: rgba(201,168,124,.3);
+      font-size: 1.7rem;
+    }
+
+    .spirit p {
+      color: rgba(245,239,230,.75);
+      max-width: 480px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    /* ---- KEY INSIGHTS ---- */
+    .insights {
+      margin-top: 56px;
+    }
+
+    .insight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .insight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: white;
+      border-radius: 10px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 10px rgba(92,61,46,.07);
+    }
+
+    .insight-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .insight-item strong {
+      display: block;
+      color: var(--brown);
+      margin-bottom: 3px;
+    }
+
+    .insight-item span {
+      font-size: 0.92rem;
+      color: #4a3525;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: var(--dark);
+      color: var(--muted);
+      text-align: center;
+      padding: 28px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    footer strong {
+      color: var(--tan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WATERMARK -->
+  <div class="watermark" aria-hidden="true"></div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="buffalo-icon">&#x1F9AC;</span>
+    <h1>Lucile &mdash; <span>Jamf Training</span></h1>
+    <p class="subtitle">3 days. APIs, VMs, AI, and a lot of new ideas.</p>
+    <div class="spirit-badge">
+      Spirit animal: Buffalo &mdash; part of the Big Five, and kinda fast
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- TIMELINE -->
+    <section class="timeline">
+      <p class="section-title">The Journey</p>
+      <h2>3 Days in Review</h2>
+
+      <div class="day-block">
+        <div class="day-label">
+          <span class="num">1</span>
+          <span class="word">Day</span>
+        </div>
+        <div class="day-line">
+          <h3>People, Context &amp; What Is Jamf?</h3>
+          <p>Started with icebreakers &mdash; drawing ducks with the group, tasting Dutch liquorice (zoet and zout), and hearing how a single bug led someone into tech. Shared how watching AI and robotics evolve sparked a curiosity about what else the field had to offer.</p>
+          <p>Learnt that Jamf is a mobile device management platform that helps organisations automate the deployment and configuration of Apple devices &mdash; not just enterprises, but schools too. Mapped the <strong>Enterprise IT Admin</strong> persona and realised how much manual work could be automated.</p>
+          <div class="tag-row">
+            <span class="tag">Jamf Pro</span>
+            <span class="tag">Persona Mapping</span>
+            <span class="tag">Git Basics</span>
+            <span class="tag">Figma</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label">
+          <span class="num">2</span>
+          <span class="word">Day</span>
+        </div>
+        <div class="day-line">
+          <h3>VMs, APIs &amp; Webhooks</h3>
+          <p>Spun up a Tart VM &mdash; a computer inside a computer, like a two-headed body sharing the same hardware but working independently. Used Postman to fire API requests at the Jamf Pro instance and created a category via a POST request.</p>
+          <p>APIs clicked as the "waiter" between the frontend and the backend. Webhooks are still a bit fuzzy &mdash; the idea of an event triggering a payload to a URL is clear, but want more hands-on practice.</p>
+          <div class="tag-row">
+            <span class="tag">Tart VM</span>
+            <span class="tag">REST API</span>
+            <span class="tag">Postman</span>
+            <span class="tag">Webhooks</span>
+            <span class="tag">JSON</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label">
+          <span class="num">3</span>
+          <span class="word">Day</span>
+        </div>
+        <div class="day-line">
+          <h3>AI-Native Development</h3>
+          <p>Working with Claude Code to build real things fast. The Compound Engineering Loop &mdash; Plan, Work, Review, Compound &mdash; gives structure to AI-assisted building so the output is actually intentional, not just generated.</p>
+          <div class="tag-row">
+            <span class="tag">Claude Code</span>
+            <span class="tag">Compound Loop</span>
+            <span class="tag">HTML</span>
+            <span class="tag">AI Principles</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPIRIT ANIMAL -->
+    <section class="spirit">
+      <span class="big">&#x1F9AC;</span>
+      <h2>Spirit Animal: Buffalo</h2>
+      <p>"Part of the Big Five &mdash; and kinda fast." Powerful, deliberate, and not something you want to underestimate.</p>
+    </section>
+
+    <!-- BEST QUOTES -->
+    <section class="quotes">
+      <p class="section-title">In Her Own Words</p>
+      <h2>Favourite Moments</h2>
+
+      <div class="quote-grid">
+        <div class="quote-card">
+          <div class="label">On VMs</div>
+          <blockquote>"Like having a two-headed body &mdash; each head works independently, but it needs the same body to function."</blockquote>
+        </div>
+        <div class="quote-card">
+          <div class="label">On APIs</div>
+          <blockquote>"It's the middle man between the front end and the backend &mdash; the waiter that takes the order and comes back with the data."</blockquote>
+        </div>
+        <div class="quote-card">
+          <div class="label">On Webhooks</div>
+          <blockquote>"It's a way to send data to a URL when an event triggers the action."</blockquote>
+        </div>
+        <div class="quote-card">
+          <div class="label">On Jamf</div>
+          <blockquote>"A mobile device management platform that helps organisations automate the deployment of Apple devices."</blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY INSIGHTS -->
+    <section class="insights">
+      <p class="section-title">Takeaways</p>
+      <h2>What Stuck</h2>
+
+      <div class="insight-list">
+        <div class="insight-item">
+          <div class="insight-icon">&#x26A1;</div>
+          <div>
+            <strong>Automation beats manual work</strong>
+            <span>Watching the Enterprise IT Admin persona struggle with manual tasks made the case clear &mdash; the best tool is one that handles the boring parts automatically.</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon">&#x1F4BB;</div>
+          <div>
+            <strong>VMs are surprisingly easy to spin up</strong>
+            <span>Installing a virtual machine felt like a big thing before Day 2. Turns out it's not &mdash; and Jamf even manages them.</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon">&#x1F916;</div>
+          <div>
+            <strong>AI is a tool, not magic</strong>
+            <span>The Compound Engineering Loop shows that the value comes from how you work with AI &mdash; plan first, then build, then review.</span>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon">&#x1F310;</div>
+          <div>
+            <strong>Context travels</strong>
+            <span>From Figma design culture to retool and Notion &mdash; everyone in the room came from somewhere different, and that made the conversations richer.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <strong>Lucile</strong> &mdash; Jamf Training &mdash; March 2026 &mdash; built with Claude Code
+  </footer>
+
+</body>
+</html>

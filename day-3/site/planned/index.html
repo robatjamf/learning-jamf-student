@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucile — Workshop Review</title>
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0f0f0f;
+      --surface: #1a1a1a;
+      --border:  #2a2a2a;
+      --text:    #e8e8e8;
+      --muted:   #888;
+      --accent:  #6ee7b7;
+      --accent2: #34d3a3;
+      --correct: #4ade80;
+      --wrong:   #f87171;
+      --radius:  10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a { color: var(--accent); }
+
+    /* ── ANIMATIONS ──────────────────────── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(110,231,183,0); border-color: rgba(110,231,183,.5); }
+      50%       { box-shadow: 0 0 18px 3px rgba(110,231,183,.18); border-color: var(--accent); }
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes scanline {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(400%); }
+    }
+
+    /* ── NAV ──────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,15,15,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 0.5px;
+      padding: 14px 10px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    nav a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: rgba(110,231,183,.07);
+      border-radius: 4px 4px 0 0;
+      text-shadow: 0 0 12px rgba(110,231,183,.5);
+      transition: background .3s, color .3s, border-color .3s, text-shadow .3s;
+    }
+
+    /* ── HERO ─────────────────────────────── */
+    .hero {
+      padding: 72px 24px 64px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: radial-gradient(ellipse at 50% -10%, rgba(110,231,183,.1) 0%, transparent 65%), var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(110,231,183,.07) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+    .hero .animal {
+      font-size: 88px;
+      line-height: 1;
+      margin-bottom: 18px;
+      display: block;
+      animation: float 5s ease-in-out infinite;
+      filter: drop-shadow(0 0 24px rgba(110,231,183,.35));
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 4.4rem);
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #6ee7b7 0%, #34d3a3 40%, #a78bfa 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 6s ease infinite;
+    }
+    .hero .sub {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+    }
+    .hero .badge {
+      display: inline-block;
+      margin-top: 20px;
+      border: 1px solid rgba(110,231,183,.5);
+      color: var(--accent);
+      font-size: 0.78rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 100px;
+      animation: badgePulse 3.5s ease-in-out infinite;
+    }
+
+    /* ── SHARED ───────────────────────────── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    section { margin-top: 64px; }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-family: 'Courier New', monospace;
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 28px;
+      padding-bottom: 12px;
+      border-bottom: none;
+      position: relative;
+    }
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(167,139,250,.4) 40%, transparent 100%);
+    }
+
+    /* ── TIMELINE ─────────────────────────── */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .tday {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .tday:hover {
+      transform: translateY(-4px);
+      border-color: rgba(110,231,183,.3);
+      box-shadow: 0 8px 28px rgba(110,231,183,.07);
+    }
+    .tday .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .tday .title { font-weight: 600; margin: 4px 0 8px; }
+    .tday p { font-size: 0.88rem; color: var(--muted); }
+    .tday blockquote {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-left: 3px solid var(--accent);
+      font-style: italic;
+      font-size: 0.83rem;
+      color: var(--text);
+      background: rgba(110,231,183,.05);
+      border-radius: 0 6px 6px 0;
+    }
+    .tday .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag {
+      font-size: 0.7rem;
+      font-family: 'Courier New', monospace;
+      background: rgba(110,231,183,.1);
+      color: var(--accent);
+      border: 1px solid rgba(110,231,183,.25);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+
+    /* ── FLASHCARDS ───────────────────────── */
+    .card-group-label {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 28px 0 12px;
+      font-family: 'Courier New', monospace;
+    }
+    .card-group-label.focus { color: var(--accent); }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .card-wrap {
+      height: 160px;
+      perspective: 800px;
+      cursor: pointer;
+      transition: filter .2s;
+    }
+    .card-wrap:not(.flipped):hover {
+      filter: drop-shadow(0 8px 20px rgba(110,231,183,.18));
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .card-front {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    /* webhook cards — mint */
+    .card-wrap.webhook-card .card-front {
+      background: linear-gradient(135deg, #0d1f18, #111a14);
+      border-color: rgba(110,231,183,.45);
+    }
+    .card-back {
+      background: #111e18;
+      border: 1px solid rgba(110,231,183,.3);
+      transform: rotateY(180deg);
+    }
+    /* API cards — blue */
+    .card-wrap.api-card .card-front {
+      background: linear-gradient(135deg, #0d1622, #111826);
+      border-color: rgba(96,165,250,.45);
+    }
+    .card-wrap.api-card .card-cat { color: #60a5fa; }
+    .card-wrap.api-card .card-back {
+      background: #0d1825;
+      border-color: rgba(96,165,250,.3);
+    }
+    .card-wrap.api-card .card-analogy { color: #60a5fa; }
+    /* misc cards — purple */
+    .card-wrap.misc-card .card-front {
+      background: linear-gradient(135deg, #160d22, #1a1128);
+      border-color: rgba(167,139,250,.45);
+    }
+    .card-wrap.misc-card .card-cat { color: #a78bfa; }
+    .card-wrap.misc-card .card-back {
+      background: #13102a;
+      border-color: rgba(167,139,250,.3);
+    }
+    .card-wrap.misc-card .card-analogy { color: #a78bfa; }
+    .card-cat {
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    .card-wrap.webhook-card .card-cat { color: var(--accent); }
+    .card-term { font-size: 1.05rem; font-weight: 600; }
+    .card-hint { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+    .card-analogy { font-size: 0.82rem; font-style: italic; color: var(--accent); margin-bottom: 6px; }
+    .card-def { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+
+    /* ── QUIZ ─────────────────────────────── */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #111e18, #12151f);
+      border: 1px solid rgba(110,231,183,.25);
+      border-radius: var(--radius);
+      padding: 16px 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(110,231,183,.06);
+    }
+    .score-label { font-size: 0.85rem; color: var(--muted); }
+    .score-num { font-size: 1.6rem; font-weight: 700; color: var(--accent); font-family: 'Courier New', monospace; }
+    .reset-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .quiz-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .quiz-item:not(.answered):hover {
+      border-color: rgba(110,231,183,.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    }
+    .quiz-item.answered { border-color: var(--border); }
+    .q-num { font-size: 0.7rem; color: var(--muted); font-family: 'Courier New', monospace; margin-bottom: 6px; }
+    .q-text { font-size: 0.95rem; font-weight: 500; margin-bottom: 14px; }
+    .q-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(110,231,183,.1);
+      color: var(--accent);
+      border: 1px solid rgba(110,231,183,.2);
+      border-radius: 4px;
+      padding: 2px 7px;
+      margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
+    }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .opt-btn {
+      text-align: left;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+    .opt-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(110,231,183,.06);
+      transform: translateX(5px);
+    }
+    .opt-btn:disabled { cursor: default; }
+    .opt-btn.correct { border-color: var(--correct); background: rgba(74,222,128,.08); color: var(--correct); }
+    .opt-btn.wrong   { border-color: var(--wrong);   background: rgba(248,113,113,.08); color: var(--wrong); }
+    .opt-btn.reveal  { border-color: var(--correct); background: rgba(74,222,128,.05); color: var(--correct); }
+    .explanation {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(110,231,183,.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .explanation.show { display: block; }
+
+    /* ── CHEAT SHEET ──────────────────────── */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .cmd-block {
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .cmd-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      background: #111;
+    }
+    .cmd-desc { font-size: 0.78rem; color: var(--muted); }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      transition: border-color .15s, color .15s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--correct); color: var(--correct); }
+    pre {
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #c8ffd4;
+      line-height: 1.55;
+    }
+
+    /* ── TOOLS SHELF ──────────────────────── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 600px) { .tools-grid { grid-template-columns: 1fr; } }
+    .tools-col-label {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-family: 'Courier New', monospace;
+    }
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      border-left-width: 3px;
+      padding: 16px;
+      margin-bottom: 10px;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .tool-card:hover { transform: translateX(5px); box-shadow: -3px 0 0 var(--accent); }
+    .tool-card.figma   { border-left-color: #a78bfa; }
+    .tool-card.postman { border-left-color: var(--accent); }
+    .tool-card.claude  { border-left-color: #60a5fa; }
+    .tool-card.tart    { border-left-color: #f59e0b; }
+    .tool-card.retool  { border-left-color: #f472b6; }
+    .tool-name { font-weight: 600; margin-bottom: 4px; }
+    .tool-what { font-size: 0.83rem; color: var(--muted); }
+    .tool-note { font-size: 0.78rem; color: var(--accent); margin-top: 6px; font-style: italic; }
+
+    /* ── ANALOGIES ────────────────────────── */
+    .analogies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .analogy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .analogy-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(110,231,183,.5), transparent);
+      animation: scanline 4s linear infinite;
+      animation-delay: var(--delay, 0s);
+    }
+    .analogy-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(110,231,183,.3);
+      box-shadow: 0 10px 28px rgba(110,231,183,.08);
+    }
+    .analogy-term { font-weight: 600; margin-bottom: 4px; }
+    .analogy-eq { color: var(--accent); font-family: 'Courier New', monospace; font-size: 0.8rem; margin-bottom: 8px; }
+    .analogy-text { font-size: 0.85rem; color: var(--muted); font-style: italic; line-height: 1.5; }
+
+    /* ── FOOTER ───────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'Courier New', monospace;
+    }
+    footer span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#timeline">Journey</a>
+  <a href="#flashcards">Flashcards</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#cheatsheet">Cheat Sheet</a>
+  <a href="#tools">Tools</a>
+  <a href="#analogies">Analogies</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="animal">&#x1F9AC;</span>
+  <h1>Lucile &mdash; <span>Workshop Review</span></h1>
+  <p class="sub">3 days. Jamf, APIs, VMs, Webhooks, and AI-native dev.</p>
+  <div class="badge">Spirit animal: Buffalo &mdash; part of the Big Five, kinda fast</div>
+</header>
+
+<div class="container">
+
+  <!-- TIMELINE -->
+  <section id="timeline">
+    <p class="section-label">The Journey</p>
+    <h2>3 Days at a Glance</h2>
+    <div class="timeline">
+      <div class="tday">
+        <div class="num">01</div>
+        <div class="title">Jamf + Personas</div>
+        <p>Icebreakers, duck-drawing, Dutch liquorice, and learning what MDM actually means.</p>
+        <blockquote>"Getting to know in depth what Jamf is about."</blockquote>
+        <div class="tags"><span class="tag">Jamf Pro</span><span class="tag">MDM</span><span class="tag">Persona mapping</span></div>
+      </div>
+      <div class="tday">
+        <div class="num">02</div>
+        <div class="title">VMs, APIs &amp; Webhooks</div>
+        <p>Spun up a VM, fired API requests in Postman, watched a webhook payload arrive as JSON.</p>
+        <blockquote>"How easy it is to install a VM into a machine. How Jamf also caters for virtual machines."</blockquote>
+        <div class="tags"><span class="tag">Tart VM</span><span class="tag">REST API</span><span class="tag">Postman</span><span class="tag">Webhooks</span><span class="tag">JSON</span></div>
+      </div>
+      <div class="tday">
+        <div class="num">03</div>
+        <div class="title">AI-Native Dev</div>
+        <p>Plan → Work → Review → Compound. Built two real pages, compared one-shot vs planned, and discovered how specificity changes everything.</p>
+        <blockquote>"The more specific your prompt, the more advantage you have over the outcome."</blockquote>
+        <div class="tags"><span class="tag">Claude Code</span><span class="tag">Compound loop</span><span class="tag">Plan mode</span><span class="tag">One-shot vs Planned</span><span class="tag">Context is everything</span></div>
+      </div>
+    </div>
+
+    <p class="section-label" style="margin-top:2.5rem;">Day 1 Debrief</p>
+    <div class="analogies-grid" style="margin-top:1rem;">
+      <div class="analogy-card" style="--delay:0s">
+        <div class="analogy-term">What Jamf does</div>
+        <div class="analogy-eq">= MDM for Apple</div>
+        <div class="analogy-text">Jamf is a mobile device management security platform that helps manage Apple devices. It lets organisations automate device deployment and configuration — from enterprises to schools.</div>
+      </div>
+      <div class="analogy-card" style="--delay:0.7s">
+        <div class="analogy-term">Persona mapped</div>
+        <div class="analogy-eq">= Enterprise IT Admin</div>
+        <div class="analogy-text">Biggest pain points: manually entering new hires, API scripting, and manually triaging tickets. The fix? Automation for all the repetitive manual work.</div>
+      </div>
+      <div class="analogy-card" style="--delay:1.4s">
+        <div class="analogy-term">Cultural exchange</div>
+        <div class="analogy-eq">= duck + liquorice</div>
+        <div class="analogy-text">Duck-drawing showed how different people solve the same problem. Tasted Dutch liquorice — zoet (sweet) and zout (salty). Shared about Figma and how AI trends got me into tech.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.1s">
+        <div class="analogy-term">Day 1 takeaway</div>
+        <div class="analogy-eq">= depth over surface</div>
+        <div class="analogy-text">"Getting to know in depth what Jamf is about." — Me, Day 1.</div>
+      </div>
+    </div>
+
+    <p class="section-label" style="margin-top:2.5rem;">Day 2 Debrief</p>
+    <div class="analogies-grid" style="margin-top:1rem;">
+      <div class="analogy-card" style="--delay:0s">
+        <div class="analogy-term">VM = two-headed body</div>
+        <div class="analogy-eq">= computer inside a computer</div>
+        <div class="analogy-text">"Each head works independently but needs the same body to function." Running another machine's software on your local hardware — one body, two systems.</div>
+      </div>
+      <div class="analogy-card" style="--delay:0.7s">
+        <div class="analogy-term">API = middleman</div>
+        <div class="analogy-eq">= frontend ↔ backend bridge</div>
+        <div class="analogy-text">The API takes the order from the frontend, communicates with the database/server, and brings back the data. Like a waiter — you never go into the kitchen.</div>
+      </div>
+      <div class="analogy-card" style="--delay:1.4s">
+        <div class="analogy-term">What I created</div>
+        <div class="analogy-eq">= POST request → Jamf</div>
+        <div class="analogy-text">Used a POST request in Postman to create a category for my virtual machine in the Jamf Pro instance. Real API call, real result.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.1s">
+        <div class="analogy-term">Webhooks</div>
+        <div class="analogy-eq">= event-driven data push</div>
+        <div class="analogy-text">A way to send data to a URL when an event triggers it. The payload came back as JSON. Still wanted more clarity on the full picture going into Day 3.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.8s">
+        <div class="analogy-term">Day 2 takeaway</div>
+        <div class="analogy-eq">= VMs are easier than expected</div>
+        <div class="analogy-text">"How easy it is to install a VM into a machine. How Jamf also caters for virtual machines." — Me, Day 2.</div>
+      </div>
+    </div>
+
+    <p class="section-label" style="margin-top:2.5rem;">Day 3 Debrief</p>
+    <div class="analogies-grid" style="margin-top:1rem;">
+      <div class="analogy-card" style="--delay:0s">
+        <div class="analogy-term">One-Shot vs Planned</div>
+        <div class="analogy-eq">= free will vs full control</div>
+        <div class="analogy-text">One-shot means giving Claude free will to do whatever it wants with the information. A planned build means having full control — every design, layout, color, and placement is up to you.</div>
+      </div>
+      <div class="analogy-card" style="--delay:0.7s">
+        <div class="analogy-term">What surprised me</div>
+        <div class="analogy-eq">= specificity = power</div>
+        <div class="analogy-text">The more specific your prompt, the more advantage you have over the outcome. Vague prompts get vague results. Detail gets you exactly what you envisioned.</div>
+      </div>
+      <div class="analogy-card" style="--delay:1.4s">
+        <div class="analogy-term">What the plan unlocked</div>
+        <div class="analogy-eq">= intent → outcome</div>
+        <div class="analogy-text">During planning I got to decide: what info to display, what colors, which topics were fuzzy, how I'd use the page, how many quiz questions. Every decision shaped the result.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.1s">
+        <div class="analogy-term">What the agent caught</div>
+        <div class="analogy-eq">= partner, not just tool</div>
+        <div class="analogy-text">Claude added extra accents to the theme, a quick reference section, and a tools table showing what I've explored vs what's still to discover. Things I hadn't thought to ask for.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.8s">
+        <div class="analogy-term">Principle I'll remember</div>
+        <div class="analogy-eq">= context is everything</div>
+        <div class="analogy-text">"Context is very important. Be specific, and write down every single detail you want." — Me, Day 3.</div>
+      </div>
+      <div class="analogy-card" style="--delay:3.5s">
+        <div class="analogy-term">AI in one sentence</div>
+        <div class="analogy-eq">= unique tool, right context</div>
+        <div class="analogy-text">"AI is a very unique, cool tool. When used correctly with the right context, you can create or even solve great things." — Me, Day 3.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards">
+    <p class="section-label">Concepts</p>
+    <h2>Flashcards <small style="font-size:0.7rem;color:var(--muted);font-weight:400;">— click to flip</small></h2>
+
+    <div class="card-group-label focus">Webhooks &amp; Events (start here)</div>
+    <div class="cards-grid">
+      <div class="card-wrap webhook-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Webhooks</div><div class="card-term">Webhook</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A doorbell."</div><div class="card-def">A URL that receives data automatically when an event happens. You don't check — the server tells you.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap webhook-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Webhooks</div><div class="card-term">Polling vs Pushing</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"Are we there yet?" vs "I'll tell you when we get there."</div><div class="card-def">Polling = you keep asking. Pushing = system notifies you. Webhooks push.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap webhook-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Webhooks</div><div class="card-term">Event-driven</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"The smoke detector goes off — you don't stand there sniffing every second."</div><div class="card-def">Systems react to events as they happen, not on a timer.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap webhook-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Webhooks</div><div class="card-term">Webhook Payload</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A message that arrives the moment something happens."</div><div class="card-def">The data sent to your URL when the event fires — arrives as a JSON object.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-group-label">APIs &amp; Auth</div>
+    <div class="cards-grid">
+      <div class="card-wrap api-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">APIs</div><div class="card-term">API</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"The waiter between frontend and backend."</div><div class="card-def">Application Programming Interface — a way for software to talk to other software.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap api-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">APIs</div><div class="card-term">Bearer Token</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A wristband at an event."</div><div class="card-def">A code that proves you're already logged in. Get it once, use it for all requests.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap api-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">APIs</div><div class="card-term">GET vs POST</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"Read the menu vs place an order."</div><div class="card-def">GET = read data. POST = create something new. PUT = update. DELETE = remove.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap api-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">APIs</div><div class="card-term">JSON</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A labelled form: each field has a name and a value."</div><div class="card-def">JavaScript Object Notation — structured data both humans and machines can read. <code style="font-size:0.75rem">{"key":"value"}</code></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-group-label">Everything Else</div>
+    <div class="cards-grid">
+      <div class="card-wrap misc-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Infrastructure</div><div class="card-term">Virtual Machine</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"Like having a two-headed body — each head works independently but needs the same body." (your words)</div><div class="card-def">A computer running inside another computer. Own OS, isolated environment.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap misc-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">Jamf</div><div class="card-term">MDM</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A school principal who sets rules for every classroom at once."</div><div class="card-def">Mobile Device Management — manage many devices from one place: push apps, enforce policy, deploy settings.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap misc-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">AI</div><div class="card-term">Agent</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"A smart assistant who can type on your keyboard — not just give advice."</div><div class="card-def">An AI that can read files, write code, and run commands — not just chat.</div></div>
+        </div>
+      </div>
+      <div class="card-wrap misc-card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="card-front"><div class="card-cat">AI</div><div class="card-term">Context</div><div class="card-hint">tap to see analogy</div></div>
+          <div class="card-back"><div class="card-analogy">"Asking a stranger to grab your jacket — they need to know where you live, what it looks like, where you left it."</div><div class="card-def">Everything the agent knows about what you're trying to do.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <p class="section-label">Test Yourself</p>
+    <h2>Self-Quiz</h2>
+
+    <div class="score-bar">
+      <div>
+        <div class="score-label">Score</div>
+        <div class="score-num" id="scoreDisplay">0 / 15</div>
+      </div>
+      <button class="reset-btn" onclick="resetQuiz()">Reset quiz</button>
+    </div>
+
+    <div id="quiz-container"></div>
+  </section>
+
+  <!-- CHEAT SHEET -->
+  <section id="cheatsheet">
+    <p class="section-label">Reference</p>
+    <h2>Command Cheat Sheet</h2>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('jamf', this)">Jamf API (curl)</button>
+      <button class="tab-btn" onclick="switchTab('git', this)">Git</button>
+      <button class="tab-btn" onclick="switchTab('claude', this)">Claude Code</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-jamf">
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <span class="cmd-desc">1. Authenticate + save token</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre>TOKEN=$(curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token" \
+  | jq -r '.token')</pre>
+      </div>
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <span class="cmd-desc">2. List all computers (GET)</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre>curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq .</pre>
+      </div>
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <span class="cmd-desc">3. Update Extension Attribute (PUT) — triggers webhook!</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre>curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;YourName&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'</pre>
+      </div>
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <span class="cmd-desc">4. Invalidate token (security best practice)</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre>curl -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"</pre>
+      </div>
+
+    </div>
+
+    <div class="tab-panel" id="tab-git">
+
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Clone a repo</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git clone &lt;repo-url&gt;</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Create and switch to a new branch</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git checkout -b BranchName</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">See what's changed</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git status</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Stage + commit</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git add filename.md
+git commit -m "your message here"</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Push to remote</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git push origin BranchName</pre>
+      </div>
+
+    </div>
+
+    <div class="tab-panel" id="tab-claude">
+
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Initialize project (creates CLAUDE.md)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>claude /init</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Enter plan mode before building</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>claude /plan</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Distill session into COMPOUND.md</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>claude /compound</pre>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-header"><span class="cmd-desc">Ask Claude a quick question</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>claude "explain what this error means"</pre>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section id="tools">
+    <p class="section-label">My Toolkit</p>
+    <h2>Tools</h2>
+    <div class="tools-grid">
+      <div>
+        <div class="tools-col-label">Already in my toolkit</div>
+        <div class="tool-card figma">
+          <div class="tool-name">Figma</div>
+          <div class="tool-what">Design tool for creating interfaces and interactive prototypes.</div>
+          <div class="tool-note">How I got interested in tech — design that's interactive and shareable.</div>
+        </div>
+      </div>
+      <div>
+        <div class="tools-col-label">Discovered at this workshop</div>
+        <div class="tool-card postman">
+          <div class="tool-name">Postman</div>
+          <div class="tool-what">A browser for APIs — send GET/POST requests and inspect the response.</div>
+          <div class="tool-note">Used it to hit the Jamf Pro API endpoints in Day 2.</div>
+        </div>
+        <div class="tool-card claude">
+          <div class="tool-name">Claude Code</div>
+          <div class="tool-what">AI coding assistant that can read your files, write code, and run commands.</div>
+          <div class="tool-note">Used throughout Day 3 with the Compound Engineering Loop.</div>
+        </div>
+        <div class="tool-card tart">
+          <div class="tool-name">Tart / VMware Fusion</div>
+          <div class="tool-what">Tools for running full macOS virtual machines on Apple Silicon.</div>
+          <div class="tool-note">Spun up a VM in Day 2 — easier than expected.</div>
+        </div>
+        <div class="tool-card retool">
+          <div class="tool-name">Retool / Dia</div>
+          <div class="tool-what">Low-code app builders — build internal tools without writing everything from scratch.</div>
+          <div class="tool-note">Heard from classmates on Day 1 — adding to the list to explore.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALOGIES -->
+  <section id="analogies">
+    <p class="section-label">Quick Reference</p>
+    <h2>Analogies Wall</h2>
+    <div class="analogies-grid">
+      <div class="analogy-card" style="--delay:0s">
+        <div class="analogy-term">API</div>
+        <div class="analogy-eq">= restaurant waiter</div>
+        <div class="analogy-text">You tell the waiter what you want. The waiter tells the kitchen. The kitchen sends the food back. You never go into the kitchen.</div>
+      </div>
+      <div class="analogy-card" style="--delay:0.7s">
+        <div class="analogy-term">Virtual Machine</div>
+        <div class="analogy-eq">= two-headed body</div>
+        <div class="analogy-text">"Each head works independently but needs the same body to function." — Lucile, Day 2.</div>
+      </div>
+      <div class="analogy-card" style="--delay:1.4s">
+        <div class="analogy-term">Webhook</div>
+        <div class="analogy-eq">= doorbell</div>
+        <div class="analogy-text">You don't check the door every five minutes. The doorbell rings when someone arrives. Webhooks ring when events happen.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.1s">
+        <div class="analogy-term">Bearer Token</div>
+        <div class="analogy-eq">= wristband at an event</div>
+        <div class="analogy-text">Show your ID at the door once, get a wristband. Flash the wristband everywhere else without showing ID again.</div>
+      </div>
+      <div class="analogy-card" style="--delay:2.8s">
+        <div class="analogy-term">Context (AI)</div>
+        <div class="analogy-eq">= stranger + directions</div>
+        <div class="analogy-text">If you ask a stranger to grab your jacket, they need to know where you live, what it looks like, and where you left it. That's context.</div>
+      </div>
+      <div class="analogy-card" style="--delay:3.5s">
+        <div class="analogy-term">Compounding</div>
+        <div class="analogy-eq">= pilot's logbook</div>
+        <div class="analogy-text">After every flight, the pilot records the route, weather decisions, turbulence. The next pilot starts with all of that instead of figuring it out from scratch.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>Lucile</span> &mdash; Jamf Training &mdash; March 2026 &mdash; built with Claude Code
+</footer>
+
+<script>
+// ── QUIZ DATA ──────────────────────────────────────────────────────────
+const questions = [
+  {
+    badge: "Webhooks",
+    q: "What is a webhook?",
+    opts: [
+      "A URL that you call to get data from a server",
+      "A URL that receives data automatically when an event occurs",
+      "A type of API authentication method"
+    ],
+    correct: 1,
+    explain: "A webhook is a URL that listens. When an event fires, the server POSTs data to your URL — you don't have to ask. You receive, not request."
+  },
+  {
+    badge: "Webhooks",
+    q: "The doorbell analogy: in the context of webhooks, what does the 'doorbell' represent?",
+    opts: [
+      "The server that sends the data",
+      "The URL that receives the event notification",
+      "The JSON payload that arrives"
+    ],
+    correct: 1,
+    explain: "The doorbell is your webhook URL. You don't stand at the door checking — the doorbell (your URL) gets triggered when someone (an event) arrives."
+  },
+  {
+    badge: "Webhooks",
+    q: "Polling vs webhooks: which approach uses more server resources?",
+    opts: [
+      "Webhooks, because they fire for every event",
+      "Polling, because you keep asking even when there's nothing new",
+      "They use the same amount — it depends on traffic"
+    ],
+    correct: 1,
+    explain: "Polling means constantly asking 'anything new?' — most of the time the answer is no, so you waste requests. Webhooks only fire when there's actually something to say."
+  },
+  {
+    badge: "Webhooks — Scenario",
+    q: "In the Day 2 workshop, what sequence of events triggered the webhook on webhook.site?",
+    opts: [
+      "You sent a POST request directly to webhook.site",
+      "You updated the Extension Attribute → computer joined Smart Group → Jamf fired the webhook",
+      "You logged into Jamf Pro → this automatically triggered a webhook"
+    ],
+    correct: 1,
+    explain: "The chain was: PUT request updated the EA → computer matched Smart Group criteria → Jamf fired the configured webhook → JSON payload appeared on webhook.site. Event-driven integration in action."
+  },
+  {
+    badge: "Webhooks",
+    q: "What format did the webhook payload arrive in?",
+    opts: ["XML", "JSON", "Plain text"],
+    correct: 1,
+    explain: "The payload arrived as JSON — a structured object with key/value pairs that both humans and machines can read."
+  },
+  {
+    badge: "Webhooks",
+    q: "Key difference: who initiates the data transfer in a webhook vs a regular API call?",
+    opts: [
+      "Both are initiated by the client (you)",
+      "Webhook: initiated by the server when an event happens. API call: initiated by you (the client)",
+      "Webhook: initiated by you. API call: initiated by the server"
+    ],
+    correct: 1,
+    explain: "With a regular API call, you reach out — you GET or POST. With a webhook, the server reaches out to you when something happens. The direction is reversed."
+  },
+  {
+    badge: "Webhooks — Scenario",
+    q: "Your manager wants to know the moment a new device enrolls in Jamf Pro. What's the right approach?",
+    opts: [
+      "Poll the Jamf API every minute to check for new devices",
+      "Set up a webhook that fires whenever a device enrollment event occurs",
+      "Log in to Jamf Pro and check the device list manually each morning"
+    ],
+    correct: 1,
+    explain: "A webhook is the right tool — it will fire immediately when enrollment happens. Polling wastes resources and introduces delay. Manual checking doesn't scale."
+  },
+  {
+    badge: "Webhooks",
+    q: "What does 'event-driven' mean?",
+    opts: [
+      "The system runs on a fixed schedule (every 5 minutes)",
+      "The system reacts to specific events as they happen, rather than on a timer",
+      "Events are driven by the user clicking buttons in the UI"
+    ],
+    correct: 1,
+    explain: "Event-driven means the system responds to things as they occur — enrollment, update, removal — not on a schedule. It's reactive, not scheduled."
+  },
+  {
+    badge: "APIs",
+    q: "Which HTTP method is used to create a new resource?",
+    opts: ["GET", "POST", "PUT"],
+    correct: 1,
+    explain: "POST creates something new. GET reads. PUT updates an existing resource. DELETE removes. In Day 2 you used PUT to update an Extension Attribute."
+  },
+  {
+    badge: "APIs",
+    q: "After you authenticate to the Jamf Pro API and get a token, what does the token replace for all following requests?",
+    opts: [
+      "Your username and password",
+      "The Content-Type header",
+      "The base URL of the API"
+    ],
+    correct: 0,
+    explain: "Once you have a bearer token, you use it in the Authorization header instead of sending your username/password every time. Like the wristband at an event — show ID once, flash wristband everywhere else."
+  },
+  {
+    badge: "APIs — Scenario",
+    q: "What is the correct order of the Jamf Pro API workflow you used in Day 2?",
+    opts: [
+      "Use token → Authenticate → Invalidate",
+      "Authenticate → Save token → Use token → Invalidate token",
+      "Save token → Authenticate → Use token"
+    ],
+    correct: 1,
+    explain: "Always: Authenticate first to get the token. Save it to a variable ($TOKEN). Use it for your actual API calls. Invalidate it when done — this is a security best practice."
+  },
+  {
+    badge: "APIs",
+    q: "What does `jq` do in a curl command?",
+    opts: [
+      "It sends the request faster by compressing it",
+      "It formats and extracts fields from JSON responses so they're readable",
+      "It authenticates you to the API"
+    ],
+    correct: 1,
+    explain: "jq is a JSON processor. Without it, the API response is one long unformatted blob. With `| jq .` it pretty-prints it. With `| jq -r '.token'` it extracts just the token value."
+  },
+  {
+    badge: "APIs — Scenario",
+    q: "You run a curl command and get back a 401 error. What's the most likely cause?",
+    opts: [
+      "The server is down",
+      "Your bearer token is missing, expired, or wrong",
+      "You used GET instead of POST"
+    ],
+    correct: 1,
+    explain: "401 = Unauthorized. Your token is either not included, has expired, or was invalidated. Re-run the authentication command to get a fresh token."
+  },
+  {
+    badge: "Jamf",
+    q: "What does MDM stand for, and what kind of devices does Jamf's MDM manage?",
+    opts: [
+      "Mobile Data Management — manages data stored on any device",
+      "Mobile Device Management — manages Apple devices (Macs, iPhones, iPads)",
+      "Multi-Device Monitoring — monitors network traffic across all devices"
+    ],
+    correct: 1,
+    explain: "MDM = Mobile Device Management. Jamf specialises in Apple devices — it lets IT teams push apps, enforce settings, and manage thousands of Macs, iPhones, and iPads from one place."
+  },
+  {
+    badge: "AI Loop",
+    q: "What are the four phases of the Compound Engineering Loop?",
+    opts: [
+      "Plan → Build → Ship → Repeat",
+      "Plan → Work → Review → Compound",
+      "Research → Design → Code → Test"
+    ],
+    correct: 1,
+    explain: "Plan (define requirements, gather context) → Work (build with AI) → Review (evaluate against your plan) → Compound (/compound distils the session so the next one inherits everything). Then the loop starts again."
+  }
+];
+
+// ── RENDER QUIZ ────────────────────────────────────────────────────────
+let score = 0;
+let answered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  score = 0;
+  answered = 0;
+  updateScore();
+
+  questions.forEach((q, qi) => {
+    const item = document.createElement('div');
+    item.className = 'quiz-item';
+    item.id = `q${qi}`;
+
+    const opts = q.opts.map((o, oi) =>
+      `<button class="opt-btn" onclick="answer(${qi},${oi})">${o}</button>`
+    ).join('');
+
+    item.innerHTML = `
+      <div class="q-num">Q${qi + 1} of ${questions.length}</div>
+      <div class="q-badge">${q.badge}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${opts}</div>
+      <div class="explanation" id="exp${qi}">${q.explain}</div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function answer(qi, chosen) {
+  const q = questions[qi];
+  const item = document.getElementById(`q${qi}`);
+  if (item.classList.contains('answered')) return;
+  item.classList.add('answered');
+
+  const btns = item.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (chosen === q.correct) {
+    btns[chosen].classList.add('correct');
+    score++;
+  } else {
+    btns[chosen].classList.add('wrong');
+    btns[q.correct].classList.add('reveal');
+  }
+
+  document.getElementById(`exp${qi}`).classList.add('show');
+  answered++;
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('scoreDisplay').textContent = `${score} / ${questions.length}`;
+}
+
+function resetQuiz() { buildQuiz(); }
+
+buildQuiz();
+
+// ── TABS ───────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── ACTIVE NAV ON SCROLL ───────────────────────────────────────────────
+(function() {
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const sections = Array.from(navLinks).map(a => document.querySelector(a.getAttribute('href')));
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => s && observer.observe(s));
+})();
+
+// ── COPY ───────────────────────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.closest('.cmd-block').querySelector('pre');
+  // Decode HTML entities before copying
+  const tmp = document.createElement('textarea');
+  tmp.value = pre.innerText;
+  document.body.appendChild(tmp);
+  tmp.select();
+  document.execCommand('copy');
+  document.body.removeChild(tmp);
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+}
+</script>
+</body>
+</html>
