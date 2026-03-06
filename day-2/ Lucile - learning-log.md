@@ -8,7 +8,7 @@ Your personal reflections from Day 2. Fill in each section at the checkpoint —
 
 **What was your first impression of Claude Code?**
 
->
+> Very powerful tool if prompted with the right context.
 
 **When you ran `/init`, what did Claude create? Did anything surprise you?**
 
@@ -53,7 +53,7 @@ What suprised me was how you can use the terminal to create folders and create o
 
 **What did the webhook payload look like when it arrived? What information was in it?**
 
-> it came back as a json 
+> it came back as a json and in the classic it came as an xml.
 
 ---
 
@@ -71,4 +71,4 @@ How jamf pro also caters for virtual machines.
 
 **What do you want to explore on Day 3?**
 
-> getting to know more about AI
+> getting to know more about AI and what it can do.
