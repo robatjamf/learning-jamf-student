@@ -15,7 +15,7 @@
       --white: #FFFFFF; --muted: #7a7a7a; --border: #282828;
       --blue: #4A9EFF; --green: #66BB6A; --amber: #FFA726; --red: #EF5350;
     }
-    body { background: var(--bg); color: var(--white); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+    body { background: var(--bg); color: var(--white); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; font-feature-settings: 'kern' 1, 'liga' 1; letter-spacing: 0.01em; }
 
     /* CONFETTI */
     #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; }
@@ -23,10 +23,10 @@
     /* SEARCH MODAL */
     .search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: flex-start; justify-content: center; padding-top: 120px; }
     .search-overlay.open { display: flex; }
-    .search-box { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 600px; border-radius: 4px; overflow: hidden; }
+    .search-box { background: #141414; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.06); width: 100%; max-width: 600px; border-radius: 4px; overflow: hidden; }
     .search-input-wrap { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 12px; }
     .search-icon { color: var(--muted); font-size: 14px; flex-shrink: 0; }
-    #search-input { flex: 1; background: none; border: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 15px; outline: none; }
+    #search-input { flex: 1; background: none; border: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 16px; outline: none; }
     #search-input::placeholder { color: #444; }
     .search-esc { font-size: 9px; font-weight: 800; letter-spacing: 0.15em; color: #444; border: 1px solid #333; padding: 3px 6px; }
     #search-results { max-height: 360px; overflow-y: auto; }
@@ -43,40 +43,40 @@
 
     /* HERO */
     .hero { padding: 80px 64px 72px; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.07) 0%, transparent 60%); }
-    .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
-    .hero-title { font-size: clamp(56px, 10vw, 128px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.88; margin-bottom: 36px; }
-    .hero-rule { width: 64px; height: 3px; background: var(--gold); margin-bottom: 24px; }
+    .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; border-left: 2px solid var(--gold); padding-left: 12px; }
+    .hero-title { font-size: clamp(56px, 10vw, 128px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.88; margin-bottom: 36px; background: linear-gradient(135deg, #ffffff 30%, #E8C96D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-rule { width: 80px; height: 2px; background: linear-gradient(to right, var(--gold), transparent); margin-bottom: 24px; }
     .hero-sub { font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
 
     /* TAB NAV */
-    .tab-nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 64px; overflow-x: auto; }
+    .tab-nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.96); backdrop-filter: blur(20px); border-top: 1px solid rgba(201,168,76,0.15); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 64px; overflow-x: auto; }
     .tab-nav::-webkit-scrollbar { display: none; }
     .tab-btn { padding: 18px 22px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: color 0.2s, border-color 0.2s; margin-bottom: -1px; white-space: nowrap; flex-shrink: 0; }
     .tab-btn:hover { color: var(--white); }
-    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); text-shadow: 0 0 20px rgba(201,168,76,0.4); }
     .search-trigger { margin-left: auto; flex-shrink: 0; background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
     .search-trigger:hover { color: var(--white); border-color: var(--muted); }
     .search-kbd { font-size: 9px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; }
 
     /* PANELS */
-    .panel { display: none; animation: panelFade 0.3s ease forwards; padding: 72px 64px; max-width: 1280px; margin: 0 auto; }
+    .panel { display: none; animation: panelFade 0.3s ease forwards; padding: 96px 80px; max-width: 1280px; margin: 0 auto; }
     .panel.active { display: block; }
     @keyframes panelFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* SECTION */
-    .section { margin-bottom: 72px; }
+    .section { margin-bottom: 96px; }
     .section:last-child { margin-bottom: 0; }
-    .section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-    .section-heading { font-size: clamp(28px, 4vw, 52px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; margin-bottom: 14px; }
-    .section-divider { width: 40px; height: 2px; background: var(--gold); margin-bottom: 40px; }
-    .section-body { font-size: 15px; color: #b0b0b0; max-width: 680px; line-height: 1.75; margin-bottom: 40px; }
+    .section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .section-heading { font-size: clamp(28px, 4vw, 52px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1; margin-bottom: 14px; }
+    .section-divider { width: 52px; height: 2px; background: linear-gradient(to right, var(--gold), transparent); margin-bottom: 52px; }
+    .section-body { font-size: 15px; color: #a8a8a8; max-width: 680px; line-height: 1.75; margin-bottom: 40px; letter-spacing: 0.01em; }
 
     /* TWO-COL */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
     /* COMPARE CARDS */
-    .compare-card { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; }
-    .compare-card.gold-tint { border-color: rgba(201,168,76,0.3); background: #0f0d07; }
+    .compare-card { background: linear-gradient(145deg, #161616 0%, #111111 100%); border: 1px solid rgba(255,255,255,0.06); padding: 36px 40px; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 1px 3px rgba(0,0,0,0.4); }
+    .compare-card.gold-tint { background: linear-gradient(145deg, #1c1608 0%, #111008 100%); border: 1px solid rgba(201,168,76,0.22); box-shadow: 0 0 40px rgba(201,168,76,0.05), 0 1px 0 rgba(255,255,255,0.03) inset; }
     .compare-card-label { font-size: 9px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
     .compare-card-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; }
     .compare-card.gold-tint .compare-card-title { color: var(--gold-light); }
@@ -85,9 +85,9 @@
 
     /* PERSONA CARDS */
     .persona-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .persona-card { background: var(--surface); border: 1px solid var(--border); padding: 24px 20px; position: relative; overflow: hidden; }
-    .persona-card.featured { border-color: var(--gold); background: #0f0d08; }
-    .persona-card::before { content: attr(data-num); position: absolute; top: -10px; right: 8px; font-size: 84px; font-weight: 900; color: rgba(255,255,255,0.03); line-height: 1; pointer-events: none; letter-spacing: -0.04em; }
+    .persona-card { background: linear-gradient(145deg, #161616 0%, #111111 100%); border: 1px solid rgba(255,255,255,0.06); padding: 32px 28px; position: relative; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 1px 3px rgba(0,0,0,0.4); }
+    .persona-card.featured { background: linear-gradient(145deg, #1c1608 0%, #111008 100%); border: 1px solid rgba(201,168,76,0.22); border-top: 2px solid var(--gold); box-shadow: 0 0 40px rgba(201,168,76,0.05), 0 1px 0 rgba(255,255,255,0.03) inset; }
+    .persona-card::before { content: attr(data-num); position: absolute; top: -10px; right: 8px; font-size: 84px; font-weight: 900; color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; letter-spacing: -0.04em; }
     .persona-card.featured::before { color: rgba(201,168,76,0.07); }
     .persona-badge { display: inline-block; background: var(--gold); color: #000; font-size: 7px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 7px; margin-bottom: 10px; }
     .persona-role { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
@@ -118,7 +118,7 @@
     /* CODE BLOCK */
     .code-wrap { margin-bottom: 32px; position: relative; }
     .code-label { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-    .code-block { background: #080808; border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 20px 24px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.8; overflow-x: auto; white-space: pre; }
+    .code-block { background: #060606; border: 1px solid rgba(255,255,255,0.04); border-left: 2px solid rgba(201,168,76,0.6); border-top: 1px solid rgba(255,255,255,0.04); padding: 24px 28px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.8; overflow-x: auto; white-space: pre; }
     .copy-btn { position: absolute; top: 28px; right: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 5px 10px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
     .copy-btn:hover { color: var(--gold); border-color: var(--gold); }
     .copy-btn.copied { color: var(--green); border-color: var(--green); }
@@ -158,11 +158,11 @@
     .fc-shuffle { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 7px 14px; cursor: pointer; transition: all 0.2s; }
     .fc-shuffle:hover { color: var(--gold); border-color: var(--gold); }
     .fc-wrapper { perspective: 1000px; margin-bottom: 24px; }
-    .fc-card { width: 100%; max-width: 680px; height: 300px; margin: 0 auto; position: relative; transform-style: preserve-3d; transition: transform 0.55s ease; cursor: pointer; }
+    .fc-card { width: 100%; max-width: 680px; height: 320px; margin: 0 auto; position: relative; transform-style: preserve-3d; transition: transform 0.55s ease; cursor: pointer; }
     .fc-card.flipped { transform: rotateY(180deg); }
     .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; }
-    .fc-front { background: var(--surface); border: 1px solid var(--border); }
-    .fc-back  { background: #0f0d08; border: 1px solid rgba(201,168,76,0.3); transform: rotateY(180deg); }
+    .fc-front { background: linear-gradient(145deg, #181818, #101010); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+    .fc-back  { background: linear-gradient(145deg, #1a1508, #0f0c04); border: 1px solid rgba(201,168,76,0.3); transform: rotateY(180deg); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
     .fc-hint  { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
     .fc-term  { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
     .fc-def   { font-size: 14px; color: #b0b0b0; line-height: 1.7; margin-bottom: 12px; }
@@ -290,6 +290,26 @@
     .page-footer { border-top: 1px solid var(--border); padding: 20px 64px; display: flex; justify-content: space-between; align-items: center; }
     .footer-left { font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #2a2a2a; }
     .footer-right { font-size: 10px; color: #2a2a2a; letter-spacing: 0.08em; }
+
+    /* SLIDING TAB INDICATOR */
+    .tab-indicator { position: absolute; bottom: -1px; height: 2px; background: var(--gold); box-shadow: 0 0 10px rgba(201,168,76,0.6); pointer-events: none; transition: left 0.35s cubic-bezier(0.4,0,0.2,1), width 0.35s cubic-bezier(0.4,0,0.2,1); }
+
+    /* DIRECTION-AWARE PANEL TRANSITIONS */
+    @keyframes slideFromRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideFromLeft  { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+    .panel.slide-right { animation: slideFromRight 0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
+    .panel.slide-left  { animation: slideFromLeft  0.28s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+    /* SECTION SCROLL ENTRANCE */
+    .section { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .section.in-view { opacity: 1; transform: translateY(0); }
+
+    /* CARD HOVER LIFT */
+    .compare-card, .persona-card, .note-card { transition: transform 0.22s ease; }
+    .compare-card:hover, .persona-card:hover, .note-card:hover { transform: translateY(-3px); }
+
+    /* TAB PRESS MICRO-INTERACTION */
+    .tab-btn:active { transform: scale(0.92); }
   </style>
 </head>
 <body>
@@ -533,6 +553,57 @@
         <div class="principle-item"><div class="principle-num">05</div><div class="principle-text"><strong>Recognize when to quit.</strong> Sunk cost is a trap. Starting fresh with better context is faster than pushing through a bad path.</div></div>
         <div class="principle-item"><div class="principle-num">06</div><div class="principle-text"><strong>It's a conversation.</strong> Not a command line. Back and forth. Refine. Improve. Iterate.</div></div>
         <div class="principle-item"><div class="principle-num">07</div><div class="principle-text"><strong>Compound your sessions.</strong> Distill the full session so the next one inherits everything.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">One-Shot vs Planned</p>
+      <h2 class="section-heading">The Difference</h2>
+      <div class="section-divider"></div>
+      <div class="two-col">
+        <div class="compare-card">
+          <p class="compare-card-label">Round 1</p>
+          <h3 class="compare-card-title">One-Shot</h3>
+          <p class="compare-card-body">"I just told it — build this for me — without actually telling it what I want, how something will function, how the page should behave and what content to add."</p>
+        </div>
+        <div class="compare-card gold-tint">
+          <p class="compare-card-label">Round 2</p>
+          <h3 class="compare-card-title">Planned Build</h3>
+          <p class="compare-card-body">"With the planned page I went into detail and added more flesh on how things should move around and where things should go."</p>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">Sean's Reflections</p>
+      <h2 class="section-heading">In His Words</h2>
+      <div class="section-divider"></div>
+      <div class="notes-grid">
+        <div class="note-card">
+          <span class="note-tag">First Reaction</span>
+          <h3 class="note-title">The One-Shot Moment</h3>
+          <p class="note-body">"When I actually went into it the page it was like — <strong>woooow, this looks cooler than I thought.</strong>"</p>
+          <div class="note-why"><strong>Context</strong>Seeing the first AI-built page with zero planning. The surprise of what a single prompt could produce.</div>
+        </div>
+        <div class="note-card">
+          <span class="note-tag">Planning Process</span>
+          <h3 class="note-title">Where Time Was Spent</h3>
+          <p class="note-body">"I spent most of my time on the <strong>colors of the page</strong> — I didn't want way too bright colors, and I didn't want them to be too dull."</p>
+          <div class="note-why"><strong>Context</strong>The planning step isn't just about features — it's about making decisions the agent can't make for you.</div>
+        </div>
+        <div class="note-card">
+          <span class="note-tag">The Review Step</span>
+          <h3 class="note-title">What the Agent Caught</h3>
+          <p class="note-body">"It caught how I didn't put the search option to search for glossaries, how they couldn't copy and paste certain things from the code snippets I had."</p>
+          <div class="note-why"><strong>Context</strong>The Review step works. Use it first, then ask the agent what's missing.</div>
+        </div>
+        <div class="note-card featured">
+          <span class="note-tag">Key Principle</span>
+          <h3 class="note-title">The One Thing He'll Remember</h3>
+          <p class="note-body">"<strong>You need to use proper context.</strong> This could be anywhere in life — not just using AI."</p>
+          <div class="note-why"><strong>Why it matters</strong>Context isn't a prompt engineering trick. It's a thinking skill. The better you understand what you want, the better anything you build with anyone — or anything — will be.</div>
+        </div>
+      </div>
+      <div class="day3-highlight" style="margin-top: 40px; margin-bottom: 0;">
+        <p>"AI is one of the best tools you could work with — why? Because you can spend only about an hour or even less trying to build a website that could take you <strong>days</strong> to make and finish." &mdash; Sean</p>
       </div>
     </div>
   </section>
@@ -785,13 +856,49 @@
 <script>
 // ── TABS + KEYBOARD SHORTCUTS ──
 const tabBtns = document.querySelectorAll('.tab-btn');
+let currentTabIndex = 0;
+
+// Sliding gold indicator
+const tabNav = document.querySelector('.tab-nav');
+const indicator = document.createElement('div');
+indicator.className = 'tab-indicator';
+tabNav.appendChild(indicator);
+
+function updateIndicator(btn, instant) {
+  const navRect = tabNav.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  if (instant) indicator.style.transition = 'none';
+  indicator.style.left = (btnRect.left - navRect.left + tabNav.scrollLeft) + 'px';
+  indicator.style.width = btnRect.width + 'px';
+  if (instant) requestAnimationFrame(() => { indicator.style.transition = ''; });
+}
+
 tabBtns.forEach((btn, i) => {
   btn.addEventListener('click', () => {
+    const prevIndex = currentTabIndex;
+    currentTabIndex = i;
+    const goingRight = i >= prevIndex;
+
     tabBtns.forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active', 'slide-right', 'slide-left'));
     btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
+    const panel = document.getElementById(btn.dataset.tab);
+    panel.classList.add('active', goingRight ? 'slide-right' : 'slide-left');
+
+    updateIndicator(btn, false);
+    window.scrollTo(0, 0);
+
+    // Stagger section entrances in the new panel
+    panel.querySelectorAll('.section:not(.in-view)').forEach((s, idx) => {
+      s.style.transitionDelay = (idx * 0.07) + 's';
+    });
   });
+});
+
+// Initialise indicator on load
+requestAnimationFrame(() => {
+  const activeBtn = document.querySelector('.tab-btn.active');
+  if (activeBtn) updateIndicator(activeBtn, true);
 });
 
 document.addEventListener('keydown', e => {
@@ -820,6 +927,26 @@ window.addEventListener('scroll', () => {
   const h = document.documentElement.scrollHeight - window.innerHeight;
   progressBar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
 });
+
+// ── SECTION ENTRANCE ANIMATIONS ──
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      sectionObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+document.querySelectorAll('.section').forEach(s => sectionObserver.observe(s));
+
+// Trigger sections already visible on first load with a stagger
+setTimeout(() => {
+  document.querySelectorAll('.panel.active .section:not(.in-view)').forEach((s, idx) => {
+    s.style.transitionDelay = (idx * 0.07) + 's';
+    s.classList.add('in-view');
+  });
+}, 80);
 
 // ── COPY BUTTONS ──
 document.querySelectorAll('.code-wrap').forEach(wrap => {
