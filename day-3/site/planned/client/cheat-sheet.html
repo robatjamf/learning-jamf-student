@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheat Sheet — Ron Harifiyati</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">Ron Harifiyati</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="cheat-sheet.html" class="active">Cheat Sheet</a></li>
+        <li><a href="notes.html">Notes</a></li>
+        <li><a href="resources.html">Resources</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="page-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>Cheat Sheet</h1>
+        <p>Key commands and concepts — quick reference for Git, Tart, curl, and Claude Code.</p>
+      </div>
+
+      <!-- TAB NAV -->
+      <div class="tab-container">
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="git">Git</button>
+          <button class="tab-btn" data-tab="tart">Tart</button>
+          <button class="tab-btn" data-tab="curl">curl</button>
+          <button class="tab-btn" data-tab="claude">Claude Code</button>
+        </div>
+
+        <!-- GIT -->
+        <div class="tab-panel active" data-tab="git">
+          <div class="cheatsheet-section">
+            <h2>Git</h2>
+            <p class="section-desc">Git is a distributed version control system. It tracks changes to files over time and lets multiple people collaborate on the same codebase without overwriting each other's work.</p>
+
+            <h3 class="mt-lg mb-md">Core Concepts</h3>
+            <div class="grid-2">
+              <div class="card card-sm">
+                <h4>Repository (repo)</h4>
+                <p>A folder tracked by Git. Contains your files and the full history of every change ever made. Can live locally on your machine and/or remotely (e.g. on GitHub).</p>
+              </div>
+              <div class="card card-sm">
+                <h4>Branch</h4>
+                <p>An independent line of development. <code>main</code> is the default. You create a branch to work on a feature or fix without affecting the main codebase. Branches are cheap — create them freely.</p>
+              </div>
+              <div class="card card-sm">
+                <h4>Commit</h4>
+                <p>A saved snapshot of your staged changes. Each commit has a unique ID (hash), a message, an author, and a timestamp. The commit history is your project's timeline.</p>
+              </div>
+              <div class="card card-sm">
+                <h4>Remote</h4>
+                <p>A version of the repo hosted elsewhere (usually GitHub). <code>origin</code> is the conventional name for your primary remote. You push to share your changes; you pull to receive others'.</p>
+              </div>
+              <div class="card card-sm">
+                <h4>Staging Area (Index)</h4>
+                <p>A preparation zone. Files you <code>git add</code> move to staging. Only staged changes are included in the next commit. This lets you craft precise commits.</p>
+              </div>
+              <div class="card card-sm">
+                <h4>HEAD</h4>
+                <p>A pointer to the current commit you are on. Usually points to the tip of your current branch. Detached HEAD means you are on a specific commit rather than a branch.</p>
+              </div>
+            </div>
+
+            <h3 class="mt-xl mb-md">Essential Commands</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>git init</code></td><td>Initialise a new local repository in the current folder.</td></tr>
+                  <tr><td><code>git clone &lt;url&gt;</code></td><td>Download a remote repo to your machine.</td></tr>
+                  <tr><td><code>git status</code></td><td>Show which files are staged, unstaged, or untracked.</td></tr>
+                  <tr><td><code>git add &lt;file&gt;</code></td><td>Stage a specific file for the next commit.</td></tr>
+                  <tr><td><code>git add .</code></td><td>Stage all changed files. Use carefully — can include files you did not mean to commit.</td></tr>
+                  <tr><td><code>git commit -m "message"</code></td><td>Save staged changes as a commit with a message.</td></tr>
+                  <tr><td><code>git log --oneline</code></td><td>Compact commit history — hash and message per line.</td></tr>
+                  <tr><td><code>git diff</code></td><td>Show unstaged changes. Add <code>--staged</code> for staged changes.</td></tr>
+                  <tr><td><code>git push origin &lt;branch&gt;</code></td><td>Upload your branch to the remote.</td></tr>
+                  <tr><td><code>git pull</code></td><td>Fetch and merge changes from the remote into your current branch.</td></tr>
+                  <tr><td><code>git fetch</code></td><td>Download remote changes without merging. Safe way to see what changed.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Branching &amp; Merging</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>git branch</code></td><td>List all local branches. Current branch is marked with <code>*</code>.</td></tr>
+                  <tr><td><code>git branch &lt;name&gt;</code></td><td>Create a new branch (does not switch to it).</td></tr>
+                  <tr><td><code>git checkout &lt;branch&gt;</code></td><td>Switch to an existing branch.</td></tr>
+                  <tr><td><code>git checkout -b &lt;name&gt;</code></td><td>Create a new branch and switch to it immediately.</td></tr>
+                  <tr><td><code>git merge &lt;branch&gt;</code></td><td>Merge the named branch into your current branch.</td></tr>
+                  <tr><td><code>git branch -d &lt;name&gt;</code></td><td>Delete a branch (safe — won't delete if unmerged).</td></tr>
+                  <tr><td><code>git stash</code></td><td>Temporarily shelve uncommitted changes so you can switch branches cleanly.</td></tr>
+                  <tr><td><code>git stash pop</code></td><td>Restore the most recently stashed changes.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Undoing Things</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>git revert &lt;hash&gt;</code></td><td>Create a new commit that undoes a previous one. Safe — does not rewrite history.</td></tr>
+                  <tr><td><code>git reset --soft HEAD~1</code></td><td>Undo the last commit but keep changes staged. Good for rewording a commit message.</td></tr>
+                  <tr><td><code>git reset --hard HEAD~1</code></td><td>Undo the last commit and discard all changes. Destructive — cannot be recovered easily.</td></tr>
+                  <tr><td><code>git restore &lt;file&gt;</code></td><td>Discard unstaged changes to a file, restoring it to the last commit state.</td></tr>
+                  <tr><td><code>git restore --staged &lt;file&gt;</code></td><td>Unstage a file (remove from staging area without losing changes).</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Typical Workflow</h3>
+            <pre><code># 1. Make sure you are on main and up to date
+git checkout main
+git pull
+
+# 2. Create a feature branch
+git checkout -b my-feature
+
+# 3. Make changes, then stage and commit
+git add specific-file.html
+git commit -m "Add navigation bar to index page"
+
+# 4. Push branch to remote and open a PR
+git push origin my-feature</code></pre>
+          </div>
+        </div>
+
+        <!-- TART -->
+        <div class="tab-panel" data-tab="tart">
+          <div class="cheatsheet-section">
+            <h2>Tart</h2>
+            <p class="section-desc">Tart is a macOS command-line tool for creating and running Apple Silicon virtual machines (macOS and Linux). It uses Apple's Virtualization framework — fast, lightweight, and native to Apple Silicon.</p>
+
+            <h3 class="mt-lg mb-md">Concept</h3>
+            <div class="card card-sm mb-lg">
+              <p>Tart VMs are identified by name. Images are downloaded from a registry (like OCI/Docker Hub but for VMs). You clone an image, give it a name, and run it. Each VM is isolated — changes inside the VM do not affect the host.</p>
+            </div>
+
+            <h3 class="mt-lg mb-md">Commands</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>tart list</code></td><td>List all local VMs and their status (running/stopped).</td></tr>
+                  <tr><td><code>tart pull &lt;image&gt;</code></td><td>Download a VM image from the registry. Example: <code>tart pull ghcr.io/cirruslabs/macos-sequoia-base:latest</code></td></tr>
+                  <tr><td><code>tart clone &lt;source&gt; &lt;name&gt;</code></td><td>Create a new VM named <code>&lt;name&gt;</code> from an existing image or local VM. Fast — uses copy-on-write.</td></tr>
+                  <tr><td><code>tart run &lt;name&gt;</code></td><td>Start and display a VM. Opens a graphical window by default.</td></tr>
+                  <tr><td><code>tart run &lt;name&gt; --no-graphics</code></td><td>Start a VM in headless mode (no window). Useful for servers.</td></tr>
+                  <tr><td><code>tart stop &lt;name&gt;</code></td><td>Gracefully shut down a running VM.</td></tr>
+                  <tr><td><code>tart delete &lt;name&gt;</code></td><td>Permanently delete a VM and all its disk data.</td></tr>
+                  <tr><td><code>tart ip &lt;name&gt;</code></td><td>Get the IP address of a running VM (for SSH or web access).</td></tr>
+                  <tr><td><code>tart get &lt;name&gt;</code></td><td>Show details about a VM (CPU, memory, disk size).</td></tr>
+                  <tr><td><code>tart set &lt;name&gt; --cpu 4 --memory 8192</code></td><td>Configure a VM's CPU and memory (must be stopped first).</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Typical Workflow</h3>
+            <pre><code># Pull a macOS image
+tart pull ghcr.io/cirruslabs/macos-sequoia-base:latest
+
+# Clone it into a named VM
+tart clone ghcr.io/cirruslabs/macos-sequoia-base:latest my-mac-vm
+
+# Run it
+tart run my-mac-vm
+
+# In another terminal, get its IP
+tart ip my-mac-vm
+
+# SSH into a Linux VM (if SSH is enabled)
+ssh admin@$(tart ip my-linux-vm)
+
+# Stop and clean up
+tart stop my-mac-vm
+tart delete my-mac-vm</code></pre>
+
+            <h3 class="mt-xl mb-md">Useful Tips</h3>
+            <div class="alert alert-info">
+              <p><strong>Snapshots via clone:</strong> Clone a running VM before making risky changes. If things go wrong, delete the broken copy and clone again from the clean one.</p>
+            </div>
+            <div class="alert alert-info mt-md">
+              <p><strong>Shared directories:</strong> Tart supports mounting host directories into the VM using <code>--dir</code> flag, so you can share files without SCP.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CURL -->
+        <div class="tab-panel" data-tab="curl">
+          <div class="cheatsheet-section">
+            <h2>curl</h2>
+            <p class="section-desc">curl is a command-line tool for making HTTP requests. Used here to interact with the Jamf Pro REST API — authenticating, retrieving data, and creating resources.</p>
+
+            <h3 class="mt-lg mb-md">Core Flags</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Flag</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>-X &lt;METHOD&gt;</code></td><td>Set the HTTP method: GET, POST, PUT, DELETE, PATCH.</td></tr>
+                  <tr><td><code>-H "Header: Value"</code></td><td>Add a request header. Use multiple <code>-H</code> flags for multiple headers.</td></tr>
+                  <tr><td><code>-d '{"key":"value"}'</code></td><td>Send a request body (for POST/PUT). Implies POST if no -X specified.</td></tr>
+                  <tr><td><code>-u username:password</code></td><td>Basic authentication shorthand.</td></tr>
+                  <tr><td><code>-o &lt;file&gt;</code></td><td>Write the response body to a file instead of printing it.</td></tr>
+                  <tr><td><code>-s</code></td><td>Silent mode — suppresses progress bar. Useful in scripts.</td></tr>
+                  <tr><td><code>-i</code></td><td>Include response headers in output. Good for debugging.</td></tr>
+                  <tr><td><code>-v</code></td><td>Verbose — shows full request and response. Best for debugging.</td></tr>
+                  <tr><td><code>| python3 -m json.tool</code></td><td>Pipe output to pretty-print JSON responses.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Jamf Pro API — Authentication</h3>
+            <p>Jamf Pro uses Bearer token authentication for its modern REST API. First, exchange your credentials for a token, then use that token in subsequent requests.</p>
+
+            <pre><code># Step 1: Get a Bearer token
+TOKEN=$(curl -s -X POST \
+  "https://your-instance.jamfcloud.com/api/v1/auth/token" \
+  -u "username:password" \
+  -H "Accept: application/json" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+
+echo $TOKEN</code></pre>
+
+            <h3 class="mt-xl mb-md">GET — Retrieve Data</h3>
+            <pre><code># Get all computers
+curl -s -X GET \
+  "https://your-instance.jamfcloud.com/api/v1/computers-preview" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json" \
+  | python3 -m json.tool
+
+# Get a specific computer by ID
+curl -s -X GET \
+  "https://your-instance.jamfcloud.com/api/v1/computers-preview/1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json"</code></pre>
+
+            <h3 class="mt-xl mb-md">POST — Create a Resource</h3>
+            <pre><code># Create a new category (classic API — uses XML)
+curl -s -X POST \
+  "https://your-instance.jamfcloud.com/JSSResource/categories" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  -H "Accept: application/xml" \
+  -d '&lt;category&gt;&lt;name&gt;My New Category&lt;/name&gt;&lt;priority&gt;9&lt;/priority&gt;&lt;/category&gt;'
+
+# Create using JSON (modern API)
+curl -s -X POST \
+  "https://your-instance.jamfcloud.com/api/v1/categories" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My New Category", "priority": 9}'</code></pre>
+
+            <h3 class="mt-xl mb-md">PUT — Update a Resource</h3>
+            <pre><code># Update a category by ID
+curl -s -X PUT \
+  "https://your-instance.jamfcloud.com/api/v1/categories/5" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Renamed Category", "priority": 5}'</code></pre>
+
+            <h3 class="mt-xl mb-md">DELETE — Remove a Resource</h3>
+            <pre><code># Delete a category by ID
+curl -s -X DELETE \
+  "https://your-instance.jamfcloud.com/api/v1/categories/5" \
+  -H "Authorization: Bearer $TOKEN"</code></pre>
+
+            <h3 class="mt-xl mb-md">Invalidate Token (Clean Up)</h3>
+            <pre><code>curl -s -X POST \
+  "https://your-instance.jamfcloud.com/api/v1/auth/invalidate-token" \
+  -H "Authorization: Bearer $TOKEN"</code></pre>
+          </div>
+        </div>
+
+        <!-- CLAUDE CODE -->
+        <div class="tab-panel" data-tab="claude">
+          <div class="cheatsheet-section">
+            <h2>Claude Code</h2>
+            <p class="section-desc">Claude Code is Anthropic's official CLI for Claude — an AI assistant that works directly in your terminal, reads your project files, and helps you build software through conversation.</p>
+
+            <h3 class="mt-lg mb-md">Starting &amp; Stopping</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>claude</code></td><td>Start an interactive Claude Code session in the current directory.</td></tr>
+                  <tr><td><code>claude "do something"</code></td><td>Run a one-shot task and exit (non-interactive).</td></tr>
+                  <tr><td><code>Ctrl+C</code></td><td>Cancel the current operation or exit.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">Slash Commands</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>/init</code></td><td>Initialise the project — creates <code>CLAUDE.md</code> with project context for future sessions.</td></tr>
+                  <tr><td><code>/clear</code></td><td>Clear the conversation history and start fresh (context window reset).</td></tr>
+                  <tr><td><code>/compact</code></td><td>Summarise the current conversation to reduce context usage. Keeps working without losing history.</td></tr>
+                  <tr><td><code>/help</code></td><td>Show all available slash commands and shortcuts.</td></tr>
+                  <tr><td><code>/plan</code></td><td>Enter plan mode — Claude describes what it will do before taking any action.</td></tr>
+                  <tr><td><code>/cost</code></td><td>Show how many tokens the current session has used.</td></tr>
+                  <tr><td><code>/model</code></td><td>Show the current model being used.</td></tr>
+                  <tr><td><code>/bug</code></td><td>Open a GitHub issue to report a Claude Code bug.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">CLAUDE.md — Project Context File</h3>
+            <p>Claude reads <code>CLAUDE.md</code> at the start of every session. It is your way of giving Claude persistent instructions about your project.</p>
+            <pre><code># CLAUDE.md
+
+## Project Overview
+Brief description of what this project is and does.
+
+## Tech Stack
+- Language / framework
+- Key dependencies
+
+## Repository Structure
+| Folder | Purpose |
+|--------|---------|
+| src/   | Source code |
+| tests/ | Test files |
+
+## Conventions
+- Use 2-space indentation
+- Commit messages: imperative tense ("Add feature", not "Added feature")
+- Never commit .env files
+
+## Current State
+What is the current focus or in-progress work?</code></pre>
+
+            <h3 class="mt-xl mb-md">Memory System</h3>
+            <p>Claude Code supports a persistent memory directory for notes that survive across sessions.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><code>~/.claude/MEMORY.md</code></td><td>Global memory — loaded in every project. Good for personal preferences and recurring patterns.</td></tr>
+                  <tr><td><code>.claude/memory/</code></td><td>Project-level memory directory. Store topic-specific notes here.</td></tr>
+                  <tr><td><code>COMPOUND.md</code></td><td>Session history file — decisions, tradeoffs, dead ends. Populated via <code>/compound</code> at end of session.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="mt-xl mb-md">@ File References</h3>
+            <p>Use <code>@</code> to reference files directly in your prompt — Claude will read and use that file's content.</p>
+            <pre><code># Reference a file in your prompt
+Review the code in @src/index.js and suggest improvements.
+
+# Reference multiple files
+Compare @day-3/site/planned/index.html with @day-3/site/one-shot/index.html</code></pre>
+
+            <h3 class="mt-xl mb-md">Hooks</h3>
+            <p>Hooks are shell commands that run automatically in response to Claude Code events (e.g. before a file is written, after a tool is used). Configure them in settings to enforce rules automatically.</p>
+
+            <h3 class="mt-xl mb-md">The Compound Engineering Loop</h3>
+            <pre><code># 1. PLAN
+/plan
+"Describe what you want to build and ask Claude to plan it."
+
+# 2. WORK
+"Build it." (Claude reads, edits, creates files)
+
+# 3. REVIEW
+"Review what was built — open it in the browser, check the code."
+
+# 4. COMPOUND
+/compound
+"Claude distils the session into COMPOUND.md for next time."</code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    Ron Harifiyati &mdash; Jamf Pro Workshop &mdash; 2026
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

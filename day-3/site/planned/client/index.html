@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ron Harifiyati — Jamf Workshop</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">Ron Harifiyati</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="cheat-sheet.html">Cheat Sheet</a></li>
+        <li><a href="notes.html">Notes</a></li>
+        <li><a href="resources.html">Resources</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <h1>Ron Harifiyati</h1>
+      <p class="hero-sub">Jamf Pro Workshop &mdash; 3-Day Review &amp; Reference</p>
+      <div class="hero-meta">
+        <span class="badge badge-accent">Apple Device Management</span>
+        <span class="badge badge-neutral">APIs &amp; Automation</span>
+        <span class="badge badge-neutral">AI-Native Development</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- DAY OVERVIEW CARDS -->
+    <section style="background: var(--bg-secondary); padding: var(--space-2xl) 0;">
+      <div class="container">
+        <h2 style="margin-bottom: var(--space-xl);">Workshop Overview</h2>
+        <div class="grid-3">
+          <a href="#day1" class="day-card">
+            <div class="day-label">Day 1</div>
+            <h3>Context, Empathy &amp; Persona Mapping</h3>
+            <ul>
+              <li>What is Jamf and MDM?</li>
+              <li>Integrations over replacements</li>
+              <li>Enterprise IT Admin persona</li>
+              <li>Workflow design thinking</li>
+            </ul>
+          </a>
+          <a href="#day2" class="day-card">
+            <div class="day-label">Day 2</div>
+            <h3>APIs, VMs &amp; Webhooks</h3>
+            <ul>
+              <li>Jamf Pro REST API with curl</li>
+              <li>Virtual machines with Tart</li>
+              <li>Enrolling devices into Jamf Pro</li>
+              <li>Webhooks and event-driven data</li>
+            </ul>
+          </a>
+          <a href="#day3" class="day-card">
+            <div class="day-label">Day 3</div>
+            <h3>AI-Native Development</h3>
+            <ul>
+              <li>Claude Code in the terminal</li>
+              <li>Compound Engineering loop</li>
+              <li>CLAUDE.md and COMPOUND.md</li>
+              <li>Building a real project with AI</li>
+            </ul>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAY SUMMARIES -->
+    <section class="page-content" style="padding-top: var(--space-2xl);">
+      <div class="container">
+        <h2 style="margin-bottom: var(--space-xl);">Day Summaries</h2>
+
+        <!-- DAY 1 -->
+        <details class="accordion" id="day1">
+          <summary>
+            <span><span class="badge badge-accent" style="margin-right:10px;">Day 1</span> Context, Empathy &amp; Persona Mapping</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <h4>What is Jamf?</h4>
+            <p>Jamf is a company focused entirely on designing and deploying solutions that help organisations manage and secure Apple devices. What was surprising: Jamf does not replace existing IT tools — it integrates with them. Identity providers, SIEM platforms, and ServiceNow all work alongside Jamf Pro rather than being displaced by it.</p>
+
+            <h4>The Enterprise IT Admin Persona</h4>
+            <p>The mapped persona was an Enterprise IT Admin. Her biggest pain points were tasks she was never meant to own: manually entering new hire information and rewriting scripts that got deleted after every system update.</p>
+            <p>The proposed solution: build an automated flow where HR data feeds into an Identity provider (which stores employee records and permissions), which then connects to a SIEM or ServiceNow, which in turn syncs with Jamf Pro. No manual entry, no lost scripts. The Identity layer is the key piece most organisations are missing.</p>
+
+            <h4>Biggest Takeaway</h4>
+            <p>There are no wrong questions. It sounds simple, but it gave the whole group the confidence to actually participate. One brave question opens the door for everyone else — and the answer to an "obvious" question is often exactly what someone else needed to hear.</p>
+          </div>
+        </details>
+
+        <!-- DAY 2 -->
+        <details class="accordion" id="day2">
+          <summary>
+            <span><span class="badge badge-accent" style="margin-right:10px;">Day 2</span> APIs, VMs &amp; Webhooks</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <h4>Virtual Machines</h4>
+            <p>Used Virtual Buddy to spin up a macOS VM, enrolled it into a Jamf Pro instance, and logged in to view the device in the console. A VM shares the host machine's hardware (CPU, RAM, storage) — it does not get its own dedicated chips. Think of it like a model house inside your real house: the model uses space inside the actual structure.</p>
+
+            <h4>The Jamf Pro API</h4>
+            <p>Sent POST requests through the Jamf Pro REST API using curl. The request created new categories in the Jamf Pro instance. The API works like a restaurant: you are the client, the API is the waiter, and Jamf Pro is the kitchen. You send an order (request) and get data back (response).</p>
+
+            <h4>Webhooks</h4>
+            <p>Set up a webhook that fired whenever a device attribute changed in Jamf Pro. The payload arrived as XML — visually similar to HTML. The device ID was clearly visible in the payload structure. This made the difference between XML and JSON concrete: same concept, different syntax.</p>
+            <p>Push vs pull: pull means you ask for data on a schedule (polling). Push means the server sends data to you the moment something happens. Webhooks are push — more efficient for real-time events.</p>
+
+            <h4>What Clicked</h4>
+            <p>Seeing XML and JSON side by side. Understanding that they both encode structured data but look and read differently — and that the choice between them is often dictated by what the system supports, not personal preference.</p>
+          </div>
+        </details>
+
+        <!-- DAY 3 -->
+        <details class="accordion" id="day3">
+          <summary>
+            <span><span class="badge badge-accent" style="margin-right:10px;">Day 3</span> AI-Native Development</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="accordion-body">
+            <h4>The Compound Engineering Loop</h4>
+            <p>Day 3 introduced a structured approach to building with AI: <strong>Plan → Work → Review → Compound</strong>. The goal is not just to ship something quickly — it is to build something better each round by being intentional. Decisions, tradeoffs, and reasoning are captured in <code>COMPOUND.md</code> so each session builds on the last.</p>
+
+            <h4>Two Files, Two Roles</h4>
+            <p><code>CLAUDE.md</code> — project setup, structure, and current state. Kept lean.</p>
+            <p><code>COMPOUND.md</code> — rich session history: decisions, tradeoffs, dead ends, reasoning. This is where context accumulates over time.</p>
+
+            <h4>Claude Code in the Terminal</h4>
+            <p>Claude Code is a CLI tool that brings AI assistance directly into the development workflow. It reads your project context via <code>CLAUDE.md</code>, uses slash commands for common actions (<code>/init</code>, <code>/compact</code>, <code>/clear</code>), and can read, edit, and create files in your project without leaving the terminal.</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- QUICK LINKS -->
+    <section style="padding-bottom: var(--space-3xl);">
+      <div class="container">
+        <h2 style="margin-bottom: var(--space-xl);">Quick Links</h2>
+        <div class="grid-3">
+          <a href="quiz.html" class="day-card" style="text-decoration:none;">
+            <div class="day-label">Test Yourself</div>
+            <h3>Quiz</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin-top:8px;">Choose topics and a mode. Immediate feedback or end review.</p>
+          </a>
+          <a href="cheat-sheet.html" class="day-card" style="text-decoration:none;">
+            <div class="day-label">Commands</div>
+            <h3>Cheat Sheet</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin-top:8px;">Git, Tart, curl, and Claude Code — concept + commands + examples.</p>
+          </a>
+          <a href="notes.html" class="day-card" style="text-decoration:none;">
+            <div class="day-label">Reference</div>
+            <h3>Notes</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin-top:8px;">18 topics from Jamf to LLMs. Plain explanation, key concepts, deeper dive.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Ron Harifiyati &mdash; Jamf Pro Workshop &mdash; 2026
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
