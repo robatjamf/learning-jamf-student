@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wadzie — Jamf Workshop Review</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #fdf6ef;
+      color: #3d2c1e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: #c9623f; text-decoration: none; }
+
+    /* ── Layout ── */
+    .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #f9e4d0 0%, #fcd5b8 50%, #f9c9a8 100%);
+      padding: 80px 24px 60px;
+      text-align: center;
+      border-bottom: 1px solid #f0cdb0;
+    }
+    .hero h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -1px; color: #3d2c1e; }
+    .hero h1 span { color: #c9623f; }
+    .hero p { margin-top: 12px; color: #8a6652; font-size: 1.05rem; }
+    .badge {
+      display: inline-block;
+      margin-top: 20px;
+      background: #fde8d8;
+      border: 1px solid #e8a07a;
+      color: #a04e2e;
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Sections ── */
+    section { padding: 60px 0; border-bottom: 1px solid #f0ddd0; }
+    section:last-of-type { border-bottom: none; }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 28px;
+      color: #3d2c1e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .icon { font-size: 1.1rem; opacity: 0.7; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff8f3;
+      border: 1px solid #f0ddd0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+    }
+    .card-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #c9623f;
+      margin-bottom: 6px;
+    }
+    .card p { color: #5c4033; font-size: 0.95rem; }
+
+    /* ── Takeaways grid ── */
+    .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 580px) { .takeaways { grid-template-columns: 1fr; } }
+
+    /* ── Concept pills ── */
+    .concepts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .concept {
+      background: #fef0e6;
+      border: 1px solid #f0cdb0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      color: #7a4030;
+      cursor: default;
+    }
+    .concept strong { display: block; color: #3d2c1e; margin-bottom: 2px; font-size: 0.9rem; }
+
+    /* ── Accordion glossary ── */
+    .accordion { margin-bottom: 8px; }
+    .accordion summary {
+      list-style: none;
+      cursor: pointer;
+      background: #fff8f3;
+      border: 1px solid #f0ddd0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      color: #c9623f;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .accordion summary:hover { background: #fde8d8; }
+    .accordion summary::after { content: "+"; font-size: 1.1rem; color: #e8a07a; }
+    .accordion[open] summary::after { content: "−"; }
+    .accordion .def {
+      background: #fef5ee;
+      border: 1px solid #f0ddd0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #6b4c3b;
+    }
+    .def .analogy { color: #a07060; font-style: italic; margin-top: 6px; font-size: 0.84rem; }
+
+    /* ── Quiz ── */
+    .quiz-question { margin-bottom: 28px; }
+    .quiz-question p { font-size: 0.97rem; color: #3d2c1e; margin-bottom: 12px; font-weight: 500; }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .option {
+      background: #fff8f3;
+      border: 1px solid #f0ddd0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 0.88rem;
+      color: #6b4c3b;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+    .option:hover:not(:disabled) { border-color: #c9623f; background: #fde8d8; }
+    .option.correct { border-color: #6aaa6a; background: #eef7ee; color: #2d6b2d; }
+    .option.wrong { border-color: #e07060; background: #fdf0ee; color: #8a2c20; }
+    .option:disabled { cursor: default; opacity: 0.8; }
+    .feedback { font-size: 0.82rem; margin-top: 8px; min-height: 18px; }
+    .feedback.correct { color: #4a9a4a; }
+    .feedback.wrong { color: #c04030; }
+    .quiz-score {
+      text-align: center;
+      margin-top: 24px;
+      padding: 20px;
+      background: #fff8f3;
+      border: 1px solid #f0ddd0;
+      border-radius: 12px;
+      display: none;
+    }
+    .quiz-score .score-num { font-size: 2.4rem; font-weight: 700; color: #c9623f; }
+    .quiz-score p { color: #a07060; font-size: 0.88rem; margin-top: 4px; }
+    #reset-btn {
+      margin-top: 14px;
+      background: #fde8d8;
+      border: 1px solid #e8a07a;
+      color: #a04e2e;
+      padding: 8px 22px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    #reset-btn:hover { background: #f9d4bc; }
+
+    /* ── Principles ── */
+    .principles { counter-reset: p; display: flex; flex-direction: column; gap: 12px; }
+    .principle {
+      background: #fff8f3;
+      border: 1px solid #f0ddd0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .principle-num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #f0cdb0;
+      min-width: 28px;
+      line-height: 1;
+    }
+    .principle-body strong { color: #3d2c1e; display: block; font-size: 0.95rem; margin-bottom: 4px; }
+    .principle-body span { color: #a07060; font-size: 0.84rem; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      color: #c4a898;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <h1>Hey, <span>Wadzie</span>.</h1>
+    <p>Your personal review page from the Jamf Pro Workshop — Days 1, 2 &amp; 3.</p>
+    <span class="badge">Jamf Pro Training &middot; Apple Device Management</span>
+  </div>
+</div>
+
+<!-- Day 1 Takeaways -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#128218;</span> Day 1 — Your Actual Takeaways</h2>
+    <div class="takeaways">
+      <div class="card">
+        <div class="card-label">On DDM vs MDM</div>
+        <p>Apple is constantly updating, using DDM as a more modern approach instead of relying on legacy MDM commands.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">On Different Approaches</div>
+        <p>There isn't necessarily a right or wrong way — just different ways of accomplishing the same goal.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">What Jamf Does</div>
+        <p>A software platform that helps IT departments manage Apple devices at scale.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">What Surprised You</div>
+        <p>Rather than just reporting non-compliance, Jamf can automatically remediate issues — it fixes, not just flags.</p>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-label">Persona You Mapped</div>
+        <p><strong style="color:#c9623f;">Security Analyst</strong> — managing 1,000+ alerts a day, keeping devices compliant without grinding everything to a halt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 2 Takeaways -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#128187;</span> Day 2 — Your Actual Takeaways</h2>
+    <div class="takeaways">
+      <div class="card">
+        <div class="card-label">Tart VM Commands</div>
+        <p>Used <code style="color:#7dd3fc">tart list</code>, <code style="color:#7dd3fc">tart run</code>, and <code style="color:#7dd3fc">tart stop</code> to create and manage a macOS virtual machine. The VM behaves like a real computer but runs on the resources of the main machine.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">VM in Plain English</div>
+        <p>It's a virtual machine — a separate computer environment that runs inside your main computer, with its own OS, apps, and settings.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">API Calls in Postman</div>
+        <p>Sent a POST request to get a bearer token, then used GET requests to retrieve device inventory from Jamf Pro. Responses came back as JSON data.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Push vs Pull</div>
+        <p><strong style="color:#dbeafe;">Pull</strong> — you ask the server for data when you need it. <strong style="color:#dbeafe;">Push</strong> — the server automatically sends data when an event happens (like a webhook firing on device enrolment).</p>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-label">Webhook Payload</div>
+        <p>When the Jamf Pro webhook arrived, the payload was JSON containing the event type, device ID, device name, and timestamp — sent automatically to the endpoint.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Day 3 Reflections -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#129504;</span> Day 3 — Your Reflections</h2>
+    <div class="takeaways">
+      <div class="card">
+        <div class="card-label">The One-Shot Page</div>
+        <p>Clear layout with the main idea in the center and key points organized around it. More detailed than expected — clear and precise. Seeing everything on one page helped understand how ideas connected.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Planned Build vs One-Shot</div>
+        <p>The plan set the structure; the one-shot was the refined final version. The planned build added more details, adjusted the order, and made everything clearer than the original plan.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">The Review Step</div>
+        <p>Main ideas and structure matched the plan. What changed: the order of details and how some points were explained — ended up better than first imagined.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Most Time Spent On</div>
+        <p>The compound process — refining information, adding more details, and strengthening the connections between ideas to make the page more complete.</p>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-label">What Working with AI Taught You</div>
+        <p>AI is fun and efficient — but it requires you to be specific. It won't let you ask an incomplete question; it pushes you to clarify so you get the answer you actually want. That's different from other AI tools.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Concepts -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#128161;</span> Key Concepts to Know</h2>
+    <div class="concepts">
+      <div class="concept"><strong>MDM</strong>Manage many devices from one place — settings, apps, security rules.</div>
+      <div class="concept"><strong>DDM</strong>Declarative Device Management — Apple's modern approach. Devices manage themselves against a declared state.</div>
+      <div class="concept"><strong>API</strong>Software talking to software. You send a request, you get data back.</div>
+      <div class="concept"><strong>REST</strong>GET = read &bull; POST = create &bull; PUT = update &bull; DELETE = remove</div>
+      <div class="concept"><strong>Webhook</strong>Push, not pull. The server tells YOU when something happens — like a doorbell.</div>
+      <div class="concept"><strong>VM</strong>A computer inside your computer. Isolated, resettable, throwaway.</div>
+      <div class="concept"><strong>Bearer Token</strong>Prove you logged in once, use the token everywhere else.</div>
+      <div class="concept"><strong>JSON</strong>Structured data both humans and machines can read: <code style="color:#7dd3fc">{"key": "value"}</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- Glossary -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#128218;</span> Glossary — Tap to Expand</h2>
+
+    <details class="accordion">
+      <summary>Persona</summary>
+      <div class="def">
+        A fictional character representing a real type of user — their workflow, tools, and pain points.
+        <div class="analogy">Four from Day 1: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.</div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Journey Map</summary>
+      <div class="def">
+        A walkthrough of a user's workflow — the steps, tools, and where they get stuck.
+        <div class="analogy">Like drawing a map of someone's commute, marking every traffic jam.</div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Virtual Machine (VM)</summary>
+      <div class="def">
+        A computer running inside another computer with its own OS.
+        <div class="analogy">A snow globe — a little world inside your world. You can reset or throw it away without affecting anything outside.</div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Tart</summary>
+      <div class="def">
+        A tool for running macOS VMs on Apple Silicon.
+        <div class="analogy">Key commands: <code>tart clone</code> &bull; <code>tart run</code> &bull; <code>tart stop</code> &bull; <code>tart ip</code></div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Polling vs. Pushing</summary>
+      <div class="def">
+        Polling = you keep asking "anything new?" &mdash; Pushing = the system tells you when there's news.
+        <div class="analogy">Polling: "Are we there yet? Are we there yet?" &mdash; Pushing: "I'll tell you when we arrive."</div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Context Window</summary>
+      <div class="def">
+        How much the AI agent can hold in memory at once. When full, earlier content gets dropped.
+        <div class="analogy">A whiteboard. You can keep writing, but eventually you run out of space and have to erase something.</div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>Compounding</summary>
+      <div class="def">
+        Distilling a full session — decisions, tradeoffs, dead ends — into a file the next session inherits.
+        <div class="analogy">A pilot's logbook. After every flight they record the route, decisions, turbulence. The next pilot starts with all that context.</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- Quiz -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#129354;</span> Quick Quiz — Test Yourself</h2>
+
+    <div id="quiz-container">
+
+      <div class="quiz-question" data-answer="1">
+        <p>1. What's the key difference between MDM and DDM?</p>
+        <div class="options">
+          <button class="option" onclick="answer(this, 0)">DDM is older and more widely supported</button>
+          <button class="option" onclick="answer(this, 1)">DDM lets devices manage themselves against a declared state — no commands needed</button>
+          <button class="option" onclick="answer(this, 2)">MDM only works on iPhones</button>
+          <button class="option" onclick="answer(this, 3)">They are the same thing with different names</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <p>2. What does a Bearer Token do?</p>
+        <div class="options">
+          <button class="option" onclick="answer(this, 0)">It encrypts your API request body</button>
+          <button class="option" onclick="answer(this, 1)">It stores your username and password</button>
+          <button class="option" onclick="answer(this, 2)">It proves you're authenticated — like a wristband you show everywhere after getting in</button>
+          <button class="option" onclick="answer(this, 3)">It limits which devices you can manage</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <p>3. What HTTP method would you use to CREATE something new via a REST API?</p>
+        <div class="options">
+          <button class="option" onclick="answer(this, 0)">POST</button>
+          <button class="option" onclick="answer(this, 1)">GET</button>
+          <button class="option" onclick="answer(this, 2)">DELETE</button>
+          <button class="option" onclick="answer(this, 3)">PATCH</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="quiz-question" data-answer="3">
+        <p>4. What is a Webhook?</p>
+        <div class="options">
+          <button class="option" onclick="answer(this, 0)">A plugin that runs inside Jamf Pro</button>
+          <button class="option" onclick="answer(this, 1)">A way to poll an API on a schedule</button>
+          <button class="option" onclick="answer(this, 2)">A type of bearer token</button>
+          <button class="option" onclick="answer(this, 3)">A URL that receives data when an event happens — the server pushes to you</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <p>5. Which Jamf behaviour surprised Wadzie on Day 1?</p>
+        <div class="options">
+          <button class="option" onclick="answer(this, 0)">Jamf can manage Windows devices too</button>
+          <button class="option" onclick="answer(this, 1)">Instead of just reporting non-compliance, Jamf can automatically remediate issues</button>
+          <button class="option" onclick="answer(this, 2)">Jamf has no API access</button>
+          <button class="option" onclick="answer(this, 3)">Jamf requires manual device enrolment</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+    </div>
+
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display"></div>
+      <p id="score-message"></p>
+      <button id="reset-btn" onclick="resetQuiz()">Try Again</button>
+    </div>
+  </div>
+</section>
+
+<!-- 7 Principles -->
+<section>
+  <div class="container">
+    <h2><span class="icon">&#9881;&#65039;</span> 7 Transferable Principles</h2>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">1</div>
+        <div class="principle-body">
+          <strong>Context Is Everything</strong>
+          <span>The quality of your output is determined by the quality of your context. AI only knows what you tell it.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">2</div>
+        <div class="principle-body">
+          <strong>Planning &gt; Building</strong>
+          <span>80% planning, 20% building. The plan IS the work. Execution is confirmation.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">3</div>
+        <div class="principle-body">
+          <strong>Share Your Mental Model</strong>
+          <span>The agent starts from zero. Transfer your picture of how things should work before it writes a line of code.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">4</div>
+        <div class="principle-body">
+          <strong>Recognise When to Quit</strong>
+          <span>Sunk cost is a trap. Starting fresh isn't failure — it's the skill.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">5</div>
+        <div class="principle-body">
+          <strong>It's a Conversation, Not a Command</strong>
+          <span>This is collaboration. Back-and-forth is where the real value comes from.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">6</div>
+        <div class="principle-body">
+          <strong>Review Against Your Plan</strong>
+          <span>Open the output. Use it. Your eyes and judgment are the primary review tool — not the AI's.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">7</div>
+        <div class="principle-body">
+          <strong>Compound Your Sessions</strong>
+          <span>Distill every session into a reference. The next session inherits everything you figured out instead of starting from zero.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Built on Day 3 &mdash; Jamf Pro Training &mdash; Wadzie &mdash; 2026
+  </div>
+</footer>
+
+<script>
+  let answered = 0;
+  let correct = 0;
+  const total = document.querySelectorAll('.quiz-question').length;
+
+  function answer(btn, selected) {
+    const question = btn.closest('.quiz-question');
+    if (question.dataset.done) return;
+    question.dataset.done = true;
+
+    const correctAnswer = parseInt(question.dataset.answer);
+    const options = question.querySelectorAll('.option');
+    const feedback = question.querySelector('.feedback');
+
+    options.forEach((opt, i) => {
+      opt.disabled = true;
+      if (i === correctAnswer) opt.classList.add('correct');
+    });
+
+    if (selected === correctAnswer) {
+      correct++;
+      feedback.textContent = 'Correct!';
+      feedback.className = 'feedback correct';
+    } else {
+      btn.classList.add('wrong');
+      feedback.textContent = 'Not quite — the highlighted answer is correct.';
+      feedback.className = 'feedback wrong';
+    }
+
+    answered++;
+    if (answered === total) showScore();
+  }
+
+  function showScore() {
+    const scoreEl = document.getElementById('quiz-score');
+    const display = document.getElementById('score-display');
+    const msg = document.getElementById('score-message');
+
+    display.textContent = correct + ' / ' + total;
+    const pct = correct / total;
+    if (pct === 1) msg.textContent = 'Perfect. You were paying attention.';
+    else if (pct >= 0.6) msg.textContent = 'Solid — review the ones you missed.';
+    else msg.textContent = 'Worth another pass through the glossary.';
+
+    scoreEl.style.display = 'block';
+  }
+
+  function resetQuiz() {
+    answered = 0;
+    correct = 0;
+    document.querySelectorAll('.quiz-question').forEach(q => {
+      delete q.dataset.done;
+      q.querySelectorAll('.option').forEach(o => {
+        o.disabled = false;
+        o.classList.remove('correct', 'wrong');
+      });
+      q.querySelector('.feedback').textContent = '';
+      q.querySelector('.feedback').className = 'feedback';
+    });
+    document.getElementById('quiz-score').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
