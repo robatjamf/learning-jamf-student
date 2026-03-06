@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sean's Jamf Workshop Review</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #4f8ef7;
+      --accent2: #7c5cbf;
+      --green: #3ecf8e;
+      --yellow: #f5c542;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 17, 23, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 56px;
+    }
+    nav .brand { font-weight: 700; font-size: 1rem; color: var(--accent); white-space: nowrap; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      background: linear-gradient(160deg, #0f1117 0%, #181c2e 100%);
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin-inline: auto;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.8rem;
+    }
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* LAYOUT */
+    main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+
+    section { margin-bottom: 4rem; }
+    section h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.4rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    section h2 .tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--surface2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .card p, .card li { color: var(--muted); font-size: 0.93rem; }
+    .card ul { padding-left: 1.2rem; }
+    .card li { margin-bottom: 0.25rem; }
+
+    .card .quote {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      color: var(--text);
+      font-style: italic;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    /* TWO COL GRID */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* HTTP METHOD PILLS */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .method-card {
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border);
+    }
+    .method-card .verb {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    .method-card p { font-size: 0.82rem; color: var(--muted); }
+    .get  { background: rgba(62,207,142,0.08); border-color: rgba(62,207,142,0.3); }
+    .get .verb  { color: var(--green); }
+    .post { background: rgba(79,142,247,0.08); border-color: rgba(79,142,247,0.3); }
+    .post .verb { color: var(--accent); }
+    .put  { background: rgba(245,197,66,0.08); border-color: rgba(245,197,66,0.3); }
+    .put .verb  { color: var(--yellow); }
+    .del  { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+    .del .verb  { color: var(--red); }
+
+    /* PUSH vs PULL */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 560px) { .compare { grid-template-columns: 1fr; } }
+    .compare-card {
+      border-radius: var(--radius);
+      padding: 1.3rem 1.4rem;
+      border: 1px solid var(--border);
+    }
+    .compare-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .compare-card p { font-size: 0.88rem; color: var(--muted); }
+    .push-card { background: rgba(79,142,247,0.07); border-color: rgba(79,142,247,0.25); }
+    .push-card h4 { color: var(--accent); }
+    .pull-card { background: rgba(245,197,66,0.07); border-color: rgba(245,197,66,0.25); }
+    .pull-card h4 { color: var(--yellow); }
+
+    /* PERSONA TABLE */
+    .persona-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .persona-table th {
+      text-align: left;
+      padding: 0.6rem 0.9rem;
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+    }
+    .persona-table td {
+      padding: 0.75rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      vertical-align: top;
+    }
+    .persona-table tr:last-child td { border-bottom: none; }
+    .persona-table tr:hover td { background: var(--surface2); }
+    .persona-name { color: var(--text); font-weight: 600; }
+
+    /* ACCORDION / EXPANDABLE */
+    details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    summary {
+      cursor: pointer;
+      padding: 1rem 1.4rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+";
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+    .details-body {
+      padding: 0 1.4rem 1.2rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .details-body p { margin-bottom: 0.5rem; }
+    .details-body .analogy {
+      margin-top: 0.6rem;
+      padding: 0.7rem 1rem;
+      background: var(--surface2);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .details-body .analogy span { color: var(--accent); font-weight: 600; }
+
+    /* QUIZ */
+    .quiz-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .quiz-q {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem 1.5rem;
+    }
+    .quiz-q p {
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-opt {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      text-align: left;
+      width: 100%;
+    }
+    .quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+    .quiz-opt.correct { background: rgba(62,207,142,0.12); border-color: var(--green); color: var(--green); }
+    .quiz-opt.wrong   { background: rgba(239,68,68,0.1);  border-color: var(--red);   color: var(--red); }
+    .quiz-opt:disabled { cursor: default; }
+    .quiz-feedback {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      min-height: 1.2em;
+      color: var(--muted);
+    }
+
+    /* CODE BLOCK */
+    pre {
+      background: #11131d;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      color: #a9c1f5;
+      font-family: "SF Mono", "Fira Code", monospace;
+      margin-top: 0.75rem;
+    }
+    code { font-family: inherit; }
+
+    /* DAY 3 LOOP */
+    .loop-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .loop-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.3rem;
+      position: relative;
+    }
+    .loop-step .step-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .loop-step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .loop-step p { font-size: 0.83rem; color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    footer strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">Sean's Jamf Review</span>
+  <a href="#day1">Day 1</a>
+  <a href="#day2">Day 2</a>
+  <a href="#glossary">Glossary</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#day3">Day 3</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>3 Days of Jamf</h1>
+  <p>A personal review of everything covered in the Jamf Pro workshop — from personas to APIs to AI-assisted engineering.</p>
+  <div class="badge-row">
+    <span class="badge">Jamf Pro</span>
+    <span class="badge">MDM / DDM</span>
+    <span class="badge">REST APIs</span>
+    <span class="badge">Webhooks</span>
+    <span class="badge">Virtual Machines</span>
+    <span class="badge">Claude Code</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- DAY 1 -->
+  <section id="day1">
+    <h2>Day 1 — What Is Jamf? <span class="tag">Overview</span></h2>
+
+    <div class="card">
+      <h3>What Jamf Does</h3>
+      <p class="quote">"Jamf is a security platform exclusively designed for Apple devices."</p>
+      <p style="margin-top:0.8rem;">Jamf lets IT teams manage Apple devices (Mac, iPhone, iPad) at scale — pushing settings, installing apps, enforcing security policies, and supporting users remotely. The surprise: <strong style="color:var(--text)">Zero Touch</strong> — you can go from unboxing a MacBook to a fully configured device without ever touching it directly.</p>
+    </div>
+
+    <div class="card">
+      <h3>MDM vs DDM (Blueprints)</h3>
+      <div class="grid-2">
+        <div>
+          <p style="font-weight:600; color:var(--text); margin-bottom:0.4rem;">MDM (Mobile Device Management)</p>
+          <p>The classic model. Jamf Pro sends a command → device checks in → executes → reports back. More back-and-forth between server and device.</p>
+        </div>
+        <div>
+          <p style="font-weight:600; color:var(--green); margin-bottom:0.4rem;">DDM / Blueprints (Declarative)</p>
+          <p>The device and Jamf Pro communicate directly using declarations. Less back-and-forth, faster, and the device manages its own state. The biggest Day 1 takeaway.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>The Four Personas</h3>
+      <div style="overflow-x:auto; margin-top:0.5rem;">
+        <table class="persona-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Scale</th>
+              <th>Biggest Pain Point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="persona-name">Enterprise IT Admin</td>
+              <td>10,000+ devices</td>
+              <td>Consistency and compliance at massive scale</td>
+            </tr>
+            <tr>
+              <td class="persona-name">K-12 IT Coordinator</td>
+              <td>Multiple schools</td>
+              <td>One person managing 3 campuses — can't be everywhere</td>
+            </tr>
+            <tr>
+              <td class="persona-name">Security Analyst</td>
+              <td>1,000+ alerts/day</td>
+              <td>Alert fatigue, identifying real threats in the noise</td>
+            </tr>
+            <tr>
+              <td class="persona-name">Help Desk Technician</td>
+              <td>Org-wide</td>
+              <td>Remote troubleshooting without physical access</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="quote" style="margin-top:1rem;">
+        My group mapped the K-12 IT Coordinator — one person managing three campuses alone. Jamf lets them see which device has an issue and act on it remotely, without driving to the site.
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section id="day2">
+    <h2>Day 2 — VMs, APIs & Webhooks <span class="tag">Technical</span></h2>
+
+    <div class="card">
+      <h3>Virtual Machines</h3>
+      <p>A computer running inside another computer. Its own OS, behaves like a real machine. On Day 2 I enrolled a Tart VM into Jamf Pro.</p>
+      <p style="margin-top:0.5rem; color:var(--muted); font-size:0.9rem;">Think of it like a snow globe — a little world inside your world. You can reset it or throw it away without affecting anything outside.</p>
+      <pre><code>tart clone &lt;image&gt;   # copy a base image
+tart run &lt;name&gt;      # start the VM
+tart ip &lt;name&gt;       # get its IP address
+tart stop &lt;name&gt;     # shut it down</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>HTTP Methods — REST API</h3>
+      <p style="margin-bottom:0.9rem; color:var(--muted); font-size:0.9rem;">Think of it like a restaurant: you (client) send an order through the waiter (API) to the kitchen (server) and get food (data) back. On Day 2, I made a POST request in Postman and got back a created category in Jamf Pro.</p>
+      <div class="method-grid">
+        <div class="method-card get">
+          <div class="verb">GET</div>
+          <p>Read data. Fetch a list of computers or a policy. No changes made.</p>
+        </div>
+        <div class="method-card post">
+          <div class="verb">POST</div>
+          <p>Create something new. I created a category in Jamf Pro using POST.</p>
+        </div>
+        <div class="method-card put">
+          <div class="verb">PUT</div>
+          <p>Update an existing record. Replace or edit something already there.</p>
+        </div>
+        <div class="method-card del">
+          <div class="verb">DELETE</div>
+          <p>Remove a record permanently. Use with care.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>JSON — The Data Format</h3>
+      <p>Structured data that both humans and computers can read. Curly braces, colons, quotes. The webhook payload that arrived on Day 2 was in JSON format.</p>
+      <pre><code>{
+  "event": "ComputerEnrolled",
+  "deviceName": "Sean-MacBook",
+  "serialNumber": "C02XK1234567",
+  "enrolled": true
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>Push vs Pull (Webhooks)</h3>
+      <div class="compare">
+        <div class="compare-card push-card">
+          <h4>Push (Webhooks)</h4>
+          <p>The server tells you when something happens — immediately. You don't have to ask. Like a doorbell: you don't check the door every 5 minutes, it rings when someone arrives.</p>
+        </div>
+        <div class="compare-card pull-card">
+          <h4>Pull (Polling)</h4>
+          <p>You keep asking "anything new?" over and over. Less efficient. Like a kid in the back seat: "Are we there yet? Are we there yet?"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <h2>Key Terms <span class="tag">Expandable</span></h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1.2rem;">Click any term to see the definition and analogy.</p>
+
+    <details>
+      <summary>MDM — Mobile Device Management</summary>
+      <div class="details-body">
+        <p>A system for managing many devices from one place — pushing settings, installing apps, enforcing security rules.</p>
+        <div class="analogy"><span>Analogy:</span> Like a school principal who can set rules for every classroom at once, instead of walking to each room individually.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>DDM / Blueprints — Declarative Device Management</summary>
+      <div class="details-body">
+        <p>A newer, faster way for devices to manage themselves based on declarations. Less back-and-forth with the server. The device checks its own state and applies what's needed.</p>
+        <div class="analogy"><span>Key difference:</span> MDM = Jamf tells the device what to do. DDM = the device knows what it should look like and gets there itself.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>API — Application Programming Interface</summary>
+      <div class="details-body">
+        <p>A way for software to talk to other software. You send a request and get data back. Jamf Pro has a REST API you can call with tools like Postman.</p>
+        <div class="analogy"><span>Analogy:</span> A restaurant — you tell the waiter (API) what you want, the waiter tells the kitchen (server), and you get your food (data) back.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Bearer Token — Authentication</summary>
+      <div class="details-body">
+        <p>A code that proves you've already logged in. You authenticate once, receive a token, and use it for all subsequent API requests.</p>
+        <div class="analogy"><span>Analogy:</span> A wristband at an event. Show your ID at the door once, get the band, and flash it everywhere else without showing ID again.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Webhook</summary>
+      <div class="details-body">
+        <p>A URL that receives data when something happens. Instead of polling ("anything new?"), the server pushes data to you the moment an event fires.</p>
+        <div class="analogy"><span>Analogy:</span> A doorbell. You don't check the door every five minutes — it rings when someone arrives.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Virtual Machine (VM)</summary>
+      <div class="details-body">
+        <p>A computer running inside another computer. It has its own OS and behaves like a separate machine. On Day 2, I used Tart to run a macOS VM and enrolled it in Jamf Pro.</p>
+        <div class="analogy"><span>Analogy:</span> A snow globe — a little world inside your world. You can shake it, reset it, or throw it away without affecting the room you're in.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>JSON — JavaScript Object Notation</summary>
+      <div class="details-body">
+        <p>A structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes. This is what API responses and webhook payloads look like.</p>
+        <div class="analogy"><span>Analogy:</span> Filling out a form — each field has a label and a value. <code style="color:var(--accent)">{"name": "Sean", "role": "student"}</code></div>
+      </div>
+    </details>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <h2>Quick Check <span class="tag">Interactive</span></h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1.4rem;">Test what you remember. Click an answer to see if you got it right.</p>
+
+    <div class="quiz-container">
+
+      <div class="quiz-q">
+        <p>1. What HTTP method do you use to <strong>create</strong> a new resource (like a category in Jamf Pro)?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">GET</button>
+          <button class="quiz-opt" data-correct="true"  onclick="answer(this)">POST</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">PUT</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">DELETE</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>2. What is the key advantage of <strong>DDM / Blueprints</strong> over traditional MDM?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">It works on Windows devices too</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">It requires no internet connection</button>
+          <button class="quiz-opt" data-correct="true"  onclick="answer(this)">Less back-and-forth — the device manages its own state directly</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">It replaces the need for a bearer token</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>3. A webhook is an example of which model?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Pull (polling)</button>
+          <button class="quiz-opt" data-correct="true"  onclick="answer(this)">Push (server notifies you)</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">GET request</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Bearer token exchange</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>4. Which K-12 IT Coordinator pain point did my group identify?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Too many devices on one campus</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Lack of Apple device support</button>
+          <button class="quiz-opt" data-correct="true"  onclick="answer(this)">One person managing three campuses alone, needing to travel to each site</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">No way to install apps remotely</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>5. What is a <strong>Bearer Token</strong> used for?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Formatting JSON data</button>
+          <button class="quiz-opt" data-correct="true"  onclick="answer(this)">Proving you're authenticated without logging in again for every request</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Starting a virtual machine</button>
+          <button class="quiz-opt" data-correct="false" onclick="answer(this)">Sending a DELETE request</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section id="day3">
+    <h2>Day 3 — Building with Claude Code <span class="tag">Process</span></h2>
+
+    <div class="card">
+      <h3>The Compound Engineering Loop</h3>
+      <p style="margin-bottom:1rem; color:var(--muted); font-size:0.9rem;">Day 3 introduced a structured way to work with AI agents. The core idea: planning is the hard part. Execution is just confirmation.</p>
+      <div class="loop-steps">
+        <div class="loop-step">
+          <div class="step-num">Step 1</div>
+          <h4>Plan</h4>
+          <p>Define the goal clearly. Gather context. Answer the agent's questions before it starts building.</p>
+        </div>
+        <div class="loop-step">
+          <div class="step-num">Step 2</div>
+          <h4>Work</h4>
+          <p>Execute with AI assistance. Stay within the plan. Don't let scope creep in.</p>
+        </div>
+        <div class="loop-step">
+          <div class="step-num">Step 3</div>
+          <h4>Review</h4>
+          <p>Evaluate the output yourself first. Compare to what you planned. Then ask the agent what it missed.</p>
+        </div>
+        <div class="loop-step">
+          <div class="step-num">Step 4</div>
+          <h4>Compound</h4>
+          <p>Distill decisions, tradeoffs, and discoveries into a reference. The next session inherits everything.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>One-Shot vs Planned Build</h3>
+      <div class="grid-2">
+        <div>
+          <p style="font-weight:600; color:var(--yellow); margin-bottom:0.4rem;">One-Shot</p>
+          <p>Dump everything into one prompt and hope for the best. Fast to start, messy to finish. Good for comparison — kept in <code style="color:var(--accent)">site/one-shot/</code>.</p>
+        </div>
+        <div>
+          <p style="font-weight:600; color:var(--green); margin-bottom:0.4rem;">Planned Build</p>
+          <p>Read the project first. Plan before building. Ask questions. This page is the result of the planned build. Lives in <code style="color:var(--accent)">site/planned/</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Key Principles from Day 3</h3>
+      <ul style="padding-left:1.2rem; margin-top:0.3rem;">
+        <li><strong style="color:var(--text)">Context is everything</strong> — the agent only knows what you tell it</li>
+        <li><strong style="color:var(--text)">Planning &gt; building</strong> — think before you build</li>
+        <li><strong style="color:var(--text)">Share your mental model</strong> — the agent doesn't have it automatically</li>
+        <li><strong style="color:var(--text)">Review against your plan</strong> — your eyes and judgment come first</li>
+        <li><strong style="color:var(--text)">Know when to quit</strong> — starting fresh with better context beats pushing through a bad path</li>
+        <li><strong style="color:var(--text)">Compound your sessions</strong> — distill everything so the next session inherits it</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Built by <strong>Sean</strong> &mdash; Jamf Pro Workshop &mdash; Day 3 Planned Build
+</footer>
+
+<script>
+  function answer(btn) {
+    const questionEl = btn.closest('.quiz-q');
+    const allOpts = questionEl.querySelectorAll('.quiz-opt');
+    const feedback = questionEl.querySelector('.quiz-feedback');
+
+    // Disable all buttons in this question
+    allOpts.forEach(b => {
+      b.disabled = true;
+      b.onclick = null;
+    });
+
+    if (btn.dataset.correct === 'true') {
+      btn.classList.add('correct');
+      feedback.textContent = 'Correct!';
+      feedback.style.color = 'var(--green)';
+    } else {
+      btn.classList.add('wrong');
+      // Highlight the correct one
+      allOpts.forEach(b => {
+        if (b.dataset.correct === 'true') b.classList.add('correct');
+      });
+      feedback.textContent = 'Not quite — see the highlighted answer.';
+      feedback.style.color = 'var(--red)';
+    }
+  }
+</script>
+
+</body>
+</html>

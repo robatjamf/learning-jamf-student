@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jamf Workshop — Sean</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a; --surface: #111111; --surface2: #1a1a1a;
+      --gold: #C9A84C; --gold-light: #E8C96D;
+      --white: #FFFFFF; --muted: #7a7a7a; --border: #282828;
+      --blue: #4A9EFF; --green: #66BB6A; --amber: #FFA726; --red: #EF5350;
+    }
+    body { background: var(--bg); color: var(--white); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+    /* CONFETTI */
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; }
+
+    /* SEARCH MODAL */
+    .search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: flex-start; justify-content: center; padding-top: 120px; }
+    .search-overlay.open { display: flex; }
+    .search-box { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 600px; border-radius: 4px; overflow: hidden; }
+    .search-input-wrap { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 12px; }
+    .search-icon { color: var(--muted); font-size: 14px; flex-shrink: 0; }
+    #search-input { flex: 1; background: none; border: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 15px; outline: none; }
+    #search-input::placeholder { color: #444; }
+    .search-esc { font-size: 9px; font-weight: 800; letter-spacing: 0.15em; color: #444; border: 1px solid #333; padding: 3px 6px; }
+    #search-results { max-height: 360px; overflow-y: auto; }
+    .search-result { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #1a1a1a; }
+    .search-result:hover { background: var(--surface2); }
+    .search-result:last-child { border-bottom: none; }
+    .sr-type { font-size: 8px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); width: 64px; flex-shrink: 0; }
+    .sr-name { font-size: 13px; color: var(--white); }
+    .sr-empty { padding: 24px 20px; text-align: center; color: #444; font-size: 13px; }
+
+    /* PROGRESS BAR */
+    .progress-bar-wrap { position: sticky; top: 57px; z-index: 99; height: 2px; background: transparent; }
+    .progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.08s linear; }
+
+    /* HERO */
+    .hero { padding: 80px 64px 72px; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.07) 0%, transparent 60%); }
+    .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
+    .hero-title { font-size: clamp(56px, 10vw, 128px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.88; margin-bottom: 36px; }
+    .hero-rule { width: 64px; height: 3px; background: var(--gold); margin-bottom: 24px; }
+    .hero-sub { font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    /* TAB NAV */
+    .tab-nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 64px; overflow-x: auto; }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn { padding: 18px 22px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: color 0.2s, border-color 0.2s; margin-bottom: -1px; white-space: nowrap; flex-shrink: 0; }
+    .tab-btn:hover { color: var(--white); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .search-trigger { margin-left: auto; flex-shrink: 0; background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+    .search-trigger:hover { color: var(--white); border-color: var(--muted); }
+    .search-kbd { font-size: 9px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; }
+
+    /* PANELS */
+    .panel { display: none; animation: panelFade 0.3s ease forwards; padding: 72px 64px; max-width: 1280px; margin: 0 auto; }
+    .panel.active { display: block; }
+    @keyframes panelFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* SECTION */
+    .section { margin-bottom: 72px; }
+    .section:last-child { margin-bottom: 0; }
+    .section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .section-heading { font-size: clamp(28px, 4vw, 52px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; margin-bottom: 14px; }
+    .section-divider { width: 40px; height: 2px; background: var(--gold); margin-bottom: 40px; }
+    .section-body { font-size: 15px; color: #b0b0b0; max-width: 680px; line-height: 1.75; margin-bottom: 40px; }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* COMPARE CARDS */
+    .compare-card { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; }
+    .compare-card.gold-tint { border-color: rgba(201,168,76,0.3); background: #0f0d07; }
+    .compare-card-label { font-size: 9px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .compare-card-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; }
+    .compare-card.gold-tint .compare-card-title { color: var(--gold-light); }
+    .compare-card-body { font-size: 13px; color: #999; line-height: 1.75; }
+    .compare-card-body strong { color: var(--white); font-weight: 600; }
+
+    /* PERSONA CARDS */
+    .persona-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .persona-card { background: var(--surface); border: 1px solid var(--border); padding: 24px 20px; position: relative; overflow: hidden; }
+    .persona-card.featured { border-color: var(--gold); background: #0f0d08; }
+    .persona-card::before { content: attr(data-num); position: absolute; top: -10px; right: 8px; font-size: 84px; font-weight: 900; color: rgba(255,255,255,0.03); line-height: 1; pointer-events: none; letter-spacing: -0.04em; }
+    .persona-card.featured::before { color: rgba(201,168,76,0.07); }
+    .persona-badge { display: inline-block; background: var(--gold); color: #000; font-size: 7px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 7px; margin-bottom: 10px; }
+    .persona-role { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .persona-name { font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.2; margin-bottom: 20px; }
+    .persona-card.featured .persona-name { color: var(--gold-light); }
+    .persona-stats { border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .persona-card.featured .persona-stats { border-top-color: rgba(201,168,76,0.25); }
+    .pstat { display: flex; flex-direction: column; gap: 2px; }
+    .pstat-label { font-size: 8px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .persona-card.featured .pstat-label { color: rgba(201,168,76,0.55); }
+    .pstat-value { font-size: 12px; font-weight: 600; color: var(--white); line-height: 1.4; }
+
+    /* HTTP METHOD CARDS */
+    .method-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 36px; }
+    .method-card { padding: 24px 20px; }
+    .method-card.get    { background: rgba(74,158,255,0.08);  border: 1px solid rgba(74,158,255,0.25); }
+    .method-card.post   { background: rgba(76,175,80,0.08);   border: 1px solid rgba(76,175,80,0.25); }
+    .method-card.put    { background: rgba(255,152,0,0.08);   border: 1px solid rgba(255,152,0,0.25); }
+    .method-card.delete { background: rgba(244,67,54,0.08);   border: 1px solid rgba(244,67,54,0.25); }
+    .method-verb { font-size: 26px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .method-card.get    .method-verb { color: var(--blue); }
+    .method-card.post   .method-verb { color: var(--green); }
+    .method-card.put    .method-verb { color: var(--amber); }
+    .method-card.delete .method-verb { color: var(--red); }
+    .method-action { font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .method-desc { font-size: 12px; color: #777; line-height: 1.55; }
+
+    /* CODE BLOCK */
+    .code-wrap { margin-bottom: 32px; position: relative; }
+    .code-label { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .code-block { background: #080808; border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 20px 24px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.8; overflow-x: auto; white-space: pre; }
+    .copy-btn { position: absolute; top: 28px; right: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 5px 10px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+    .copy-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+    .c-method { color: var(--green); font-weight: 700; } .c-url { color: #c0c0c0; } .c-key { color: var(--gold-light); }
+    .c-str { color: var(--green); } .c-num { color: var(--blue); } .c-bool { color: var(--amber); }
+    .c-status { color: var(--gold); font-weight: 700; } .c-comment { color: #444; }
+    .c-cmd { color: var(--green); font-weight: 600; } .c-arg { color: #a0c8ff; }
+
+    /* PUSH PULL */
+    .push-pull-card { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; }
+    .push-pull-title { font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .push-pull-body { font-size: 13px; color: #999; line-height: 1.75; margin-bottom: 16px; }
+    .push-pull-body strong { color: var(--white); font-weight: 600; }
+    .push-pull-analogy { font-size: 12px; color: #555; font-style: italic; line-height: 1.65; border-left: 2px solid var(--border); padding-left: 12px; }
+
+    /* GLOSSARY */
+    .glossary-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; gap: 20px; }
+    .mode-toggle { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 16px; cursor: pointer; transition: all 0.2s; flex-shrink: 0; margin-top: 4px; }
+    .mode-toggle:hover, .mode-toggle.active { color: var(--gold); border-color: var(--gold); }
+    .accordion { display: flex; flex-direction: column; gap: 2px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
+    .accordion-trigger { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; background: none; border: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; transition: background 0.15s; gap: 12px; }
+    .accordion-trigger:hover { background: var(--surface2); }
+    .accordion-item.open .accordion-trigger { color: var(--gold); }
+    .accordion-chevron { flex-shrink: 0; color: var(--muted); transition: transform 0.3s, color 0.2s; }
+    .accordion-item.open .accordion-chevron { transform: rotate(180deg); color: var(--gold); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.32s ease; }
+    .accordion-content { margin: 0 24px 18px 28px; padding: 0 16px; border-left: 3px solid var(--gold); }
+    .accordion-def { font-size: 14px; color: #b8b8b8; line-height: 1.7; margin-bottom: 8px; }
+    .accordion-analogy { font-size: 12px; color: #5a5a5a; font-style: italic; line-height: 1.65; }
+
+    /* FLASHCARD MODE */
+    .flashcard-mode { display: none; }
+    .flashcard-mode.active { display: block; }
+    .fc-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .fc-counter { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+    .fc-shuffle { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 7px 14px; cursor: pointer; transition: all 0.2s; }
+    .fc-shuffle:hover { color: var(--gold); border-color: var(--gold); }
+    .fc-wrapper { perspective: 1000px; margin-bottom: 24px; }
+    .fc-card { width: 100%; max-width: 680px; height: 300px; margin: 0 auto; position: relative; transform-style: preserve-3d; transition: transform 0.55s ease; cursor: pointer; }
+    .fc-card.flipped { transform: rotateY(180deg); }
+    .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; }
+    .fc-front { background: var(--surface); border: 1px solid var(--border); }
+    .fc-back  { background: #0f0d08; border: 1px solid rgba(201,168,76,0.3); transform: rotateY(180deg); }
+    .fc-hint  { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .fc-term  { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
+    .fc-def   { font-size: 14px; color: #b0b0b0; line-height: 1.7; margin-bottom: 12px; }
+    .fc-analogy { font-size: 12px; color: #555; font-style: italic; line-height: 1.6; }
+    .fc-controls { display: flex; justify-content: center; gap: 8px; }
+    .fc-btn { background: var(--surface); border: 1px solid var(--border); color: var(--white); font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 24px; cursor: pointer; transition: all 0.2s; }
+    .fc-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .fc-btn.flip { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+
+    /* QUIZ */
+    .quiz-topic-screen { text-align: center; padding: 40px 0; }
+    .quiz-topic-label { font-size: 10px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .quiz-topic-heading { font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; }
+    .quiz-topic-sub { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+    .topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 800px; margin: 0 auto; }
+    .topic-card { background: var(--surface); border: 1px solid var(--border); padding: 24px 20px; cursor: pointer; text-align: left; transition: border-color 0.2s, background 0.2s; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; }
+    .topic-card:hover { border-color: var(--gold); background: #0f0d08; }
+    .topic-card-icon { font-size: 24px; margin-bottom: 12px; }
+    .topic-card-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; color: var(--white); }
+    .topic-card-count { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+    .mastery-bar-wrap { height: 3px; background: var(--border); width: 100%; margin-bottom: 6px; }
+    .mastery-bar-fill { height: 100%; background: var(--gold); transition: width 0.6s ease; }
+    .mastery-pct { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .mastery-pct.not-attempted { color: #333; }
+
+    .quiz-active-screen { display: none; }
+    .quiz-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; margin-bottom: 40px; flex-wrap: wrap; }
+    .scoreboard { background: var(--surface); border: 1px solid var(--border); padding: 20px 28px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    .score-display { display: flex; align-items: baseline; gap: 4px; }
+    .score-num { font-size: 52px; font-weight: 900; color: var(--gold); line-height: 1; font-variant-numeric: tabular-nums; }
+    .score-sep { font-size: 28px; font-weight: 400; color: var(--border); }
+    .score-total-n { font-size: 36px; font-weight: 900; color: #333; }
+    .score-meta { display: flex; flex-direction: column; gap: 4px; }
+    .score-title { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .streak-badge { display: none; font-size: 11px; font-weight: 800; color: var(--amber); letter-spacing: 0.05em; }
+    .streak-badge.visible { display: block; }
+    .quiz-back-btn { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 18px; cursor: pointer; transition: all 0.2s; }
+    .quiz-back-btn:hover { color: var(--white); border-color: var(--muted); }
+    .quiz-topic-badge { display: inline-block; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; padding: 4px 10px; margin-bottom: 8px; }
+    .quiz-questions { display: flex; flex-direction: column; gap: 16px; }
+    .quiz-q { background: var(--surface); border: 1px solid var(--border); padding: 28px 32px; }
+    .quiz-q-num { font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .quiz-q-text { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt { padding: 14px 18px; background: var(--surface2); border: 1px solid var(--border); color: var(--white); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; text-align: left; cursor: pointer; transition: border-color 0.15s, color 0.15s; width: 100%; line-height: 1.4; }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-light); }
+    .quiz-opt:disabled { cursor: default; }
+    .quiz-opt.correct { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); animation: goldFlash 0.5s ease; }
+    .quiz-opt.wrong   { background: rgba(180,0,0,0.08); border-color: rgba(180,0,0,0.3); color: #6b2020; }
+    @keyframes goldFlash { 0% { background: var(--gold); color: #000; } 100% { background: rgba(201,168,76,0.12); color: var(--gold); } }
+
+    /* QUIZ END */
+    .quiz-end { display: none; text-align: center; padding: 48px 32px; border: 1px solid var(--border); background: var(--surface); margin-top: 24px; }
+    .quiz-end.visible { display: block; }
+    .end-score { font-size: 80px; font-weight: 900; color: var(--gold); letter-spacing: -0.03em; line-height: 1; margin-bottom: 8px; }
+    .end-msg { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 32px; }
+    .results-breakdown { text-align: left; max-width: 480px; margin: 0 auto 32px; }
+    .breakdown-heading { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .breakdown-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .breakdown-label { font-size: 11px; font-weight: 600; color: #888; width: 110px; flex-shrink: 0; }
+    .breakdown-bar-wrap { flex: 1; height: 4px; background: var(--border); }
+    .breakdown-bar-fill { height: 100%; background: var(--gold); transition: width 0.6s ease; }
+    .breakdown-score { font-size: 11px; font-weight: 800; color: var(--white); width: 36px; text-align: right; flex-shrink: 0; }
+    .end-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn-gold { padding: 13px 28px; background: var(--gold); color: #000; border: none; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .btn-gold:hover { background: var(--gold-light); }
+    .btn-outline { padding: 13px 28px; background: var(--surface2); border: 1px solid var(--border); color: var(--white); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .btn-outline:hover { border-color: var(--muted); }
+
+    /* CHEAT SHEET */
+    .cheat-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+    .cheat-table th { background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; text-align: left; font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .cheat-table td { border: 1px solid var(--border); padding: 12px 16px; font-size: 13px; color: #b0b0b0; line-height: 1.6; vertical-align: top; }
+    .cheat-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .cheat-table td strong { color: var(--white); font-weight: 600; }
+    .cheat-table td code { font-family: 'Courier New', monospace; font-size: 11px; color: var(--gold-light); background: rgba(201,168,76,0.08); padding: 1px 5px; }
+    .principle-list { display: flex; flex-direction: column; gap: 2px; }
+    .principle-item { display: flex; gap: 20px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
+    .principle-num { font-size: 11px; font-weight: 800; color: var(--gold); flex-shrink: 0; width: 20px; }
+    .principle-text { font-size: 14px; color: #b0b0b0; line-height: 1.6; }
+    .principle-text strong { color: var(--white); font-weight: 700; }
+    .loop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); margin-bottom: 48px; }
+    .loop-step { background: var(--bg); padding: 24px; }
+    .loop-step-num { font-size: 10px; font-weight: 800; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 8px; }
+    .loop-step-name { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .loop-step-q { font-size: 11px; color: var(--muted); line-height: 1.6; font-style: italic; margin-bottom: 8px; }
+    .loop-step-desc { font-size: 12px; color: #555; line-height: 1.6; }
+    .warning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .warning-item { display: flex; gap: 16px; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
+    .warning-icon { color: var(--red); font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .warning-label { font-size: 12px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .warning-desc { font-size: 11px; color: #666; line-height: 1.5; }
+
+    /* DAY 03 */
+    .day3-highlight { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2); padding: 24px 28px; margin-bottom: 40px; }
+    .day3-highlight p { font-size: 15px; color: #c0c0c0; line-height: 1.75; }
+    .day3-highlight p + p { margin-top: 12px; }
+    .phase-detail { display: flex; flex-direction: column; gap: 2px; margin-bottom: 48px; }
+    .phase-row { display: flex; background: var(--surface); border: 1px solid var(--border); }
+    .phase-label { width: 120px; flex-shrink: 0; padding: 16px 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); border-right: 1px solid var(--border); display: flex; align-items: center; }
+    .phase-content { padding: 16px 20px; display: flex; flex-direction: column; gap: 4px; }
+    .phase-what { font-size: 13px; color: var(--white); font-weight: 600; line-height: 1.5; }
+    .phase-q { font-size: 11px; color: #666; font-style: italic; line-height: 1.5; }
+
+    /* NOTES */
+    .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .note-card { background: var(--surface); border: 1px solid var(--border); padding: 28px; }
+    .note-card.featured { border-color: rgba(201,168,76,0.4); background: #0f0d08; }
+    .note-tag { font-size: 8px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(201,168,76,0.3); display: inline-block; padding: 3px 8px; margin-bottom: 12px; }
+    .note-title { font-size: 20px; font-weight: 900; margin-bottom: 16px; line-height: 1.2; }
+    .note-body { font-size: 14px; color: #a0a0a0; line-height: 1.75; margin-bottom: 16px; }
+    .note-body strong { color: var(--white); font-weight: 600; }
+    .note-why { border-left: 3px solid var(--gold); padding-left: 14px; font-size: 13px; color: #777; line-height: 1.65; }
+    .note-why strong { color: var(--gold); font-weight: 700; display: block; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+
+    /* ANALOGY CARD */
+    .analogy-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 20px 24px; max-width: 600px; font-size: 13px; color: #999; line-height: 1.75; }
+    .analogy-card strong { color: var(--white); font-weight: 600; }
+
+    /* KEYBOARD HINT */
+    .kb-hint { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); padding: 10px 14px; font-size: 10px; color: #444; letter-spacing: 0.05em; animation: hintFade 3s ease forwards; pointer-events: none; z-index: 200; }
+    @keyframes hintFade { 0%,60% { opacity: 1; } 100% { opacity: 0; } }
+
+    /* FOOTER */
+    .page-footer { border-top: 1px solid var(--border); padding: 20px 64px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-left { font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #2a2a2a; }
+    .footer-right { font-size: 10px; color: #2a2a2a; letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- SEARCH MODAL -->
+<div class="search-overlay" id="search-overlay" onclick="handleOverlayClick(event)">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <span class="search-icon">&#9906;</span>
+      <input type="text" id="search-input" placeholder="Search terms, notes, topics..." autocomplete="off">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div id="search-results"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="hero-eyebrow">Jamf Pro Workshop &mdash; March 2026</p>
+  <h1 class="hero-title">3 DAYS.<br>ONE PAGE.</h1>
+  <div class="hero-rule"></div>
+  <p class="hero-sub">Sean &mdash; Swift Developer &mdash; Zimbabwe</p>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="panel-day1">Day 01</button>
+  <button class="tab-btn" data-tab="panel-day2">Day 02</button>
+  <button class="tab-btn" data-tab="panel-day3">Day 03</button>
+  <button class="tab-btn" data-tab="panel-glossary">Glossary</button>
+  <button class="tab-btn" data-tab="panel-quiz">Quiz</button>
+  <button class="tab-btn" data-tab="panel-cheatsheet">Cheat Sheet</button>
+  <button class="tab-btn" data-tab="panel-notes">Notes</button>
+  <button class="search-trigger" onclick="openSearch()">
+    <span>Search</span>
+    <span class="search-kbd">&#8984;K</span>
+  </button>
+</nav>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+
+<!-- PANELS -->
+<div class="panels-wrap">
+
+  <!-- DAY 01 -->
+  <section id="panel-day1" class="panel active">
+    <div class="section">
+      <p class="section-label">What Is Jamf</p>
+      <h2 class="section-heading">Overview</h2>
+      <div class="section-divider"></div>
+      <p class="section-body">"Jamf is a security platform exclusively designed for Apple devices. What surprised me most? Zero touch — how you can go from unboxing a MacBook to a fully configured device. The whole idea that an IT admin doesn't have to physically touch the machine to set it up." &mdash; Sean</p>
+    </div>
+    <div class="section">
+      <p class="section-label">Day 1 Highlight</p>
+      <h2 class="section-heading">MDM vs DDM</h2>
+      <div class="section-divider"></div>
+      <div class="two-col">
+        <div class="compare-card">
+          <p class="compare-card-label">Traditional</p>
+          <h3 class="compare-card-title">MDM</h3>
+          <p class="compare-card-body"><strong>Mobile Device Management.</strong> The server sends commands and the device replies. Back-and-forth through Apple Push Notification servers (APNs). More steps, more latency.</p>
+        </div>
+        <div class="compare-card gold-tint">
+          <p class="compare-card-label">Modern</p>
+          <h3 class="compare-card-title">DDM — Blueprints</h3>
+          <p class="compare-card-body"><strong>Declarative Device Management.</strong> Jamf Pro describes the desired state and the device figures out how to get there on its own.<br><br>"JP and my machine communicate directly and it's faster because there's less back and forth." &mdash; Sean</p>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">Persona Mapping</p>
+      <h2 class="section-heading">The Four Users</h2>
+      <div class="section-divider"></div>
+      <div class="persona-grid">
+        <div class="persona-card" data-num="01">
+          <p class="persona-role">IT Admin</p>
+          <h3 class="persona-name">Enterprise<br>IT Admin</h3>
+          <div class="persona-stats">
+            <div class="pstat"><span class="pstat-label">Scale</span><span class="pstat-value">10,000+ devices</span></div>
+            <div class="pstat"><span class="pstat-label">Pain</span><span class="pstat-value">Policy gaps across a massive fleet</span></div>
+            <div class="pstat"><span class="pstat-label">Solution</span><span class="pstat-value">Jamf Pro automation + smart groups</span></div>
+          </div>
+        </div>
+        <div class="persona-card featured" data-num="02">
+          <span class="persona-badge">Your Group</span>
+          <p class="persona-role">Education IT</p>
+          <h3 class="persona-name">K-12 IT<br>Coordinator</h3>
+          <div class="persona-stats">
+            <div class="pstat"><span class="pstat-label">Scale</span><span class="pstat-value">3 campuses, shared iPads</span></div>
+            <div class="pstat"><span class="pstat-label">Pain</span><span class="pstat-value">One IT person. Three campuses. No visibility into which device is down.</span></div>
+            <div class="pstat"><span class="pstat-label">Solution</span><span class="pstat-value">Remote management + zero-touch enrollment</span></div>
+          </div>
+        </div>
+        <div class="persona-card" data-num="03">
+          <p class="persona-role">Security</p>
+          <h3 class="persona-name">Security<br>Analyst</h3>
+          <div class="persona-stats">
+            <div class="pstat"><span class="pstat-label">Scale</span><span class="pstat-value">1,000+ alerts/day</span></div>
+            <div class="pstat"><span class="pstat-label">Pain</span><span class="pstat-value">Alert fatigue — too much noise</span></div>
+            <div class="pstat"><span class="pstat-label">Solution</span><span class="pstat-value">Jamf Protect + compliance reporting</span></div>
+          </div>
+        </div>
+        <div class="persona-card" data-num="04">
+          <p class="persona-role">Support</p>
+          <h3 class="persona-name">Help Desk<br>Technician</h3>
+          <div class="persona-stats">
+            <div class="pstat"><span class="pstat-label">Scale</span><span class="pstat-value">Remote fleet</span></div>
+            <div class="pstat"><span class="pstat-label">Pain</span><span class="pstat-value">Can't physically access user machines</span></div>
+            <div class="pstat"><span class="pstat-label">Solution</span><span class="pstat-value">Remote wipe + MDM commands</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 02 -->
+  <section id="panel-day2" class="panel">
+    <div class="section">
+      <p class="section-label">Proudest Learning</p>
+      <h2 class="section-heading">APIs + Postman</h2>
+      <div class="section-divider"></div>
+      <p class="section-body">"What clicked for me was the HTTP methods — how each of them work, and how each of them communicates with the API." &mdash; Sean</p>
+      <div class="method-grid">
+        <div class="method-card get"><p class="method-verb">GET</p><p class="method-action">Read</p><p class="method-desc">Fetch data from the server. Ask for what's already there.</p></div>
+        <div class="method-card post"><p class="method-verb">POST</p><p class="method-action">Create</p><p class="method-desc">Send new data. Sean used this to create a category in Jamf Pro.</p></div>
+        <div class="method-card put"><p class="method-verb">PUT</p><p class="method-action">Update</p><p class="method-desc">Replace existing data with a new version.</p></div>
+        <div class="method-card delete"><p class="method-verb">DELETE</p><p class="method-action">Remove</p><p class="method-desc">Delete a record from the server permanently.</p></div>
+      </div>
+      <div class="code-wrap">
+        <p class="code-label">Sean's POST Call — Postman</p>
+        <div class="code-block"><span class="c-method">POST</span>  <span class="c-url">/api/v1/categories</span>
+<span class="c-comment">Authorization: Bearer eyJhbGciOiJSUzI1NiJ9...</span>
+
+{
+  <span class="c-key">"name"</span>: <span class="c-str">"Sean-Test-Category"</span>,
+  <span class="c-key">"priority"</span>: <span class="c-str">"1"</span>
+}
+
+<span class="c-status">→  201 Created</span>
+
+{
+  <span class="c-key">"id"</span>: <span class="c-num">42</span>,
+  <span class="c-key">"name"</span>: <span class="c-str">"Sean-Test-Category"</span>
+}</div>
+      </div>
+      <div class="code-wrap">
+        <p class="code-label">What JSON Looks Like</p>
+        <div class="code-block"><span class="c-comment">// JSON — structured data both humans and machines can read</span>
+{
+  <span class="c-key">"device"</span>:        <span class="c-str">"MacBook Pro"</span>,
+  <span class="c-key">"serialNumber"</span>:  <span class="c-str">"C02XG2JQJGH5"</span>,
+  <span class="c-key">"enrolled"</span>:      <span class="c-bool">true</span>,
+  <span class="c-key">"managedBy"</span>:     <span class="c-str">"Jamf Pro"</span>,
+  <span class="c-key">"osVersion"</span>:     <span class="c-str">"14.3.1"</span>
+}</div>
+      </div>
+      <div class="analogy-card"><strong>The analogy that clicked:</strong> "The weather app communicates to the weather server and gives me back the weather of where I am. That's an API." &mdash; Sean</div>
+    </div>
+    <div class="section">
+      <p class="section-label">Day 2 Infrastructure</p>
+      <h2 class="section-heading">Virtual Machines</h2>
+      <div class="section-divider"></div>
+      <p class="section-body">"It's like a software which allows you to put another computer inside your physical one. Not physical at all — virtually." Sean enrolled his Tart VM into Jamf Pro during the workshop.</p>
+      <div class="code-wrap">
+        <p class="code-label">Tart CLI — Key Commands</p>
+        <div class="code-block"><span class="c-comment"># Clone a macOS image from the registry</span>
+<span class="c-cmd">tart clone</span> <span class="c-arg">ghcr.io/cirruslabs/macos-sonoma-base:latest</span> <span class="c-arg">sonoma-vm</span>
+
+<span class="c-comment"># Boot the VM</span>
+<span class="c-cmd">tart run</span> <span class="c-arg">sonoma-vm</span>
+
+<span class="c-comment"># Find the VM's IP address (for Jamf enrollment)</span>
+<span class="c-cmd">tart ip</span> <span class="c-arg">sonoma-vm</span>
+
+<span class="c-comment"># Shut it down</span>
+<span class="c-cmd">tart stop</span> <span class="c-arg">sonoma-vm</span></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">Webhooks</p>
+      <h2 class="section-heading">Push vs Pull</h2>
+      <div class="section-divider"></div>
+      <div class="two-col">
+        <div class="push-pull-card">
+          <p class="push-pull-title" style="color:var(--gold);">Push</p>
+          <p class="push-pull-body"><strong>Event-driven.</strong> The server tells you the moment something happens.<br><br>"Push sends data to me immediately when an event happens." &mdash; Sean</p>
+          <p class="push-pull-analogy">A doorbell. You don't check the door every five minutes — it rings when someone arrives.</p>
+        </div>
+        <div class="push-pull-card">
+          <p class="push-pull-title">Pull</p>
+          <p class="push-pull-body"><strong>Polling.</strong> Your system keeps asking the server "anything new?" on a schedule.<br><br>"Pull is when the system is asking if you've received the data yet." &mdash; Sean</p>
+          <p class="push-pull-analogy">"Are we there yet? Are we there yet?" — the classic polling loop.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 03 -->
+  <section id="panel-day3" class="panel">
+    <div class="section">
+      <p class="section-label">Day 3</p>
+      <h2 class="section-heading">Claude Code + AI Agents</h2>
+      <div class="section-divider"></div>
+      <div class="day3-highlight">
+        <p>Day 3 was about learning to work <em>with</em> AI — not just use it. Claude Code is an agent: it doesn't just talk, it reads files, writes code, runs commands, and builds things for you.</p>
+        <p>The key shift: the quality of what the agent builds is determined by the quality of the context you give it. A vague prompt gets a vague result. A detailed plan gets a precise result.</p>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">The Core Loop</p>
+      <h2 class="section-heading">Compound Engineering</h2>
+      <div class="section-divider"></div>
+      <div class="loop-grid">
+        <div class="loop-step"><p class="loop-step-num">01</p><p class="loop-step-name">Plan</p><p class="loop-step-q">"Do I have enough context to build this?"</p><p class="loop-step-desc">Define requirements, gather context, create specs. Before you touch the keyboard.</p></div>
+        <div class="loop-step"><p class="loop-step-num">02</p><p class="loop-step-name">Work</p><p class="loop-step-q">"Am I staying within the plan?"</p><p class="loop-step-desc">Execute with AI assistance. Stay inside the agreed plan — don't let it drift.</p></div>
+        <div class="loop-step"><p class="loop-step-num">03</p><p class="loop-step-name">Review</p><p class="loop-step-q">"Does this match what I intended?"</p><p class="loop-step-desc">You evaluate first. Open it, use it, compare to your plan. Then ask the agent for gaps.</p></div>
+        <div class="loop-step"><p class="loop-step-num">04</p><p class="loop-step-name">Compound</p><p class="loop-step-q">"What should the next session inherit?"</p><p class="loop-step-desc">Distill decisions, tradeoffs, dead ends — so future sessions start with full context.</p></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">What Each Phase Means</p>
+      <h2 class="section-heading">Phase Breakdown</h2>
+      <div class="section-divider"></div>
+      <div class="phase-detail">
+        <div class="phase-row"><div class="phase-label">Plan</div><div class="phase-content"><p class="phase-what">Define what you're building. Gather context. Answer the agent's questions before it has to guess.</p><p class="phase-q">Try: "What questions do you have before we start?"</p></div></div>
+        <div class="phase-row"><div class="phase-label">Work</div><div class="phase-content"><p class="phase-what">Execute with Claude Code. Watch what it builds. Stop it if it drifts from the plan.</p><p class="phase-q">Try: "Explain back to me what we're trying to do" if something feels off.</p></div></div>
+        <div class="phase-row"><div class="phase-label">Review</div><div class="phase-content"><p class="phase-what">Open the output yourself first. Use it. Click buttons. Your judgment comes before the agent's.</p><p class="phase-q">Try: "Based on our plan, what did we miss?"</p></div></div>
+        <div class="phase-row"><div class="phase-label">Compound</div><div class="phase-content"><p class="phase-what">Run /compound at the end of the session. It distills everything — not just what you built, but why.</p><p class="phase-q">Like a pilot's logbook: route, weather decisions, turbulence, what you'd do differently.</p></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">The Shift</p>
+      <h2 class="section-heading">New Rules</h2>
+      <div class="section-divider"></div>
+      <div class="principle-list">
+        <div class="principle-item"><div class="principle-num">01</div><div class="principle-text"><strong>Context is everything.</strong> The agent only knows what you tell it. A vague brief gets a vague build.</div></div>
+        <div class="principle-item"><div class="principle-num">02</div><div class="principle-text"><strong>Planning &gt; building.</strong> Before AI: planning was easy, coding was hard. Now: planning is hard, execution is trivial.</div></div>
+        <div class="principle-item"><div class="principle-num">03</div><div class="principle-text"><strong>Share your mental model.</strong> The picture in your head of what "done" looks like — the agent doesn't have it automatically.</div></div>
+        <div class="principle-item"><div class="principle-num">04</div><div class="principle-text"><strong>Review against your plan.</strong> Your eyes and judgment come first. Then ask the agent what it missed.</div></div>
+        <div class="principle-item"><div class="principle-num">05</div><div class="principle-text"><strong>Recognize when to quit.</strong> Sunk cost is a trap. Starting fresh with better context is faster than pushing through a bad path.</div></div>
+        <div class="principle-item"><div class="principle-num">06</div><div class="principle-text"><strong>It's a conversation.</strong> Not a command line. Back and forth. Refine. Improve. Iterate.</div></div>
+        <div class="principle-item"><div class="principle-num">07</div><div class="principle-text"><strong>Compound your sessions.</strong> Distill the full session so the next one inherits everything.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="panel-glossary" class="panel">
+    <div class="section">
+      <div class="glossary-header">
+        <div>
+          <p class="section-label">Workshop Terms</p>
+          <h2 class="section-heading">Glossary</h2>
+          <div class="section-divider"></div>
+        </div>
+        <button class="mode-toggle" id="flashcard-toggle" onclick="toggleFlashcardMode()">Flashcard Mode</button>
+      </div>
+      <div id="accordion-view">
+        <p class="section-body" style="margin-bottom:24px;">Click any term to expand the definition and analogy.</p>
+        <div class="accordion" id="glossary-accordion"></div>
+      </div>
+      <div class="flashcard-mode" id="flashcard-view">
+        <div class="fc-meta">
+          <span class="fc-counter" id="fc-counter">1 / 18</span>
+          <button class="fc-shuffle" onclick="shuffleCards()">Shuffle</button>
+        </div>
+        <div class="fc-wrapper">
+          <div class="fc-card" id="fc-card" onclick="flipCard()">
+            <div class="fc-face fc-front"><p class="fc-hint">Click to flip</p><h3 class="fc-term" id="fc-term-text"></h3></div>
+            <div class="fc-face fc-back"><p class="fc-hint">Definition</p><p class="fc-def" id="fc-def-text"></p><p class="fc-analogy" id="fc-analogy-text"></p></div>
+          </div>
+        </div>
+        <div class="fc-controls">
+          <button class="fc-btn" onclick="prevCard()">&#8592; Prev</button>
+          <button class="fc-btn flip" onclick="flipCard()">Flip</button>
+          <button class="fc-btn" onclick="nextCard()">Next &#8594;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="panel-quiz" class="panel">
+    <div class="section">
+      <div class="quiz-topic-screen" id="quiz-topic-screen">
+        <p class="quiz-topic-label">Test Your Knowledge</p>
+        <h2 class="quiz-topic-heading">Choose a Topic</h2>
+        <p class="quiz-topic-sub">Pick what you want to be quizzed on, or go all in.</p>
+        <div class="topic-grid" id="topic-grid"></div>
+      </div>
+      <div class="quiz-active-screen" id="quiz-active-screen">
+        <div class="quiz-header">
+          <div>
+            <div id="quiz-topic-badge" class="quiz-topic-badge"></div>
+            <h2 class="section-heading" style="font-size:32px;">Quiz</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button class="quiz-back-btn" onclick="resetQuiz()">&#8592; Topics</button>
+            <div class="scoreboard">
+              <div class="score-display">
+                <span class="score-num" id="score-current">0</span>
+                <span class="score-sep">/</span>
+                <span class="score-total-n" id="score-total-n">5</span>
+              </div>
+              <div class="score-meta">
+                <span class="score-title">Score</span>
+                <span class="streak-badge" id="streak-badge"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-questions" id="quiz-questions"></div>
+        <div class="quiz-end" id="quiz-end">
+          <div class="end-score" id="end-score"></div>
+          <p class="end-msg" id="end-msg"></p>
+          <div class="results-breakdown" id="results-breakdown"></div>
+          <div class="end-btns">
+            <button class="btn-gold" onclick="retryQuiz()">Try Again</button>
+            <button class="btn-outline" onclick="resetQuiz()">Change Topic</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHEAT SHEET -->
+  <section id="panel-cheatsheet" class="panel">
+    <div class="section">
+      <p class="section-label">Quick Reference</p>
+      <h2 class="section-heading">Compound Engineering</h2>
+      <div class="section-divider"></div>
+      <p class="section-body">The one thing to remember: <strong style="color:var(--white);">the quality of your output is determined by the quality of your context.</strong></p>
+      <div class="loop-grid">
+        <div class="loop-step"><p class="loop-step-num">01</p><p class="loop-step-name">Plan</p><p class="loop-step-desc">Define requirements, gather context, create specs.</p></div>
+        <div class="loop-step"><p class="loop-step-num">02</p><p class="loop-step-name">Work</p><p class="loop-step-desc">Execute with AI assistance. Stay within the plan.</p></div>
+        <div class="loop-step"><p class="loop-step-num">03</p><p class="loop-step-name">Review</p><p class="loop-step-desc">Evaluate output against your plan. You go first.</p></div>
+        <div class="loop-step"><p class="loop-step-num">04</p><p class="loop-step-name">Compound</p><p class="loop-step-desc">Distill decisions so the next session inherits everything.</p></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">Before You Build</p>
+      <h2 class="section-heading">A Good Plan Covers</h2>
+      <div class="section-divider"></div>
+      <table class="cheat-table">
+        <thead><tr><th>Quality Check</th><th>What It Means</th><th>Try Asking...</th></tr></thead>
+        <tbody>
+          <tr><td><strong>What are we working with?</strong></td><td>The agent knows the project — not just the task</td><td><code>"Look at my project and tell me what you see"</code></td></tr>
+          <tr><td><strong>What are we trying to build?</strong></td><td>The goal is specific enough to act on</td><td><code>"Here's what I want. Propose a plan before you start."</code></td></tr>
+          <tr><td><strong>What questions came up?</strong></td><td>The agent surfaced unknowns and you answered them</td><td><code>"What questions do you have before we start?"</code></td></tr>
+          <tr><td><strong>What judgment calls need you?</strong></td><td>Decisions only a human can make have been made</td><td><code>"What could go wrong with this approach?"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <p class="section-label">Prompts</p>
+      <h2 class="section-heading">Prompts That Work</h2>
+      <div class="section-divider"></div>
+      <table class="cheat-table">
+        <thead><tr><th>When You Want To...</th><th>Try Saying...</th></tr></thead>
+        <tbody>
+          <tr><td>Build shared understanding</td><td><code>"Look at my project and tell me what you see"</code></td></tr>
+          <tr><td>Explore the problem</td><td><code>"Walk me through how this works"</code></td></tr>
+          <tr><td>Surface risks early</td><td><code>"What could go wrong with this approach?"</code></td></tr>
+          <tr><td>Get the agent's questions</td><td><code>"What questions do you have before we start?"</code></td></tr>
+          <tr><td>Check understanding</td><td><code>"Explain back to me what we're trying to do"</code></td></tr>
+          <tr><td>Find gaps against the plan</td><td><code>"Based on our plan, what did we miss?"</code></td></tr>
+          <tr><td>Start fresh</td><td><code>"Let's start over. Here's what I've learned..."</code></td></tr>
+          <tr><td>Compound the session</td><td><code>/compound</code> — the command handles the rest</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <p class="section-label">Warning Signs</p>
+      <h2 class="section-heading">When to Quit</h2>
+      <div class="section-divider"></div>
+      <div class="warning-grid">
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">Overcomplicated</div><div class="warning-desc">Solution keeps growing — more files, more steps, harder to follow.</div></div></div>
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">Context filling up</div><div class="warning-desc">Conversation is long. Agent repeats itself or forgets earlier details.</div></div></div>
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">Approach keeps changing</div><div class="warning-desc">"Actually, let's try..." — no confident direction.</div></div></div>
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">You're confused</div><div class="warning-desc">You can't explain what the agent is doing or why.</div></div></div>
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">Gut says "off"</div><div class="warning-desc">Something feels wrong, even if you can't articulate it.</div></div></div>
+        <div class="warning-item"><div class="warning-icon">&#9888;</div><div><div class="warning-label">Remember</div><div class="warning-desc">Starting fresh with better context is faster than pushing through a bad path.</div></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">Core Principles</p>
+      <h2 class="section-heading">Always True</h2>
+      <div class="section-divider"></div>
+      <div class="principle-list">
+        <div class="principle-item"><div class="principle-num">1</div><div class="principle-text"><strong>Context is everything</strong> — The agent only knows what you tell it.</div></div>
+        <div class="principle-item"><div class="principle-num">2</div><div class="principle-text"><strong>Planning &gt; building</strong> — Think before you build. The plan IS the work.</div></div>
+        <div class="principle-item"><div class="principle-num">3</div><div class="principle-text"><strong>Share your mental model</strong> — The agent doesn't have it automatically.</div></div>
+        <div class="principle-item"><div class="principle-num">4</div><div class="principle-text"><strong>Review against your plan</strong> — Your eyes and judgment come first.</div></div>
+        <div class="principle-item"><div class="principle-num">5</div><div class="principle-text"><strong>Recognize when to quit</strong> — Sunk cost is a trap.</div></div>
+        <div class="principle-item"><div class="principle-num">6</div><div class="principle-text"><strong>It's a conversation</strong> — Not a command line.</div></div>
+        <div class="principle-item"><div class="principle-num">7</div><div class="principle-text"><strong>Compound your sessions</strong> — Distill the full session so the next one inherits everything.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="panel-notes" class="panel">
+    <div class="section">
+      <p class="section-label">Reference Notes</p>
+      <h2 class="section-heading">Key Concepts</h2>
+      <div class="section-divider"></div>
+      <p class="section-body">Everything you learned, in plain English. Read these before a test or interview.</p>
+      <div class="notes-grid">
+        <div class="note-card featured" data-note="jamf-pro">
+          <span class="note-tag">Day 1 — Core</span>
+          <h3 class="note-title">What is Jamf Pro?</h3>
+          <p class="note-body">Jamf Pro is a <strong>device management platform exclusively built for Apple devices</strong> — Macs, iPhones, iPads. IT admins manage thousands of devices from a single dashboard without ever physically touching them.<br><br>You can install apps, push security policies, wipe a lost device, enforce passwords, and enroll new Macs — all remotely.</p>
+          <div class="note-why"><strong>Why we use it</strong>Companies with lots of Apple devices can't have IT manually configure each one. Jamf Pro makes it scalable — one admin can manage 10,000 devices as easily as 10.</div>
+        </div>
+        <div class="note-card" data-note="mdm-ddm">
+          <span class="note-tag">Day 1 — Core</span>
+          <h3 class="note-title">MDM vs DDM (Blueprints)</h3>
+          <p class="note-body"><strong>MDM</strong> is traditional: server sends a command, device receives it, confirms, and replies. Every action routes through Apple's push servers.<br><br><strong>DDM</strong> (Blueprints) is newer: the server describes the <em>desired state</em> and the device figures out how to get there itself. Less back-and-forth, faster results.</p>
+          <div class="note-why"><strong>Why it matters</strong>DDM is faster and more reliable. The device works independently toward the goal without waiting for instructions one at a time.</div>
+        </div>
+        <div class="note-card" data-note="zero-touch">
+          <span class="note-tag">Day 1 — Concept</span>
+          <h3 class="note-title">Zero-Touch Enrollment</h3>
+          <p class="note-body">A device goes from factory box to fully configured — apps installed, policies applied, settings locked — <strong>without IT ever physically touching it</strong>.<br><br>The device connects to the internet, checks in with Apple, gets redirected to Jamf Pro, and configures itself using pre-built profiles.</p>
+          <div class="note-why"><strong>Why it matters</strong>A school district getting 500 new iPads doesn't need to configure each one. They ship straight to classrooms, students turn them on, they're ready.</div>
+        </div>
+        <div class="note-card featured" data-note="api">
+          <span class="note-tag">Day 2 — Core</span>
+          <h3 class="note-title">What is an API?</h3>
+          <p class="note-body">An API (Application Programming Interface) is a <strong>way for software to talk to other software</strong>. You send a request, you get data back.<br><br>Every time you check the weather app, it sends a request to a weather server using an API, and gets the forecast back. You never see it — it's in the background.</p>
+          <div class="note-why"><strong>Why we use it</strong>Jamf Pro has an API that lets you automate anything — create categories, enroll devices, query inventory — without clicking through the UI.</div>
+        </div>
+        <div class="note-card" data-note="http-methods">
+          <span class="note-tag">Day 2 — Core</span>
+          <h3 class="note-title">HTTP Methods</h3>
+          <p class="note-body">HTTP methods are the <strong>actions you can take with an API</strong>:<br><br><strong>GET</strong> — Read data. "Show me all devices."<br><strong>POST</strong> — Create something new. "Add this category."<br><strong>PUT</strong> — Update something existing. "Change this device's name."<br><strong>DELETE</strong> — Remove something. "Delete this policy."</p>
+          <div class="note-why"><strong>Why it matters</strong>Every API in the world uses these same four methods. Learn them once, understand any REST API — Jamf, Spotify, Stripe, anything.</div>
+        </div>
+        <div class="note-card" data-note="postman">
+          <span class="note-tag">Day 2 — Tool</span>
+          <h3 class="note-title">What is Postman?</h3>
+          <p class="note-body">Postman is a <strong>tool for testing API calls</strong> — like a web browser, but for APIs instead of websites.<br><br>You type in the URL, pick a method (GET/POST/PUT/DELETE), add any data, and hit send. You see exactly what comes back from the server.</p>
+          <div class="note-why"><strong>Why we use it</strong>Sean used it to make a POST request and create a real category inside Jamf Pro — without writing a single line of code.</div>
+        </div>
+        <div class="note-card" data-note="json">
+          <span class="note-tag">Day 2 — Core</span>
+          <h3 class="note-title">What is JSON?</h3>
+          <p class="note-body">JSON is the <strong>standard format for sending data over the internet</strong>. Uses curly braces, keys, and values.<br><br><code style="font-family:monospace;font-size:12px;color:#E8C96D;">{"name": "Sean", "role": "developer"}</code><br><br>When you make an API request, the server usually sends back JSON. When you send data, you send it as JSON.</p>
+          <div class="note-why"><strong>Why it matters</strong>Almost every modern app uses JSON to move data around. Read and write JSON, and you can work with any API.</div>
+        </div>
+        <div class="note-card" data-note="vms">
+          <span class="note-tag">Day 2 — Concept</span>
+          <h3 class="note-title">Virtual Machines (VMs)</h3>
+          <p class="note-body">A virtual machine is a <strong>computer running inside another computer</strong>. It has its own OS and behaves exactly like a real, separate machine — but it's just software.<br><br>Sean ran a macOS VM using Tart on his MacBook, then enrolled it into Jamf Pro as if it were a real device.</p>
+          <div class="note-why"><strong>Why we use them</strong>VMs let you test things safely. Break it, wipe it, start over — without affecting your real machine. IT teams test policies on VMs before pushing to real devices.</div>
+        </div>
+        <div class="note-card" data-note="webhooks">
+          <span class="note-tag">Day 2 — Concept</span>
+          <h3 class="note-title">Webhooks: Push vs Pull</h3>
+          <p class="note-body"><strong>Pull (Polling)</strong> — Your system asks the server "anything new?" over and over on a schedule. Wasteful if nothing changes between checks.<br><br><strong>Push (Webhook)</strong> — You give the server a URL. When something happens, the server sends data to you immediately.</p>
+          <div class="note-why"><strong>Why it matters</strong>Webhooks are used everywhere: payment confirmations, Slack notifications, GitHub alerts. Jamf uses them to notify the moment a device checks in or triggers an alert.</div>
+        </div>
+        <div class="note-card featured" data-note="agent">
+          <span class="note-tag">Day 3 — Core</span>
+          <h3 class="note-title">What is an AI Agent?</h3>
+          <p class="note-body">An AI agent is not just a chatbot — it can <strong>actually do things</strong>. Read files, write code, run commands, build software.<br><br>Claude Code is an agent. When you describe what you want, it doesn't just answer — it opens your files, understands your project, and builds the thing.</p>
+          <div class="note-why"><strong>Why it matters</strong>Knowing how to give an agent the right context and direction — and how to review its work — is a skill that applies to every AI tool that exists today and will exist in 5 years.</div>
+        </div>
+        <div class="note-card" data-note="context">
+          <span class="note-tag">Day 3 — Concept</span>
+          <h3 class="note-title">Context &amp; Prompting</h3>
+          <p class="note-body"><strong>Context</strong> is everything the agent knows about what you're trying to build. More relevant detail = better understanding.<br><br><strong>Prompting</strong> is how you give it instructions. A weak prompt gets a generic result. A detailed prompt with constraints and examples gets something precise.</p>
+          <div class="note-why"><strong>The key insight</strong>"Make me food" vs "Make me a grilled cheese with tomato on sourdough." Same tool. Completely different output. Quality in = quality out.</div>
+        </div>
+        <div class="note-card" data-note="bearer">
+          <span class="note-tag">Day 2 — Concept</span>
+          <h3 class="note-title">Bearer Tokens</h3>
+          <p class="note-body">A Bearer Token is a <strong>short-lived credential that proves you're authenticated</strong>. You log in once to get the token, then attach it to every API request instead of sending your password every time.<br><br>In Postman: <code style="font-size:11px;color:#E8C96D;">Authorization: Bearer eyJhbGci...</code></p>
+          <div class="note-why"><strong>Why it matters</strong>Standard way to secure API access. Jamf Pro uses bearer tokens for its API. If a token is stolen, you revoke it without changing your password.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="page-footer">
+  <span class="footer-left">Jamf Pro Workshop &mdash; Sean &mdash; 2026</span>
+  <span class="footer-right">Built on Day 3 with Claude Code</span>
+</div>
+
+<script>
+// ── TABS + KEYBOARD SHORTCUTS ──
+const tabBtns = document.querySelectorAll('.tab-btn');
+tabBtns.forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.addEventListener('keydown', e => {
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); return; }
+  if (e.key === 'Escape') { closeSearch(); return; }
+  if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+    const n = parseInt(e.key);
+    if (n >= 1 && n <= 7) tabBtns[n - 1]?.click();
+  }
+});
+
+// Show keyboard hint on load
+setTimeout(() => {
+  const hint = document.createElement('div');
+  hint.className = 'kb-hint';
+  hint.textContent = 'Press 1–7 to switch tabs  ·  ⌘K to search';
+  document.body.appendChild(hint);
+  setTimeout(() => hint.remove(), 3200);
+}, 800);
+
+// ── PROGRESS BAR ──
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+});
+
+// ── COPY BUTTONS ──
+document.querySelectorAll('.code-wrap').forEach(wrap => {
+  const block = wrap.querySelector('.code-block');
+  if (!block) return;
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(block.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  });
+  wrap.appendChild(btn);
+});
+
+// ── GLOSSARY DATA ──
+const glossaryTerms = [
+  { term: 'MDM — Mobile Device Management', def: 'A system for managing many devices from one place — pushing settings, installing apps, enforcing security rules.', analogy: 'Like a school principal who can set rules for every classroom at once, instead of walking to each room individually.' },
+  { term: 'API — Application Programming Interface', def: 'A way for software to talk to other software. You send a request, and get data back.', analogy: 'A restaurant: you (the client) tell the waiter (the API) what you want, the waiter tells the kitchen (the server), and the kitchen sends back your food (the data).' },
+  { term: 'REST', def: 'A style of API where you use simple actions (GET, POST, PUT, DELETE) to work with data over the web.', analogy: 'GET = read something. POST = create something. PUT = update something. DELETE = remove something.' },
+  { term: 'JSON — JavaScript Object Notation', def: 'A structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes.', analogy: 'Like filling out a form: each field has a label and a value. {"name": "Sean", "role": "developer"} is JSON.' },
+  { term: 'Bearer Token', def: 'A code that proves you\'ve already logged in. You get it once, then use it for all your requests.', analogy: 'A wristband at an event. You show ID at the door, get a wristband (token), and flash it everywhere else.' },
+  { term: 'Webhook', def: 'A URL that receives data when something happens. The server tells you when there\'s news instead of you asking repeatedly.', analogy: 'A doorbell. You don\'t check the door every five minutes — it rings when someone arrives.' },
+  { term: 'Polling vs Pushing', def: 'Two ways to get updates. Polling = you keep asking. Pushing = the system tells you.', analogy: 'Polling: "Are we there yet? Are we there yet?" Pushing: "I\'ll tell you when we get there."' },
+  { term: 'Virtual Machine (VM)', def: 'A computer running inside another computer. It has its own OS and behaves like a separate machine.', analogy: 'A snow globe — a little world inside your world. You can shake it, reset it, or throw it away without affecting the room you\'re sitting in.' },
+  { term: 'Tart', def: 'A tool for running macOS virtual machines on Apple Silicon Macs.', analogy: 'Key commands: tart clone (copy an image), tart run (start it), tart stop (shut it down), tart ip (find its address).' },
+  { term: 'Integration', def: 'Code that makes two software systems talk to each other automatically.', analogy: 'Like online shopping — the cart talks to the payment system, the payment system talks to shipping. No manual copying.' },
+  { term: 'Agent', def: 'A helper that doesn\'t just talk — it can actually do things for you, like read your files, write code, and run commands.', analogy: 'Like a really smart assistant who can type on your keyboard, not just give you advice.' },
+  { term: 'Context', def: 'Everything the agent knows about what you\'re trying to do. The more you tell it, the better it understands.', analogy: 'If you ask a stranger to grab your jacket from your house, they need to know where you live, what it looks like, and where you left it.' },
+  { term: 'Prompt', def: 'What you say to the agent to tell it what you want.', analogy: '"Make me food" gets you something random. "Make me a grilled cheese with tomato on sourdough" gets you exactly what you want.' },
+  { term: 'Plan Mode', def: 'When the agent stops to think and shows you what it\'s going to do before it does it. You can say yes, no, or change this part.', analogy: 'Like looking at the blueprint before building the house.' },
+  { term: 'One-Shot Prompting', def: 'Telling the agent what you want in one go and expecting a finished result. No planning, no back-and-forth. Usually doesn\'t end well.', analogy: 'Like texting a friend "get me a birthday present for mom" with no other info.' },
+  { term: 'Compounding', def: 'Distilling everything from a session — decisions, tradeoffs, dead ends — into a reference that future sessions build on.', analogy: 'A pilot\'s logbook. After every flight they record the route, weather decisions, turbulence. The next pilot starts with all of that context.' },
+  { term: 'Context Window', def: 'How much the agent can remember in one conversation. When it fills up, it starts forgetting the earlier stuff.', analogy: 'A whiteboard. You can keep writing, but eventually you run out of space and have to erase something.' },
+  { term: 'Hallucination', def: 'When the agent says something that sounds right but isn\'t. It\'s guessing and doesn\'t know it\'s wrong.', analogy: 'Asking someone for directions and they confidently say "turn left at the big tree" — but there\'s no tree.' }
+];
+
+// Build accordion
+const accordion = document.getElementById('glossary-accordion');
+glossaryTerms.forEach(item => {
+  const el = document.createElement('div');
+  el.className = 'accordion-item';
+  el.dataset.term = item.term;
+  el.innerHTML = `
+    <button class="accordion-trigger" aria-expanded="false">
+      <span>${item.term}</span>
+      <span class="accordion-chevron"><svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <p class="accordion-def">${item.def}</p>
+        <p class="accordion-analogy">${item.analogy}</p>
+      </div>
+    </div>`;
+  accordion.appendChild(el);
+  const trigger = el.querySelector('.accordion-trigger');
+  const body    = el.querySelector('.accordion-body');
+  trigger.addEventListener('click', () => {
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.accordion-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.accordion-body').style.maxHeight = '0';
+    });
+    if (!isOpen) { el.classList.add('open'); body.style.maxHeight = body.scrollHeight + 'px'; }
+  });
+});
+
+// ── FLASHCARD MODE ──
+let fcIndex = 0;
+let fcTerms = [...glossaryTerms];
+let fcFlipped = false;
+
+function toggleFlashcardMode() {
+  const toggle = document.getElementById('flashcard-toggle');
+  const accView = document.getElementById('accordion-view');
+  const fcView  = document.getElementById('flashcard-view');
+  const isFC = fcView.classList.contains('active');
+  if (isFC) {
+    fcView.classList.remove('active');
+    accView.style.display = 'block';
+    toggle.classList.remove('active');
+    toggle.textContent = 'Flashcard Mode';
+  } else {
+    fcView.classList.add('active');
+    accView.style.display = 'none';
+    toggle.classList.add('active');
+    toggle.textContent = 'Accordion Mode';
+    fcIndex = 0;
+    updateCard();
+  }
+}
+
+function updateCard() {
+  const t = fcTerms[fcIndex];
+  document.getElementById('fc-term-text').textContent   = t.term;
+  document.getElementById('fc-def-text').textContent    = t.def;
+  document.getElementById('fc-analogy-text').textContent = t.analogy;
+  document.getElementById('fc-counter').textContent     = `${fcIndex + 1} / ${fcTerms.length}`;
+  fcFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+}
+
+function flipCard()  { fcFlipped = !fcFlipped; document.getElementById('fc-card').classList.toggle('flipped', fcFlipped); }
+function nextCard()  { fcIndex = (fcIndex + 1) % fcTerms.length; updateCard(); }
+function prevCard()  { fcIndex = (fcIndex - 1 + fcTerms.length) % fcTerms.length; updateCard(); }
+function shuffleCards() { fcTerms = fcTerms.sort(() => Math.random() - 0.5); fcIndex = 0; updateCard(); }
+
+// ── QUIZ DATA ──
+const allQuestions = [
+  { topic: 'jamf',     q: 'What does MDM stand for?',                               options: ['Mobile Device Management','Mac Data Module','Mobile Data Manager','Mac Device Module'],            correct: 0 },
+  { topic: 'jamf',     q: 'What advantage does DDM (Blueprints) have over MDM?',     options: ['Supports more device types','Costs less','Faster, direct communication — less back-and-forth','Works without internet'], correct: 2 },
+  { topic: 'jamf',     q: 'What is zero-touch enrollment?',                          options: ['Enroll by tapping once','Configure a device from factory without physically touching it','A security lock feature','Remote wipe'],    correct: 1 },
+  { topic: 'jamf',     q: 'What is Jamf Pro primarily designed for?',                options: ['Windows devices','Linux servers','Apple devices exclusively','Any internet-connected device'],  correct: 2 },
+  { topic: 'api',      q: 'Which HTTP method creates new data?',                     options: ['GET','PUT','DELETE','POST'],                                                                      correct: 3 },
+  { topic: 'api',      q: 'What tool did you use to test API calls?',                options: ['Terminal','Xcode','Safari','Postman'],                                                            correct: 3 },
+  { topic: 'api',      q: 'What did Sean create using a POST request in Jamf Pro?',  options: ['A device profile','A category','A user account','A policy'],                                     correct: 1 },
+  { topic: 'api',      q: 'What HTTP status code means "successfully created"?',     options: ['200','404','201','500'],                                                                          correct: 2 },
+  { topic: 'api',      q: 'What format is API data usually sent and received in?',   options: ['XML','CSV','JSON','HTML'],                                                                        correct: 2 },
+  { topic: 'api',      q: 'What is a Bearer Token used for?',                        options: ['Encrypting data','Proving authentication without sending your password every time','Storing preferences','Speeding up requests'], correct: 1 },
+  { topic: 'vm',       q: 'What tool runs macOS VMs on Apple Silicon Macs?',         options: ['Parallels','VMware','Tart','VirtualBox'],                                                         correct: 2 },
+  { topic: 'vm',       q: 'What does "tart clone" do?',                              options: ['Starts a VM','Copies a VM image from a registry','Gets the VM\'s IP','Shuts the VM down'],       correct: 1 },
+  { topic: 'vm',       q: 'What command finds a Tart VM\'s IP address?',             options: ['tart run','tart ip','tart clone','tart stop'],                                                    correct: 1 },
+  { topic: 'vm',       q: 'Why are VMs useful for IT testing?',                      options: ['They\'re faster than real hardware','You can break and reset them without affecting your real machine','They cost less','They work offline'], correct: 1 },
+  { topic: 'webhooks', q: 'What is a webhook?',                                      options: ['A tool that polls for updates','A URL that receives data when something happens','An API testing app','A Tart command'],          correct: 1 },
+  { topic: 'webhooks', q: 'What is "polling"?',                                      options: ['Sending data when an event occurs','Repeatedly asking the server "anything new?" on a schedule','A webhook payload type','A JSON format'], correct: 1 },
+  { topic: 'webhooks', q: 'Which is faster for receiving updates?',                  options: ['Pull — it checks more often','Push — it arrives the moment something happens','They\'re always the same','Depends on the device'], correct: 1 },
+  { topic: 'webhooks', q: 'What format did the webhook payload arrive in?',           options: ['XML','CSV','Plain text','JSON'],                                                                  correct: 3 },
+  { topic: 'ai',       q: 'What is Plan Mode in Claude Code?',                       options: ['A faster build mode','When the agent shows what it\'s going to do before doing it','An undo feature','A billing tier'],           correct: 1 },
+  { topic: 'ai',       q: 'What does "compounding" mean in AI sessions?',            options: ['Making the model bigger','Distilling session decisions so future sessions inherit them','Running multiple agents','Adding mid-session context'], correct: 1 },
+  { topic: 'ai',       q: 'What is a context window?',                               options: ['The visible screen area','How much the agent can remember in one conversation','A prompt format','A security feature'],            correct: 1 },
+  { topic: 'ai',       q: 'In the Compound Engineering loop, which phase comes first?', options: ['Work','Review','Plan','Compound'],                                                             correct: 2 },
+  { topic: 'ai',       q: 'What is an AI hallucination?',                            options: ['A visual UI glitch','When the agent says something that sounds right but is factually wrong','A slow response','A prompt injection type'], correct: 1 },
+];
+
+const topics = [
+  { id: 'jamf',     name: 'Jamf Basics',   icon: '🖥️' },
+  { id: 'api',      name: 'APIs & Postman',icon: '⚡' },
+  { id: 'vm',       name: 'VMs & Tart',    icon: '📦' },
+  { id: 'webhooks', name: 'Webhooks',       icon: '🔔' },
+  { id: 'ai',       name: 'AI & Day 3',    icon: '🤖' },
+  { id: 'all',      name: 'All Topics',    icon: '🎯' },
+];
+
+const topicNames = { jamf: 'Jamf Basics', api: 'APIs & Postman', vm: 'VMs & Tart', webhooks: 'Webhooks', ai: 'AI & Day 3' };
+
+// Mastery helpers
+function getMastery(id) {
+  try { return JSON.parse(localStorage.getItem('jamf_mastery') || '{}')[id] || null; } catch { return null; }
+}
+function saveMastery(results) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('jamf_mastery') || '{}');
+    Object.entries(results).forEach(([id, r]) => {
+      if (!stored[id]) stored[id] = { correct: 0, total: 0 };
+      stored[id].correct += r.correct;
+      stored[id].total   += r.total;
+    });
+    localStorage.setItem('jamf_mastery', JSON.stringify(stored));
+  } catch {}
+}
+
+function buildTopicCards() {
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = '';
+  topics.forEach(t => {
+    const qs = t.id === 'all' ? allQuestions : allQuestions.filter(q => q.topic === t.id);
+    let masteryHTML = '<div class="mastery-pct not-attempted">Not attempted yet</div>';
+    if (t.id !== 'all') {
+      const m = getMastery(t.id);
+      if (m && m.total > 0) {
+        const pct = Math.round((m.correct / m.total) * 100);
+        masteryHTML = `<div class="mastery-bar-wrap"><div class="mastery-bar-fill" style="width:${pct}%"></div></div><div class="mastery-pct">${pct}% mastered (${m.correct}/${m.total})</div>`;
+      }
+    }
+    const card = document.createElement('button');
+    card.className = 'topic-card';
+    card.innerHTML = `<div class="topic-card-icon">${t.icon}</div><div class="topic-card-name">${t.name}</div><div class="topic-card-count">${qs.length} questions</div>${masteryHTML}`;
+    card.addEventListener('click', () => startQuiz(t));
+    grid.appendChild(card);
+  });
+}
+buildTopicCards();
+
+// Quiz state
+let score = 0, answered = 0, streak = 0, activeQuestions = [], sessionResults = {};
+
+const topicScreen  = document.getElementById('quiz-topic-screen');
+const activeScreen = document.getElementById('quiz-active-screen');
+const scoreEl      = document.getElementById('score-current');
+const scoreTotalEl = document.getElementById('score-total-n');
+const quizQsEl     = document.getElementById('quiz-questions');
+const quizEndEl    = document.getElementById('quiz-end');
+const endScoreEl   = document.getElementById('end-score');
+const endMsgEl     = document.getElementById('end-msg');
+const streakBadge  = document.getElementById('streak-badge');
+const breakdownEl  = document.getElementById('results-breakdown');
+
+function startQuiz(topic) {
+  const qs = topic.id === 'all' ? [...allQuestions] : allQuestions.filter(q => q.topic === topic.id);
+  activeQuestions = qs.sort(() => Math.random() - 0.5);
+  score = 0; answered = 0; streak = 0; sessionResults = {};
+  scoreEl.textContent      = '0';
+  scoreTotalEl.textContent = activeQuestions.length;
+  streakBadge.classList.remove('visible');
+  document.getElementById('quiz-topic-badge').textContent = topic.name;
+  topicScreen.style.display  = 'none';
+  activeScreen.style.display = 'block';
+  quizEndEl.classList.remove('visible');
+  buildQuiz();
+}
+
+function buildQuiz() {
+  quizQsEl.innerHTML = '';
+  activeQuestions.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.innerHTML = `
+      <p class="quiz-q-num">Question ${String(qi+1).padStart(2,'0')}</p>
+      <p class="quiz-q-text">${q.q}</p>
+      <div class="quiz-options">${q.options.map((o,oi) => `<button class="quiz-opt" data-qi="${qi}" data-oi="${oi}">${o}</button>`).join('')}</div>`;
+    quizQsEl.appendChild(div);
+  });
+  quizQsEl.querySelectorAll('.quiz-opt').forEach(btn => btn.addEventListener('click', function() { handleAnswer(this); }));
+}
+
+function handleAnswer(btn) {
+  const qi   = parseInt(btn.dataset.qi);
+  const oi   = parseInt(btn.dataset.oi);
+  const q    = activeQuestions[qi];
+  const btns = btn.closest('.quiz-options').querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+  const tid = q.topic;
+  if (!sessionResults[tid]) sessionResults[tid] = { correct: 0, total: 0 };
+  sessionResults[tid].total++;
+  if (oi === q.correct) {
+    btn.classList.add('correct');
+    score++; streak++;
+    scoreEl.textContent = score;
+    sessionResults[tid].correct++;
+    if (streak >= 2) { streakBadge.textContent = `🔥 ${streak} streak`; streakBadge.classList.add('visible'); }
+  } else {
+    btn.classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    streak = 0;
+    streakBadge.classList.remove('visible');
+  }
+  answered++;
+  if (answered === activeQuestions.length) setTimeout(showEnd, 1000);
+}
+
+function showEnd() {
+  const total = activeQuestions.length;
+  const pct   = score / total;
+  const msgs  = ['Start over from Day 1.','Run it back.','Review the glossary.','Solid work.','Almost perfect.','You locked in.'];
+  const msgIdx = Math.round(pct * (msgs.length - 1));
+  endScoreEl.textContent = `${score} / ${total}`;
+  endMsgEl.textContent   = msgs[msgIdx];
+
+  // Results breakdown
+  breakdownEl.innerHTML = Object.keys(sessionResults).length > 1
+    ? `<p class="breakdown-heading">Topic Breakdown</p>` + Object.entries(sessionResults).map(([tid, r]) => {
+        const p = Math.round((r.correct / r.total) * 100);
+        return `<div class="breakdown-row"><div class="breakdown-label">${topicNames[tid]||tid}</div><div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="width:${p}%"></div></div><div class="breakdown-score">${r.correct}/${r.total}</div></div>`;
+      }).join('')
+    : '';
+
+  saveMastery(sessionResults);
+  quizEndEl.classList.add('visible');
+  if (score === total) launchConfetti();
+}
+
+function retryQuiz() {
+  score = 0; answered = 0; streak = 0; sessionResults = {};
+  scoreEl.textContent = '0';
+  streakBadge.classList.remove('visible');
+  quizEndEl.classList.remove('visible');
+  activeQuestions = activeQuestions.sort(() => Math.random() - 0.5);
+  buildQuiz();
+}
+
+function resetQuiz() {
+  topicScreen.style.display  = 'block';
+  activeScreen.style.display = 'none';
+  quizEndEl.classList.remove('visible');
+  buildTopicCards();
+}
+
+// ── CONFETTI ──
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.style.display = 'block';
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#C9A84C','#E8C96D','#FFFFFF','#FFA726'];
+  const particles = Array.from({length: 100}, () => ({
+    x: Math.random() * canvas.width, y: -10,
+    r: Math.random() * 5 + 2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    speed: Math.random() * 3 + 1.5,
+    drift: (Math.random() - 0.5) * 2,
+    spin: Math.random() * 0.2,
+    w: Math.random() * 10 + 4, h: Math.random() * 6 + 2
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(frame * p.spin);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.y += p.speed; p.x += p.drift;
+    });
+    frame++;
+    if (frame < 220) requestAnimationFrame(draw);
+    else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+  }
+  draw();
+}
+
+// ── CMD+K SEARCH ──
+const searchIndex = [
+  ...glossaryTerms.map(t => ({ type: 'Glossary', name: t.term, action: () => { tabBtns[3].click(); setTimeout(() => { const el = document.querySelector(`[data-term="${t.term}"]`); if (el) { const trigger = el.querySelector('.accordion-trigger'); const body = el.querySelector('.accordion-body'); document.querySelectorAll('.accordion-item').forEach(i => { i.classList.remove('open'); i.querySelector('.accordion-body').style.maxHeight = '0'; }); el.classList.add('open'); body.style.maxHeight = body.scrollHeight + 'px'; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 100); } })),
+  ...document.querySelectorAll('.note-card').length ? [] : [],
+  { type: 'Tab', name: 'Day 01 — Jamf Overview, MDM vs DDM, Personas', action: () => tabBtns[0].click() },
+  { type: 'Tab', name: 'Day 02 — APIs, Postman, VMs, Webhooks',         action: () => tabBtns[1].click() },
+  { type: 'Tab', name: 'Day 03 — Claude Code, Compound Engineering',    action: () => tabBtns[2].click() },
+  { type: 'Tab', name: 'Glossary — All workshop terms',                  action: () => tabBtns[3].click() },
+  { type: 'Tab', name: 'Quiz — Test your knowledge',                     action: () => tabBtns[4].click() },
+  { type: 'Tab', name: 'Cheat Sheet — Compound Engineering reference',  action: () => tabBtns[5].click() },
+  { type: 'Tab', name: 'Notes — Key concepts explained',                 action: () => tabBtns[6].click() },
+];
+
+// Add note cards to index
+document.querySelectorAll('.note-card').forEach(card => {
+  const title = card.querySelector('.note-title')?.textContent;
+  if (title) searchIndex.push({ type: 'Note', name: title, action: () => { tabBtns[6].click(); setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); } });
+});
+
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('open');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = renderResults(searchIndex.slice(0, 8));
+  setTimeout(() => document.getElementById('search-input').focus(), 50);
+}
+function closeSearch() { document.getElementById('search-overlay').classList.remove('open'); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('search-overlay')) closeSearch(); }
+
+function renderResults(items) {
+  if (!items.length) return '<div class="sr-empty">No results</div>';
+  return items.map((item, i) => `<div class="search-result" data-idx="${i}">${'<div class="sr-type">'+item.type+'</div><div class="sr-name">'+item.name+'</div>'}</div>`).join('');
+}
+
+let searchResultItems = [];
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) { document.getElementById('search-results').innerHTML = renderResults(searchIndex.slice(0, 8)); searchResultItems = searchIndex.slice(0, 8); return; }
+  searchResultItems = searchIndex.filter(item => item.name.toLowerCase().includes(q)).slice(0, 8);
+  document.getElementById('search-results').innerHTML = renderResults(searchResultItems);
+  attachResultClicks();
+});
+
+function attachResultClicks() {
+  document.querySelectorAll('.search-result').forEach(el => {
+    el.addEventListener('click', () => { const idx = parseInt(el.dataset.idx); searchResultItems[idx]?.action(); closeSearch(); });
+  });
+}
+attachResultClicks();
+
+document.getElementById('search-results').addEventListener('click', e => {
+  const el = e.target.closest('.search-result');
+  if (!el) return;
+  const idx = parseInt(el.dataset.idx);
+  const current = document.getElementById('search-results').querySelectorAll('.search-result');
+  const allVisible = Array.from(current);
+  const itemIdx = allVisible.indexOf(el);
+  if (itemIdx >= 0 && searchResultItems[itemIdx]) { searchResultItems[itemIdx].action(); closeSearch(); }
+});
+
+// Initial search results
+searchResultItems = searchIndex.slice(0, 8);
+</script>
+</body>
+</html>

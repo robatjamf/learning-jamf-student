@@ -30,17 +30,17 @@ Your personal reflections from Day 1. Fill in each section at the checkpoint —
 
 ## After Block 3 — Persona Mapping
 
-**Which persona did your group map?** (Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, or Help Desk Technician)
+**Which persona did your group map?** (Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, or Help Desk Technician).
 
->
+>K-12 IT Coordinator
 
 **What were the biggest pain points in their workflow?**
 
->
+>Being the only IT person on the campus, and having to manage all of the 3 campuses by himself.
 
 **If you could build one thing to help that persona, what would it be?**
 
->
+>Well i think a system that also help him manage all the 3 campuses, like without always having to go there to the site to actually go through each of the devices to actually see which one is dead or has an issue. For instance Jamf this will actual report which one has an issue and goes to that specific device.
 
 ---
 
