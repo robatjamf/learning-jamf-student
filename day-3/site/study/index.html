@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shine's Study Page</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --accent: #6c63ff;
+      --green: #00c9a7;
+      --orange: #f97316;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0;
+      background: rgba(15,17,23,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); }
+    nav .links { display: flex; gap: 1.5rem; }
+    nav .links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    nav .links a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem;
+    }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { color: var(--muted); font-size: 1rem; }
+
+    /* SECTION */
+    .section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── QUIZ ── */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .flip-card {
+      height: 220px;
+      cursor: pointer;
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--border);
+    }
+    .flip-card-front {
+      background: var(--surface);
+    }
+    .flip-card-back {
+      background: #1e1a3a;
+      border-color: var(--accent);
+      transform: rotateY(180deg);
+    }
+
+    .card-type {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      display: inline-block;
+      width: fit-content;
+    }
+    .type-persona { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
+    .type-pain   { background: rgba(59,130,246,0.15);  color: var(--blue);   border: 1px solid rgba(59,130,246,0.3); }
+    .type-scenario { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+    .flip-card-front .q {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-top: 0.75rem;
+    }
+    .flip-card-front .tap-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .flip-card-back .answer-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .flip-card-back .answer {
+      font-size: 0.875rem;
+      color: var(--text);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .flip-card-back .prompt {
+      background: rgba(108,99,255,0.12);
+      border-left: 3px solid var(--accent);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-style: italic;
+      border-radius: 0 6px 6px 0;
+      margin-top: 0.75rem;
+    }
+
+    /* ── CHEAT SHEET ── */
+    .toggle-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.3rem;
+      width: fit-content;
+    }
+    .toggle-btn {
+      padding: 0.5rem 1.25rem;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .cheat-view { display: none; }
+    .cheat-view.active { display: block; }
+
+    .tool-section {
+      margin-bottom: 2.5rem;
+    }
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .tool-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    .badge-git    { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
+    .badge-tart   { background: rgba(0,201,167,0.15);  color: var(--green);  border: 1px solid rgba(0,201,167,0.3); }
+    .badge-claude { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid rgba(108,99,255,0.3); }
+    .badge-api    { background: rgba(59,130,246,0.15); color: var(--blue);   border: 1px solid rgba(59,130,246,0.3); }
+    .badge-task   { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+    .tool-header h3 { font-size: 1.1rem; font-weight: 700; }
+
+    .cmd-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .cmd-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: border-color 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .cmd-item:hover { border-color: var(--accent); }
+    .cmd-item .cmd-code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.85rem;
+      color: var(--green);
+      background: rgba(0,201,167,0.06);
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .cmd-item .cmd-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding-top: 0.2rem;
+    }
+    .cmd-item .copy-hint {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.65rem;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .cmd-item:hover .copy-hint { opacity: 1; }
+    .cmd-item.copied { border-color: var(--green); }
+    .cmd-item.copied .copy-hint { opacity: 1; color: var(--green); }
+
+    .task-group {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .task-q {
+      padding: 1rem 1.25rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .task-q .q-icon {
+      font-size: 1rem;
+    }
+    .task-answers { padding: 0.75rem 1.25rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .task-cmd {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.82rem;
+      color: var(--green);
+      background: rgba(0,0,0,0.3);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .task-cmd:hover { border-color: var(--green); }
+    .task-cmd .cmd-note {
+      font-family: -apple-system, sans-serif;
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-top: 0.2rem;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .cmd-item { flex-direction: column; gap: 0.4rem; }
+      .cmd-item .cmd-code { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">Shine — Study</span>
+  <div class="links">
+    <a href="#quiz">Quiz</a>
+    <a href="#cheatsheet">Cheat Sheet</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Study Mode <span>On.</span></h1>
+  <p>Personas, pain points, and every command you used — all in one place.</p>
+</div>
+
+<!-- QUIZ -->
+<hr class="divider" />
+<div class="section" id="quiz">
+  <div class="section-title">Persona Quiz</div>
+  <div class="section-sub">Tap a card to flip it. See if you can answer before you look.</div>
+
+  <div class="quiz-grid">
+
+    <!-- Card 1: Persona → Pain -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-persona">Persona → Pain Points</span>
+          <div class="q">Help Desk Technician</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">Pain Points</div>
+            <div class="answer">
+              Knows the fix but doesn't have permission to run the script.<br><br>
+              Closes all the tickets — then new ones immediately appear for the same issue.
+            </div>
+          </div>
+          <div class="prompt">How would you explain this to someone who's never worked in IT?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Pain → Persona -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-pain">Pain Point → Who?</span>
+          <div class="q">"I get over 1,000 security alerts every single day. I can't investigate all of them."</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">This persona is...</div>
+            <div class="answer">
+              <strong>Security Analyst</strong><br><br>
+              Monitoring 1,000+ alerts/day. The real threat is buried in the noise — and devices can go out of compliance without anyone noticing.
+            </div>
+          </div>
+          <div class="prompt">What would you build to help this person?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Persona → Pain -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-persona">Persona → Pain Points</span>
+          <div class="q">Enterprise IT Admin</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">Pain Points</div>
+            <div class="answer">
+              Managing 10,000+ devices — can't touch each one individually.<br><br>
+              One wrong policy push breaks thousands of machines at once. Scale is everything.
+            </div>
+          </div>
+          <div class="prompt">How is this different from the Help Desk Technician's problems?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Pain → Persona -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-pain">Pain Point → Who?</span>
+          <div class="q">"The iPads get shared between students. I have to reset them constantly between classes and between schools."</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">This persona is...</div>
+            <div class="answer">
+              <strong>K-12 IT Coordinator</strong><br><br>
+              Managing shared iPads across multiple schools. Devices don't belong to one person — they get passed around, so they need to reset cleanly every time.
+            </div>
+          </div>
+          <div class="prompt">What's unique about managing shared devices vs. personal ones?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: Persona → Pain -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-persona">Persona → Pain Points</span>
+          <div class="q">K-12 IT Coordinator</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">Pain Points</div>
+            <div class="answer">
+              Shared iPads passed between students and classrooms across multiple school sites.<br><br>
+              Limited staff, limited budget — but responsible for every device in every school.
+            </div>
+          </div>
+          <div class="prompt">How would YOU explain this to a parent who asks "why does IT always take so long?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: Pain → Persona -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-pain">Pain Point → Who?</span>
+          <div class="q">"I know exactly what's wrong and exactly how to fix it — but I need someone else to approve the script before I can run it."</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">This persona is...</div>
+            <div class="answer">
+              <strong>Help Desk Technician</strong><br><br>
+              Has the knowledge but not the permissions. The frustration isn't the technical problem — it's the process blocking the solution.
+            </div>
+          </div>
+          <div class="prompt">What app would you build to fix this? (You said you'd build one!)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7: Persona → Pain -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-persona">Persona → Pain Points</span>
+          <div class="q">Security Analyst</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">Pain Points</div>
+            <div class="answer">
+              1,000+ alerts per day — impossible to review all of them manually.<br><br>
+              Real threats get buried in the noise. Devices go out of compliance and nobody notices until it's too late.
+            </div>
+          </div>
+          <div class="prompt">What's "alert fatigue" and why is it dangerous?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: Pain → Persona -->
+    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <span class="card-type type-pain">Pain Point → Who?</span>
+          <div class="q">"I need to push a security update to 10,000 machines by end of day. I can't be wrong."</div>
+          <div class="tap-hint">tap to reveal</div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div class="answer-label">This persona is...</div>
+            <div class="answer">
+              <strong>Enterprise IT Admin</strong><br><br>
+              At this scale, one mistake affects thousands of devices simultaneously. The pressure isn't about knowing what to do — it's about not breaking everything at once.
+            </div>
+          </div>
+          <div class="prompt">Why does scale make IT problems completely different?</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHEAT SHEET -->
+<hr class="divider" />
+<div class="section" id="cheatsheet">
+  <div class="section-title">Command Cheat Sheet</div>
+  <div class="section-sub">Click any command to copy it. Toggle between views.</div>
+
+  <div class="toggle-bar">
+    <button class="toggle-btn active" onclick="switchView('tool')">By Tool</button>
+    <button class="toggle-btn" onclick="switchView('task')">By Task</button>
+  </div>
+
+  <!-- BY TOOL VIEW -->
+  <div class="cheat-view active" id="view-tool">
+
+    <div class="tool-section">
+      <div class="tool-header">
+        <span class="tool-badge badge-git">Git</span>
+        <h3>Git — Save &amp; Share Code</h3>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item" onclick="copyCmd(this, 'git status')">
+          <span class="cmd-code">git status</span>
+          <span class="cmd-desc">See what files changed, what's staged, what's not</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git add .')">
+          <span class="cmd-code">git add .</span>
+          <span class="cmd-desc">Stage all changed files — puts them in the "ready to save" zone</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git commit -m \"your message here\"')">
+          <span class="cmd-code">git commit -m "your message"</span>
+          <span class="cmd-desc">Take a snapshot with a label — your save point</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git push')">
+          <span class="cmd-code">git push</span>
+          <span class="cmd-desc">Send your commits up to GitHub so others can see them</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git pull')">
+          <span class="cmd-code">git pull</span>
+          <span class="cmd-desc">Pull down the latest changes from GitHub to your machine</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git checkout -b branch-name')">
+          <span class="cmd-code">git checkout -b branch-name</span>
+          <span class="cmd-desc">Create a new branch and switch to it — your own lane</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'git log --oneline')">
+          <span class="cmd-code">git log --oneline</span>
+          <span class="cmd-desc">See all your commits in a clean list</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-header">
+        <span class="tool-badge badge-tart">Tart</span>
+        <h3>Tart — Virtual Machines</h3>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item" onclick="copyCmd(this, 'tart list')">
+          <span class="cmd-code">tart list</span>
+          <span class="cmd-desc">See all your VMs</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'tart clone ghcr.io/cirruslabs/macos-sequoia-base:latest my-vm')">
+          <span class="cmd-code">tart clone &lt;image&gt; my-vm</span>
+          <span class="cmd-desc">Download and copy a VM image — like duplicating a computer</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'tart run my-vm')">
+          <span class="cmd-code">tart run my-vm</span>
+          <span class="cmd-desc">Start a VM — boot it up</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'tart stop my-vm')">
+          <span class="cmd-code">tart stop my-vm</span>
+          <span class="cmd-desc">Shut the VM down</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'tart ip my-vm')">
+          <span class="cmd-code">tart ip my-vm</span>
+          <span class="cmd-desc">Get the VM's IP address so you can connect to it</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-header">
+        <span class="tool-badge badge-claude">Claude Code</span>
+        <h3>Claude Code — AI in the Terminal</h3>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item" onclick="copyCmd(this, 'claude --version')">
+          <span class="cmd-code">claude --version</span>
+          <span class="cmd-desc">Check Claude Code is installed</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'claude /init')">
+          <span class="cmd-code">claude /init</span>
+          <span class="cmd-desc">Set up Claude in your project — creates CLAUDE.md with context</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'claude \"your question here\"')">
+          <span class="cmd-code">claude "your question here"</span>
+          <span class="cmd-desc">Ask Claude anything from the terminal</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, '/plan')">
+          <span class="cmd-code">/plan</span>
+          <span class="cmd-desc">Enter plan mode — Claude shows what it'll do BEFORE doing it</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, '/compound')">
+          <span class="cmd-code">/compound</span>
+          <span class="cmd-desc">Distill the whole session into COMPOUND.md so next session starts smarter</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <div class="tool-header">
+        <span class="tool-badge badge-api">curl / API</span>
+        <h3>curl — Calling the Jamf API</h3>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item" onclick="copyCmd(this, 'curl -s -u \"jamfpro_api:PASSWORD\" -X POST \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/auth/token\"')">
+          <span class="cmd-code">curl -X POST .../auth/token</span>
+          <span class="cmd-desc">Step 1: Authenticate — get your Bearer Token (like getting a wristband)</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'TOKEN=$(curl -s -u \"jamfpro_api:PASSWORD\" -X POST \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/auth/token\" | jq -r \".token\")')">
+          <span class="cmd-code">TOKEN=$(curl ... | jq -r '.token')</span>
+          <span class="cmd-desc">Step 2: Save the token as a variable so you can reuse it</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'curl -s -H \"Authorization: Bearer $TOKEN\" \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/computers-inventory\" | jq .')">
+          <span class="cmd-code">curl -H "Authorization: Bearer $TOKEN" .../computers-inventory</span>
+          <span class="cmd-desc">GET — read data. List all computers in Jamf</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'curl -X PUT -H \"Authorization: Bearer $TOKEN\" -H \"Content-Type: application/xml\" \"https://YOUR-INSTANCE.jamfcloud.com/JSSResource/computers/id/YOUR_ID\" -d \'<computer><extension_attributes><extension_attribute><id>1</id><value>YourName</value></extension_attribute></extension_attributes></computer>\'')">
+          <span class="cmd-code">curl -X PUT ... -d '&lt;xml&gt;'</span>
+          <span class="cmd-desc">PUT — update data. Update an Extension Attribute on a device</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="cmd-item" onclick="copyCmd(this, 'curl -X POST -H \"Authorization: Bearer $TOKEN\" \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/auth/invalidate-token\"')">
+          <span class="cmd-code">curl -X POST .../invalidate-token</span>
+          <span class="cmd-desc">Invalidate your token when done — security best practice</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BY TASK VIEW -->
+  <div class="cheat-view" id="view-task">
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128190;</span> How do I save my work in Git?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'git add .')">
+          git add .
+          <div class="cmd-note">Stage everything — get it ready to save</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'git commit -m \"what I did\"')">
+          git commit -m "what I did"
+          <div class="cmd-note">Take the snapshot with a label</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'git push')">
+          git push
+          <div class="cmd-note">Send it to GitHub</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128274;</span> How do I get an API token?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'TOKEN=$(curl -s -u \"user:pass\" -X POST \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/auth/token\" | jq -r \".token\")')">
+          TOKEN=$(curl -s -u "user:pass" -X POST ".../auth/token" | jq -r '.token')
+          <div class="cmd-note">Authenticate and save the token in one step</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'echo $TOKEN')">
+          echo $TOKEN
+          <div class="cmd-note">Verify your token was saved</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128187;</span> How do I read data from Jamf? (GET)</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'curl -s -H \"Authorization: Bearer $TOKEN\" \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/computers-inventory\" | jq .')">
+          curl -s -H "Authorization: Bearer $TOKEN" ".../computers-inventory" | jq .
+          <div class="cmd-note">GET request — list all computers, formatted with jq</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#9998;&#65039;</span> How do I update data in Jamf? (PUT)</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'curl -X PUT -H \"Authorization: Bearer $TOKEN\" -H \"Content-Type: application/xml\" \"https://YOUR-INSTANCE.jamfcloud.com/JSSResource/computers/id/YOUR_ID\" -d \'<computer><extension_attributes><extension_attribute><id>1</id><value>YourName</value></extension_attribute></extension_attributes></computer>\'')">
+          curl -X PUT -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/xml" ".../id/YOUR_ID" -d '&lt;xml&gt;'
+          <div class="cmd-note">PUT request — update an Extension Attribute on a device</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128640;</span> How do I start a VM?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'tart run my-vm')">
+          tart run my-vm
+          <div class="cmd-note">Boot the VM</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'tart ip my-vm')">
+          tart ip my-vm
+          <div class="cmd-note">Get its IP address so you can connect to it</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128064;</span> How do I check what changed in my repo?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'git status')">
+          git status
+          <div class="cmd-note">See all changed/staged/untracked files</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'git log --oneline')">
+          git log --oneline
+          <div class="cmd-note">See your commit history in a clean list</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#129302;</span> How do I ask Claude something from the terminal?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'claude \"your question here\"')">
+          claude "your question here"
+          <div class="cmd-note">Ask anything — explain a command, debug an error, explain a concept</div>
+        </div>
+        <div class="task-cmd" onclick="copyCmd(this, 'claude /init')">
+          claude /init
+          <div class="cmd-note">Set up Claude in your project directory</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-group">
+      <div class="task-q"><span class="q-icon">&#128274;</span> How do I clean up when I'm done with an API session?</div>
+      <div class="task-answers">
+        <div class="task-cmd" onclick="copyCmd(this, 'curl -X POST -H \"Authorization: Bearer $TOKEN\" \"https://YOUR-INSTANCE.jamfcloud.com/api/v1/auth/invalidate-token\"')">
+          curl -X POST -H "Authorization: Bearer $TOKEN" ".../invalidate-token"
+          <div class="cmd-note">Kill your token — like logging out. Always do this!</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Shine &mdash; Jamf Training Study Page &mdash; 2026
+</footer>
+
+<script>
+  function switchView(mode) {
+    document.getElementById('view-tool').classList.toggle('active', mode === 'tool');
+    document.getElementById('view-task').classList.toggle('active', mode === 'task');
+    document.querySelectorAll('.toggle-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', (i === 0 && mode === 'tool') || (i === 1 && mode === 'task'));
+    });
+  }
+
+  function copyCmd(el, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const hint = el.querySelector('.copy-hint');
+      el.classList.add('copied');
+      if (hint) hint.textContent = 'copied!';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        if (hint) hint.textContent = 'click to copy';
+      }, 1500);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shine's Jamf Training Review</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --accent: #6c63ff;
+      --accent2: #00c9a7;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --day1: #f97316;
+      --day2: #3b82f6;
+      --day3: #a855f7;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 17, 23, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: -0.5px; }
+    nav .links { display: flex; gap: 1.5rem; }
+    nav .links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    nav .links a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(108, 99, 255, 0.15);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* SECTION */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .day-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    .day1-pill { background: rgba(249, 115, 22, 0.15); color: var(--day1); border: 1px solid rgba(249,115,22,0.3); }
+    .day2-pill { background: rgba(59, 130, 246, 0.15); color: var(--day2); border: 1px solid rgba(59,130,246,0.3); }
+    .day3-pill { background: rgba(168, 85, 247, 0.15); color: var(--day3); border: 1px solid rgba(168,85,247,0.3); }
+
+    .section-header h2 { font-size: 1.5rem; font-weight: 700; }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* CARDS GRID */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card .card-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.875rem; color: var(--muted); }
+    .card .quote {
+      background: rgba(108, 99, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-style: italic;
+      margin-top: 0.75rem;
+    }
+
+    /* WIDE CARD */
+    .card-wide {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-wide h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--accent2); }
+    .card-wide p { font-size: 0.875rem; color: var(--muted); }
+    .card-wide ul { padding-left: 1.25rem; }
+    .card-wide ul li { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.3rem; }
+
+    /* LOOP VISUAL */
+    .loop {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+    .loop-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    .loop-step .step-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+    .loop-step h4 { font-size: 1rem; font-weight: 700; }
+    .loop-step p { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+    .loop-arrow {
+      font-size: 1.25rem;
+      color: var(--muted);
+      padding: 0 0.5rem;
+    }
+
+    /* PRINCIPLES */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .principle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .principle .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: rgba(108,99,255,0.2);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .principle h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .principle p { font-size: 0.8rem; color: var(--muted); }
+
+    /* TAKEAWAY */
+    .takeaway {
+      background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(0,201,167,0.08));
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .takeaway h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem; }
+    .takeaway p { color: var(--muted); max-width: 500px; margin: 0 auto; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 600px) {
+      .loop { gap: 0.5rem; }
+      .loop-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">Shine</span>
+  <div class="links">
+    <a href="#day1">Day 1</a>
+    <a href="#day2">Day 2</a>
+    <a href="#day3">Day 3</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">3-Day Jamf Training</div>
+  <h1>Three days.<br><span>A lot learned.</span></h1>
+  <p>A personal review of everything covered across Git, APIs, VMs, webhooks, and AI-native engineering.</p>
+</div>
+
+<!-- DAY 1 -->
+<hr class="divider" />
+<section id="day1">
+  <div class="section-header">
+    <span class="day-pill day1-pill">Day 1</span>
+    <h2>Git, Jamf &amp; Personas</h2>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Icebreaker Insight</div>
+      <h3>No single right answer</h3>
+      <p>Drawing a duck — everyone did it differently. The task was the same; the solutions were not.</p>
+      <div class="quote">"Never be fixed to one solution — always think outside the box."</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Tools Discovered</div>
+      <h3>Anytype &amp; NotebookLM</h3>
+      <p>Shared Anytype (code sharing). Learned about NotebookLM — notes, flowcharts, and even podcasts.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">What Is Jamf?</div>
+      <h3>Device Management at Scale</h3>
+      <p>Jamf helps users manage and secure thousands of devices using Jamf Pro — not just tech, but sales too.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Persona: Help Desk Technician</div>
+      <h3>Pain Points Mapped</h3>
+      <p>Knows the fix but lacks permission to run scripts. Closes tickets, new ones appear instantly.</p>
+      <div class="quote">"I'd build an app that handles some tickets automatically."</div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<hr class="divider" />
+<section id="day2">
+  <div class="section-header">
+    <span class="day-pill day2-pill">Day 2</span>
+    <h2>APIs, VMs &amp; Webhooks</h2>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">APIs</div>
+      <h3>The iMessage Analogy</h3>
+      <p>Like sending a text — you (client) send a message through iMessage (API) to the other user (server) and get a response (data) back.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Virtual Machines</div>
+      <h3>A Computer Inside a Computer</h3>
+      <p>An imitation you can experiment with safely — like a snow globe inside your room.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">POST Request</div>
+      <h3>Creating with the API</h3>
+      <p>Made POST requests in Postman. Created a category and saw the name appear. Created an extension returning an ID.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Webhooks</div>
+      <h3>Push vs Pull</h3>
+      <p>Push = sending stuff. Pull = getting info from a server to your machine. Webhooks push data to you the moment something happens.</p>
+    </div>
+  </div>
+
+  <div class="card-wide" style="margin-top: 1rem;">
+    <h3>Key Concepts from Day 2</h3>
+    <ul>
+      <li><strong>REST API</strong> — GET (read), POST (create), PUT (update), DELETE (remove)</li>
+      <li><strong>Bearer Token</strong> — Like a wristband: show ID once at the door, flash it everywhere after</li>
+      <li><strong>JSON</strong> — Structured data: <code style="background:#111;padding:2px 5px;border-radius:4px;font-size:0.8rem;">{"name": "Shine", "role": "student"}</code></li>
+      <li><strong>Polling vs Webhooks</strong> — "Are we there yet?" vs "I'll tell you when we arrive."</li>
+    </ul>
+  </div>
+</section>
+
+<!-- DAY 3 -->
+<hr class="divider" />
+<section id="day3">
+  <div class="section-header">
+    <span class="day-pill day3-pill">Day 3</span>
+    <h2>AI-Native Engineering</h2>
+  </div>
+
+  <div class="loop">
+    <div class="loop-step">
+      <div class="step-num">Phase 1</div>
+      <h4>Plan</h4>
+      <p>Define requirements &amp; gather context</p>
+    </div>
+    <div class="loop-arrow">&#8594;</div>
+    <div class="loop-step">
+      <div class="step-num">Phase 2</div>
+      <h4>Work</h4>
+      <p>Execute with AI assistance</p>
+    </div>
+    <div class="loop-arrow">&#8594;</div>
+    <div class="loop-step">
+      <div class="step-num">Phase 3</div>
+      <h4>Review</h4>
+      <p>Evaluate output against plan</p>
+    </div>
+    <div class="loop-arrow">&#8594;</div>
+    <div class="loop-step">
+      <div class="step-num">Phase 4</div>
+      <h4>Compound</h4>
+      <p>Distill the session for next time</p>
+    </div>
+  </div>
+
+  <div class="principles">
+    <div class="principle">
+      <div class="num">01</div>
+      <h4>Context Is Everything</h4>
+      <p>The quality of output = quality of context. The agent only knows what you tell it.</p>
+    </div>
+    <div class="principle">
+      <div class="num">02</div>
+      <h4>Planning &gt; Building</h4>
+      <p>80% planning, 20% building. The plan IS the work. Execution is confirmation.</p>
+    </div>
+    <div class="principle">
+      <div class="num">03</div>
+      <h4>Share Your Mental Model</h4>
+      <p>The agent starts from zero every time. Transfer your picture of "done."</p>
+    </div>
+    <div class="principle">
+      <div class="num">04</div>
+      <h4>Recognize When to Quit</h4>
+      <p>Sunk cost is a trap. Starting fresh with better context is faster than pushing through.</p>
+    </div>
+    <div class="principle">
+      <div class="num">05</div>
+      <h4>It's a Conversation</h4>
+      <p>Not a command line. Collaboration, not delegation.</p>
+    </div>
+    <div class="principle">
+      <div class="num">06</div>
+      <h4>Review Against the Plan</h4>
+      <p>Your eyes and judgment are the primary review tool. Evaluate yourself first.</p>
+    </div>
+    <div class="principle">
+      <div class="num">07</div>
+      <h4>Compound Your Sessions</h4>
+      <p>Distill decisions, tradeoffs, and dead ends so every session starts smarter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TAKEAWAY -->
+<section>
+  <div class="takeaway">
+    <h2>The Biggest Takeaway</h2>
+    <p>Never be fixed to one solution. Whether it's drawing a duck, calling an API, or prompting an AI — the best outcomes come from thinking outside the box and building on what you learn each time.</p>
+  </div>
+</section>
+
+<footer>
+  Shine &mdash; Jamf Pro Training &mdash; 2026
+</footer>
+
+</body>
+</html>
