@@ -665,6 +665,152 @@
       pointer-events: auto;
     }
 
+    /* ── Quiz ── */
+    .quiz {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .quiz-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .quiz-toggle span { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+
+    .quiz-body {
+      display: none;
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .quiz-body.open { display: block; }
+
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 16px;
+    }
+
+    .quiz-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      transition: width 0.3s;
+    }
+
+    .quiz-counter { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+    .quiz-question {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+
+    .quiz-option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+
+    .quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+    .quiz-option.correct { background: rgba(16,185,129,0.12); border-color: #10b981; color: #10b981; }
+    .quiz-option.wrong   { background: rgba(239,68,68,0.12);  border-color: #ef4444; color: #ef4444; }
+    .quiz-option:disabled { cursor: default; }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      line-height: 1.5;
+    }
+
+    .quiz-feedback.correct { color: #10b981; }
+    .quiz-feedback.wrong   { color: #ef4444; }
+
+    .quiz-next {
+      margin-top: 16px;
+      padding: 9px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+    }
+
+    .quiz-next:hover { opacity: 0.85; }
+
+    .quiz-result { display: none; text-align: center; padding: 24px 0 8px; }
+
+    .quiz-score {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .quiz-score-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 8px 0 20px;
+    }
+
+    .quiz-restart {
+      padding: 9px 20px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .quiz-restart:hover { border-color: var(--accent); }
+
     /* ── Mobile ── */
     @media (max-width: 600px) {
       .hero { padding: 80px 16px 48px; }
@@ -721,10 +867,10 @@
   <!-- Sticky tabs -->
   <div class="tabs-wrapper">
     <div class="tabs">
-      <button class="tab-btn active" data-tab="jamf">&#x1F527; Jamf Pro</button>
-      <button class="tab-btn" data-tab="git">&#x1F33F; Git</button>
-      <button class="tab-btn" data-tab="api">&#x1F50C; Jamf API</button>
-      <button class="tab-btn" data-tab="aidev">&#x1F916; AI Dev</button>
+      <button class="tab-btn active" data-tab="jamf">Jamf Pro</button>
+      <button class="tab-btn" data-tab="git">Git</button>
+      <button class="tab-btn" data-tab="api">Jamf API</button>
+      <button class="tab-btn" data-tab="aidev">AI Dev</button>
     </div>
   </div>
 
@@ -924,6 +1070,27 @@ curl -X PUT \
         </table>
         <div class="qref-note">
           <strong>The Security Analyst persona (your mapped persona):</strong> Pain points are manual workflows, too many alert emails, slow report generation, and constant interruptions. Jamf helps by automating compliance checks, enabling self-service, and using Smart Groups + webhooks to trigger real-time alerts — replacing manual monitoring with event-driven automation.
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <button class="quiz-toggle" onclick="toggleQuiz(this)">
+        Quiz — Test Your Jamf Pro Knowledge <span>click to start</span>
+      </button>
+      <div class="quiz-body" data-quiz="jamf">
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:0%"></div></div>
+          <span class="quiz-counter">1 / 5</span>
+        </div>
+        <div class="quiz-question"></div>
+        <div class="quiz-options"></div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-next" onclick="quizNext(this)">Next question</button>
+        <div class="quiz-result">
+          <div class="quiz-score"></div>
+          <div class="quiz-score-label"></div>
+          <button class="quiz-restart" onclick="quizRestart(this)">Try again</button>
         </div>
       </div>
     </div>
@@ -1186,6 +1353,27 @@ Students/pride.txt is now in main — visible to everyone who pulls the repo.</d
             <tr><td>Fork</td><td>Your own copy of someone else's repo on GitHub — changes don't affect the original until you PR</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <button class="quiz-toggle" onclick="toggleQuiz(this)">
+        Quiz — Test Your Git Knowledge <span>click to start</span>
+      </button>
+      <div class="quiz-body" data-quiz="git">
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:0%"></div></div>
+          <span class="quiz-counter">1 / 5</span>
+        </div>
+        <div class="quiz-question"></div>
+        <div class="quiz-options"></div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-next" onclick="quizNext(this)">Next question</button>
+        <div class="quiz-result">
+          <div class="quiz-score"></div>
+          <div class="quiz-score-label"></div>
+          <button class="quiz-restart" onclick="quizRestart(this)">Try again</button>
+        </div>
       </div>
     </div>
 
@@ -1507,6 +1695,27 @@ echo $TOKEN  # still in memory, but Jamf rejects it now</pre>
       </div>
     </div>
 
+    <div class="quiz">
+      <button class="quiz-toggle" onclick="toggleQuiz(this)">
+        Quiz — Test Your API Knowledge <span>click to start</span>
+      </button>
+      <div class="quiz-body" data-quiz="api">
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:0%"></div></div>
+          <span class="quiz-counter">1 / 5</span>
+        </div>
+        <div class="quiz-question"></div>
+        <div class="quiz-options"></div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-next" onclick="quizNext(this)">Next question</button>
+        <div class="quiz-result">
+          <div class="quiz-score"></div>
+          <div class="quiz-score-label"></div>
+          <button class="quiz-restart" onclick="quizRestart(this)">Try again</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 
@@ -1794,6 +2003,29 @@ open day-3/site/planned/index.html
 
   </div>
 
+    <div class="quiz">
+      <button class="quiz-toggle" onclick="toggleQuiz(this)">
+        Quiz — Test Your AI Dev Knowledge <span>click to start</span>
+      </button>
+      <div class="quiz-body" data-quiz="aidev">
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:0%"></div></div>
+          <span class="quiz-counter">1 / 5</span>
+        </div>
+        <div class="quiz-question"></div>
+        <div class="quiz-options"></div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-next" onclick="quizNext(this)">Next question</button>
+        <div class="quiz-result">
+          <div class="quiz-score"></div>
+          <div class="quiz-score-label"></div>
+          <button class="quiz-restart" onclick="quizRestart(this)">Try again</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- Scroll to top -->
   <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&#x2191;</button>
 
@@ -1897,6 +2129,134 @@ open day-3/site/planned/index.html
     scrollBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    // ── Quiz data ──
+    const QUIZZES = {
+      jamf: [
+        { q: "What does MDM stand for?", options: ["Mac Device Management", "Mobile Device Management", "Managed Device Module", "Multi-Device Manager"], answer: 1, explain: "MDM = Mobile Device Management — the system that lets IT manage Apple devices at scale from a single place." },
+        { q: "In Zero Touch Deployment, when does a device auto-enroll in Jamf Pro?", options: ["After IT manually configures it", "When a technician installs an agent", "On first boot via DEP", "After the user downloads the Jamf app"], answer: 2, explain: "DEP (Device Enrollment Program) triggers automatic enrollment on first boot — no IT hands-on required." },
+        { q: "What is the main advantage of webhooks over polling?", options: ["Webhooks require less setup", "Polling is more accurate", "Webhooks notify you instantly when events happen", "Polling uses less bandwidth"], answer: 2, explain: "Webhooks push data to you the moment an event fires. Polling wastes requests asking 'did anything change?' over and over." },
+        { q: "What is an Extension Attribute in Jamf Pro?", options: ["A plugin for the Jamf app", "A custom data field added to computer records", "An extra license for Jamf Pro", "A type of Smart Group"], answer: 1, explain: "Extension Attributes store custom info on device records — like 'Workshop Status: Pride' — that Jamf doesn't track by default." },
+        { q: "Which persona was mapped to Pride in the workshop?", options: ["Enterprise IT Admin", "K-12 IT Coordinator", "Help Desk Technician", "Security Analyst"], answer: 3, explain: "Security Analyst — pain points: manual compliance checks, excessive alerts, slow incident response, manual report generation." }
+      ],
+      git: [
+        { q: "What does `git checkout -b students/pride` do?", options: ["Deletes the students/pride branch", "Switches to an existing branch", "Creates a new branch and switches to it", "Pushes the branch to GitHub"], answer: 2, explain: "The -b flag creates the branch AND switches to it in one step. Without -b it only switches to an existing branch." },
+        { q: "What is the purpose of `git add`?", options: ["Creates a new commit", "Stages changes for the next commit", "Pushes changes to remote", "Downloads remote changes"], answer: 1, explain: "Staging is a checkpoint — you choose exactly what goes into the commit before sealing it, like picking what goes in an envelope." },
+        { q: "What does a Pull Request (PR) do?", options: ["Downloads code from GitHub", "Deletes a branch after use", "Requests to merge one branch into another", "Creates a backup of the repo"], answer: 2, explain: "A PR creates a review + discussion thread on GitHub so changes can be checked before being merged into main." },
+        { q: "Which command shows both staged and unstaged changes?", options: ["git log --oneline", "git status", "git push", "git stash"], answer: 1, explain: "git status is your constant companion — it shows what's changed, what's staged, and what's untracked all at once." },
+        { q: "What does `git stash` do?", options: ["Deletes uncommitted changes permanently", "Pushes changes to a backup branch", "Temporarily saves uncommitted changes", "Creates a commit without a message"], answer: 2, explain: "Stash is a temporary shelf. Use it when you need to switch branches cleanly. `git stash pop` brings your changes back." }
+      ],
+      api: [
+        { q: "Which HTTP method is used to READ data without making changes?", options: ["POST", "PUT", "DELETE", "GET"], answer: 3, explain: "GET is safe — it only reads. POST creates, PUT updates/replaces, DELETE removes. Always use GET for queries." },
+        { q: "What HTTP status code means 'succeeded but nothing to return'?", options: ["200 OK", "201 Created", "204 No Content", "401 Unauthorized"], answer: 2, explain: "204 is normal for DELETE and invalidate-token — success with no response body. 200 has a body, 201 confirms creation." },
+        { q: "Which API path uses XML (Classic API)?", options: ["/api/v1/...", "/JSSResource/...", "/api/doc", "/api/v2/..."], answer: 1, explain: "/JSSResource/ is the older Classic API (XML-based). Still needed for Extension Attributes not yet migrated to the modern /api/v1/ JSON API." },
+        { q: "What does `jq -r` do when capturing a token?", options: ["Refreshes the JSON output", "Reverses the JSON array", "Outputs raw text without quotes", "Redirects output to a file"], answer: 2, explain: "-r = raw output. Without it strings appear with quotes: \"eyJ...\". With -r you get the bare string — essential for capturing $TOKEN into a variable." },
+        { q: "What should you always do with your bearer token when done?", options: ["Save it to a file for next time", "Leave it — it expires on its own", "Invalidate it via the API", "Share it with the team"], answer: 2, explain: "POST to /api/v1/auth/invalidate-token. This blacklists the token immediately server-side, even before natural expiry. Good security hygiene." }
+      ],
+      aidev: [
+        { q: "What does `/compound` do?", options: ["Combines two files into one", "Distills the session into COMPOUND.md", "Compresses the codebase", "Creates a new branch"], answer: 1, explain: "/compound writes a summary of everything that happened — decisions, dead ends, discoveries — to COMPOUND.md so the next session starts with full context." },
+        { q: "What ratio of planning to building does the Compound Loop recommend?", options: ["50% planning, 50% building", "20% planning, 80% building", "80% planning, 20% building", "100% building, review after"], answer: 2, explain: "80% planning, 20% building. The plan IS the work. Execution is just confirmation. If you're watching code generate most of the time, you skipped the important part." },
+        { q: "What is a hallucination in AI?", options: ["A visual bug in the UI", "When the agent forgets earlier context", "When the agent confidently states something wrong", "A plan mode feature"], answer: 2, explain: "Hallucinations sound confident but are wrong or made up. Always verify factual claims — especially API endpoints, syntax, and specific data." },
+        { q: "What is the difference between CLAUDE.md and COMPOUND.md?", options: ["CLAUDE.md is for code, COMPOUND.md is for docs", "CLAUDE.md is lean project setup; COMPOUND.md is rich session history", "COMPOUND.md is read first, CLAUDE.md is read second", "They serve the same purpose"], answer: 1, explain: "CLAUDE.md = lean setup the agent reads first every session. COMPOUND.md = rich session history that compounds over time. Together they give the agent full context." },
+        { q: "When is it better to start fresh than to keep pushing?", options: ["Never — always push through", "After every 10 messages", "When the solution keeps growing and you're confused", "Only when the agent suggests it"], answer: 2, explain: "Signs to quit: solution keeps growing, agent keeps changing direction, you can't explain what it's doing. Fresh start with better context beats fixing a bad path." }
+      ]
+    };
+
+    // ── Quiz logic ──
+    function toggleQuiz(btn) {
+      const body = btn.nextElementSibling;
+      const isOpen = body.classList.toggle('open');
+      btn.querySelector('span').textContent = isOpen ? 'click to hide' : 'click to start';
+      if (isOpen && !body.dataset.initialized) {
+        initQuiz(body);
+        body.dataset.initialized = '1';
+      }
+    }
+
+    function initQuiz(body) {
+      body._questions = [...QUIZZES[body.dataset.quiz]].sort(() => Math.random() - 0.5);
+      body._index = 0;
+      body._score = 0;
+      body.querySelector('.quiz-result').style.display = 'none';
+      body.querySelector('.quiz-progress').style.display = 'flex';
+      body.querySelector('.quiz-question').style.display = '';
+      body.querySelector('.quiz-options').style.display = '';
+      body.querySelector('.quiz-feedback').style.display = '';
+      renderQuestion(body);
+    }
+
+    function renderQuestion(body) {
+      const q = body._questions[body._index];
+      const total = body._questions.length;
+      body.querySelector('.quiz-progress-fill').style.width = (body._index / total * 100) + '%';
+      body.querySelector('.quiz-counter').textContent = (body._index + 1) + ' / ' + total;
+      body.querySelector('.quiz-question').textContent = q.q;
+      body.querySelector('.quiz-feedback').textContent = '';
+      body.querySelector('.quiz-feedback').className = 'quiz-feedback';
+      body.querySelector('.quiz-next').style.display = 'none';
+      const opts = body.querySelector('.quiz-options');
+      opts.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => handleAnswer(body, i));
+        opts.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(body, chosen) {
+      const q = body._questions[body._index];
+      const opts = body.querySelectorAll('.quiz-option');
+      const fb = body.querySelector('.quiz-feedback');
+      opts.forEach(b => b.disabled = true);
+      opts[q.answer].classList.add('correct');
+      if (chosen === q.answer) {
+        body._score++;
+        fb.textContent = 'Correct. ' + q.explain;
+        fb.className = 'quiz-feedback correct';
+      } else {
+        opts[chosen].classList.add('wrong');
+        fb.textContent = 'Not quite. ' + q.explain;
+        fb.className = 'quiz-feedback wrong';
+      }
+      const nextBtn = body.querySelector('.quiz-next');
+      nextBtn.textContent = body._index === body._questions.length - 1 ? 'See results' : 'Next question';
+      nextBtn.style.display = 'inline-block';
+    }
+
+    function quizNext(btn) {
+      const body = btn.closest('.quiz-body');
+      body._index++;
+      if (body._index >= body._questions.length) {
+        showResult(body);
+      } else {
+        renderQuestion(body);
+      }
+    }
+
+    function showResult(body) {
+      const total = body._questions.length;
+      body.querySelector('.quiz-progress').style.display = 'none';
+      body.querySelector('.quiz-question').style.display = 'none';
+      body.querySelector('.quiz-options').style.display = 'none';
+      body.querySelector('.quiz-feedback').style.display = 'none';
+      body.querySelector('.quiz-next').style.display = 'none';
+      const result = body.querySelector('.quiz-result');
+      result.querySelector('.quiz-score').textContent = body._score + ' / ' + total;
+      const pct = body._score / total;
+      result.querySelector('.quiz-score-label').textContent =
+        pct === 1 ? 'Perfect score!' : pct >= 0.8 ? 'Great job!' : pct >= 0.6 ? 'Keep reviewing.' : 'More practice needed.';
+      result.style.display = 'block';
+    }
+
+    function quizRestart(btn) {
+      const body = btn.closest('.quiz-body');
+      delete body.dataset.initialized;
+      initQuiz(body);
+      body.dataset.initialized = '1';
+    }
+
   </script>
 
 </body>
