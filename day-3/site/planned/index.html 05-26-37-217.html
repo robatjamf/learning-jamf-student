@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FC Barcelona Dashboard</title>
+  <style>
+    :root {
+      --blue: #004D98;
+      --red: #A50044;
+      --gold: #EDBB00;
+      --white: #FFFFFF;
+      --dark: #0a0a1a;
+      --dark-2: #12122a;
+      --card-bg: #0f0f2a;
+      --border: rgba(237, 187, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--dark);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    section { display: none; }
+
+    /* ── WELCOME PAGE ── */
+    #welcome {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .stripe-bg {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--blue) 0px,
+        var(--blue) 60px,
+        var(--red) 60px,
+        var(--red) 120px
+      );
+      opacity: 0.25;
+    }
+
+    .welcome-content {
+      position: relative;
+      text-align: center;
+      z-index: 1;
+      padding: 2rem;
+    }
+
+    .crest {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      border-radius: 50% 50% 48% 48% / 60% 60% 40% 40%;
+      border: 4px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 0 40px rgba(237,187,0,0.4);
+    }
+
+    .welcome-content h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--gold), var(--white));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: 1.4rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      font-style: italic;
+    }
+
+    .welcome-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(237,187,0,0.6);
+      margin-bottom: 0.6rem;
+    }
+
+    .welcome-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .welcome-divider span:not(.diamond) {
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(237,187,0,0.5));
+    }
+
+    .welcome-divider span:first-child {
+      background: linear-gradient(90deg, transparent, rgba(237,187,0,0.5));
+    }
+
+    .welcome-divider span:last-child {
+      background: linear-gradient(90deg, rgba(237,187,0,0.5), transparent);
+    }
+
+    .diamond {
+      color: var(--gold);
+      font-size: 0.6rem;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2.5rem;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      color: var(--white);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .btn-primary:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(237,187,0,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ── LOGIN PAGE ── */
+    #login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #login::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(0,77,152,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at bottom right, rgba(165,0,68,0.15) 0%, transparent 60%);
+    }
+
+    .login-card {
+      position: relative;
+      background: var(--card-bg);
+      padding: 3rem 2.5rem;
+      width: min(420px, 90vw);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 60px rgba(0,77,152,0.2), 0 0 60px rgba(165,0,68,0.1);
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, var(--blue), var(--red), var(--gold));
+      z-index: -1;
+    }
+
+    .login-card h2 {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+      color: var(--white);
+    }
+
+    .login-card .login-sub {
+      text-align: center;
+      color: var(--gold);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--white);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(237,187,0,0.15);
+    }
+
+    .form-group select option {
+      background: var(--dark-2);
+    }
+
+    .error-msg {
+      background: rgba(165,0,68,0.2);
+      border: 1px solid var(--red);
+      color: #ff6b9d;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .btn-login {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .back-link a {
+      color: var(--gold);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-link a:hover { text-decoration: underline; }
+
+    /* ── HOME / DASHBOARD ── */
+    #home { min-height: 100vh; background: var(--dark); }
+
+    .navbar {
+      background: linear-gradient(90deg, var(--dark-2), rgba(0,77,152,0.3));
+      border-bottom: 2px solid var(--gold);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-crest {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      border-radius: 50% 50% 45% 45% / 55% 55% 45% 45%;
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-user {
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .dash-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .dash-card-header {
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dash-card-header.blue { background: linear-gradient(90deg, rgba(0,77,152,0.5), transparent); }
+    .dash-card-header.red  { background: linear-gradient(90deg, rgba(165,0,68,0.5), transparent); }
+    .dash-card-header.gold { background: linear-gradient(90deg, rgba(237,187,0,0.2), transparent); }
+
+    .dash-card-header .icon { font-size: 1.4rem; }
+
+    .dash-card-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .dash-card-body { padding: 1.25rem 1.5rem; }
+
+    .dash-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .dash-form .full { grid-column: 1 / -1; }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      color: var(--white);
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-add:hover {
+      box-shadow: 0 4px 15px rgba(0,77,152,0.4);
+      transform: translateY(-1px);
+    }
+
+    .list-section {
+      margin-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+    }
+
+    .list-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .empty-state {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    /* Player Cards */
+    .player-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .player-card {
+      background: rgba(0,77,152,0.15);
+      border: 1px solid rgba(0,77,152,0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .jersey-num {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .player-info { flex: 1; min-width: 0; }
+
+    .player-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-meta {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.15rem;
+    }
+
+    /* Match Timeline */
+    .match-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .match-row {
+      background: rgba(165,0,68,0.1);
+      border: 1px solid rgba(165,0,68,0.25);
+      border-left: 3px solid var(--red);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+    }
+
+    .match-row .match-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.2rem;
+    }
+
+    .match-opponent { font-weight: 700; font-size: 0.95rem; }
+
+    .venue-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .venue-badge.home { background: rgba(0,77,152,0.4); color: #6fa8ff; }
+    .venue-badge.away { background: rgba(165,0,68,0.4); color: #ff6b9d; }
+
+    .match-meta { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+    /* Team Badges */
+    .team-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .team-badge {
+      background: rgba(237,187,0,0.08);
+      border: 1px solid rgba(237,187,0,0.2);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .team-badge .team-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .team-badge .team-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .team-badge .team-meta {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .team-badge .team-notes {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+
+    /* Scrollable lists */
+    .scrollable { max-height: 280px; overflow-y: auto; }
+    .scrollable::-webkit-scrollbar { width: 4px; }
+    .scrollable::-webkit-scrollbar-track { background: transparent; }
+    .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Delete btn */
+    .btn-del {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.3);
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-del:hover { color: var(--red); }
+
+    /* ── MESSI SILHOUETTE ── */
+    .welcome-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      width: 100%;
+      max-width: 1100px;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .messi-side {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .messi-glow {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(237,187,0,0.35) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .messi-svg {
+      height: min(62vh, 500px);
+      width: auto;
+      filter: drop-shadow(0 0 28px rgba(237,187,0,0.45));
+      position: relative;
+      z-index: 1;
+    }
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .welcome-inner { flex-direction: column; gap: 1.5rem; }
+      .messi-svg { height: min(38vh, 300px); }
+    }
+
+    @media (max-width: 600px) {
+      .dashboard { grid-template-columns: 1fr; padding: 1rem; }
+      .dash-form { grid-template-columns: 1fr; }
+      .dash-form .full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ WELCOME ══════════════════ -->
+<section id="welcome">
+  <div class="stripe-bg"></div>
+  <div class="welcome-inner">
+
+    <!-- Big Football -->
+    <div class="messi-side">
+      <div class="messi-glow"></div>
+      <svg class="messi-svg" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Main sphere gradient — deep shadow at bottom-right, bright at top-left -->
+          <radialGradient id="sphere" cx="36%" cy="32%" r="68%">
+            <stop offset="0%"   stop-color="#ffffff"/>
+            <stop offset="25%"  stop-color="#f5f5f5"/>
+            <stop offset="60%"  stop-color="#c8c8c8"/>
+            <stop offset="85%"  stop-color="#7a7a7a"/>
+            <stop offset="100%" stop-color="#3a3a3a"/>
+          </radialGradient>
+          <!-- Specular highlight -->
+          <radialGradient id="specular" cx="34%" cy="28%" r="32%">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0.95)"/>
+            <stop offset="50%"  stop-color="rgba(255,255,255,0.3)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+          <!-- Rim shadow — darkens edge all around -->
+          <radialGradient id="rimShadow" cx="50%" cy="50%" r="50%">
+            <stop offset="70%"  stop-color="rgba(0,0,0,0)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+          </radialGradient>
+          <!-- Ambient occlusion on patches -->
+          <filter id="patchShadow" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#000" flood-opacity="0.6"/>
+          </filter>
+          <!-- Outer golden glow -->
+          <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="14" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <clipPath id="ballClip">
+            <circle cx="160" cy="155" r="132"/>
+          </clipPath>
+        </defs>
+
+        <!-- Outer glow pulse -->
+        <circle cx="160" cy="155" r="148" fill="rgba(237,187,0,0.07)" filter="url(#goldGlow)"/>
+        <circle cx="160" cy="155" r="138" fill="rgba(237,187,0,0.04)"/>
+
+        <!-- Ball base sphere -->
+        <circle cx="160" cy="155" r="132" fill="url(#sphere)"/>
+
+        <!-- Black patches clipped to ball -->
+        <g clip-path="url(#ballClip)" filter="url(#patchShadow)">
+          <!-- Center pentagon -->
+          <polygon fill="#0d0d0d"
+            points="160,88 196,112 183,152 137,152 124,112"/>
+          <!-- Top-right pentagon -->
+          <polygon fill="#0d0d0d"
+            points="208,70 238,100 220,136 196,112 200,80"/>
+          <!-- Right pentagon -->
+          <polygon fill="#111"
+            points="244,148 250,185 218,205 198,178 220,136"/>
+          <!-- Bottom-right pentagon -->
+          <polygon fill="#111"
+            points="218,205 207,242 172,245 158,212 198,178"/>
+          <!-- Bottom-left pentagon -->
+          <polygon fill="#111"
+            points="158,212 137,245 102,238 102,202 137,182"/>
+          <!-- Left pentagon -->
+          <polygon fill="#0d0d0d"
+            points="102,202 72,182 66,148 100,136 122,162"/>
+          <!-- Top-left pentagon -->
+          <polygon fill="#0d0d0d"
+            points="124,112 100,136 78,102 108,70 132,80"/>
+        </g>
+
+        <!-- Rim shadow overlay -->
+        <circle cx="160" cy="155" r="132" fill="url(#rimShadow)"/>
+
+        <!-- Specular highlight — the glossy shine -->
+        <circle cx="160" cy="155" r="132" fill="url(#specular)"/>
+
+        <!-- Secondary soft highlight spot -->
+        <ellipse cx="125" cy="108" rx="28" ry="20"
+          fill="rgba(255,255,255,0.18)" transform="rotate(-25 125 108)"/>
+
+        <!-- Gold border ring -->
+        <circle cx="160" cy="155" r="132"
+          fill="none" stroke="#EDBB00" stroke-width="2.5" opacity="0.7"/>
+        <!-- Subtle inner ring -->
+        <circle cx="160" cy="155" r="129"
+          fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+        <!-- Ground shadow -->
+        <ellipse cx="160" cy="300" rx="90" ry="10" fill="rgba(0,0,0,0.4)"/>
+        <ellipse cx="160" cy="300" rx="60" ry="6"  fill="rgba(0,0,0,0.25)"/>
+      </svg>
+    </div>
+
+    <!-- Right: text content -->
+    <div class="welcome-content">
+      <div class="crest">&#x26BD;</div>
+      <p class="welcome-eyebrow">Season 2025 &mdash; 26</p>
+      <h1>FC Barcelona</h1>
+      <p class="tagline">More Than A Club</p>
+      <div class="welcome-divider">
+        <span></span><span class="diamond">&#x25C6;</span><span></span>
+      </div>
+      <p class="subtitle">Match Day Command Centre &nbsp;&mdash;&nbsp; Authorised Access Only</p>
+      <button class="btn-primary" onclick="showPage('login')">Enter the Stadium</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ LOGIN ══════════════════ -->
+<section id="login">
+  <div class="login-card">
+    <h2>Match Day Access</h2>
+    <p class="login-sub">Verified Attendees &amp; Staff Only</p>
+
+    <div class="error-msg" id="login-error">Invalid credentials. Please try again.</div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <button class="btn-primary btn-login" onclick="doLogin()">Sign In</button>
+
+    <p class="back-link"><a onclick="showPage('welcome')">&larr; Back to Welcome</a></p>
+  </div>
+</section>
+
+<!-- ══════════════════ HOME / DASHBOARD ══════════════════ -->
+<section id="home">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-crest">⚽</div>
+      FC Barcelona Dashboard
+    </div>
+    <div class="nav-right">
+      <span class="nav-user">Prosperity</span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+
+    <!-- PLAYER DETAILS -->
+    <div class="dash-card">
+      <div class="dash-card-header blue">
+        <span class="icon">👤</span>
+        <h3>Player Details</h3>
+      </div>
+      <div class="dash-card-body">
+        <div class="dash-form">
+          <div class="form-group full">
+            <label>Full Name</label>
+            <input type="text" id="p-name" placeholder="e.g. Lamine Yamal" />
+          </div>
+          <div class="form-group">
+            <label>Position</label>
+            <select id="p-position">
+              <option value="">Select...</option>
+              <option>Goalkeeper</option>
+              <option>Right Back</option>
+              <option>Centre Back</option>
+              <option>Left Back</option>
+              <option>Defensive Mid</option>
+              <option>Central Mid</option>
+              <option>Attacking Mid</option>
+              <option>Right Wing</option>
+              <option>Left Wing</option>
+              <option>Striker</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Jersey #</label>
+            <input type="number" id="p-jersey" placeholder="e.g. 19" min="1" max="99" />
+          </div>
+          <div class="form-group">
+            <label>Nationality</label>
+            <input type="text" id="p-nationality" placeholder="e.g. Spanish" />
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="p-age" placeholder="e.g. 17" min="15" max="45" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="addPlayer()">+ Add Player</button>
+
+        <div class="list-section">
+          <p class="list-label">Player Roster</p>
+          <div class="scrollable">
+            <div class="player-list" id="player-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCHDAYS -->
+    <div class="dash-card">
+      <div class="dash-card-header red">
+        <span class="icon">📅</span>
+        <h3>Matchdays</h3>
+      </div>
+      <div class="dash-card-body">
+        <div class="dash-form">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="m-date" />
+          </div>
+          <div class="form-group">
+            <label>Opponent</label>
+            <input type="text" id="m-opponent" placeholder="e.g. Real Madrid" />
+          </div>
+          <div class="form-group">
+            <label>Venue</label>
+            <select id="m-venue">
+              <option value="Home">Home</option>
+              <option value="Away">Away</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Competition</label>
+            <input type="text" id="m-competition" placeholder="e.g. La Liga" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="addMatch()">+ Add Match</button>
+
+        <div class="list-section">
+          <p class="list-label">Upcoming Fixtures</p>
+          <div class="scrollable">
+            <div class="match-list" id="match-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPPOSITION TEAMS -->
+    <div class="dash-card">
+      <div class="dash-card-header gold">
+        <span class="icon">🛡️</span>
+        <h3>Opposition Teams</h3>
+      </div>
+      <div class="dash-card-body">
+        <div class="dash-form">
+          <div class="form-group">
+            <label>Team Name</label>
+            <input type="text" id="t-name" placeholder="e.g. Real Madrid" />
+          </div>
+          <div class="form-group">
+            <label>League</label>
+            <input type="text" id="t-league" placeholder="e.g. La Liga" />
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" id="t-country" placeholder="e.g. Spain" />
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <input type="text" id="t-notes" placeholder="e.g. High press style" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTeam()">+ Add Team</button>
+
+        <div class="list-section">
+          <p class="list-label">Scouting List</p>
+          <div class="scrollable">
+            <div class="team-list" id="team-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // ── Constants ──
+  const CREDS = { username: 'proe', password: '12345' };
+
+  // ── Page routing ──
+  function showPage(id) {
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    const el = document.getElementById(id);
+    el.style.display = (id === 'welcome' || id === 'login') ? 'flex' : 'block';
+  }
+
+  function checkAuth() {
+    const path = location.hash.replace('#', '') || 'welcome';
+    if (path === 'home' && !sessionStorage.getItem('loggedIn')) {
+      showPage('login');
+    } else {
+      showPage(path === 'home' || path === 'login' || path === 'welcome' ? path : 'welcome');
+    }
+  }
+
+  // ── Auth ──
+  function doLogin() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    const err = document.getElementById('login-error');
+
+    if (u === CREDS.username && p === CREDS.password) {
+      err.classList.remove('show');
+      sessionStorage.setItem('loggedIn', 'true');
+      renderAll();
+      showPage('home');
+    } else {
+      err.classList.add('show');
+      document.getElementById('password').value = '';
+      document.getElementById('password').focus();
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('loggedIn');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    showPage('welcome');
+  }
+
+  // ── Storage helpers ──
+  function load(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
+  }
+
+  function save(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  // ── Players ──
+  function addPlayer() {
+    const name     = document.getElementById('p-name').value.trim();
+    const position = document.getElementById('p-position').value;
+    const jersey   = document.getElementById('p-jersey').value;
+    const nat      = document.getElementById('p-nationality').value.trim();
+    const age      = document.getElementById('p-age').value;
+
+    if (!name || !position || !jersey) {
+      alert('Please fill in Name, Position and Jersey Number.');
+      return;
+    }
+
+    const players = load('barca_players');
+    players.unshift({ name, position, jersey: +jersey, nationality: nat, age: +age, id: Date.now() });
+    save('barca_players', players);
+    renderPlayers();
+
+    ['p-name','p-position','p-jersey','p-nationality','p-age'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = el.tagName === 'SELECT' ? '' : '';
+    });
+  }
+
+  function deletePlayer(id) {
+    save('barca_players', load('barca_players').filter(p => p.id !== id));
+    renderPlayers();
+  }
+
+  function renderPlayers() {
+    const players = load('barca_players');
+    const list = document.getElementById('player-list');
+    if (!players.length) {
+      list.innerHTML = '<p class="empty-state">No players added yet.</p>';
+      return;
+    }
+    list.innerHTML = players.map(p => `
+      <div class="player-card">
+        <div class="jersey-num">${p.jersey}</div>
+        <div class="player-info">
+          <div class="player-name">${esc(p.name)}</div>
+          <div class="player-meta">${esc(p.position)}${p.nationality ? ' &middot; ' + esc(p.nationality) : ''}${p.age ? ' &middot; Age ' + p.age : ''}</div>
+        </div>
+        <button class="btn-del" onclick="deletePlayer(${p.id})" title="Remove">&#10005;</button>
+      </div>
+    `).join('');
+  }
+
+  // ── Matches ──
+  function addMatch() {
+    const date        = document.getElementById('m-date').value;
+    const opponent    = document.getElementById('m-opponent').value.trim();
+    const venue       = document.getElementById('m-venue').value;
+    const competition = document.getElementById('m-competition').value.trim();
+
+    if (!opponent || !date) {
+      alert('Please fill in Date and Opponent.');
+      return;
+    }
+
+    const matches = load('barca_matches');
+    matches.unshift({ date, opponent, venue, competition, id: Date.now() });
+    save('barca_matches', matches);
+    renderMatches();
+
+    document.getElementById('m-date').value = '';
+    document.getElementById('m-opponent').value = '';
+    document.getElementById('m-competition').value = '';
+  }
+
+  function deleteMatch(id) {
+    save('barca_matches', load('barca_matches').filter(m => m.id !== id));
+    renderMatches();
+  }
+
+  function renderMatches() {
+    const matches = load('barca_matches');
+    const list = document.getElementById('match-list');
+    if (!matches.length) {
+      list.innerHTML = '<p class="empty-state">No fixtures added yet.</p>';
+      return;
+    }
+    list.innerHTML = matches.map(m => `
+      <div class="match-row">
+        <div class="match-top">
+          <span class="match-opponent">vs ${esc(m.opponent)}</span>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <span class="venue-badge ${m.venue.toLowerCase()}">${m.venue}</span>
+            <button class="btn-del" onclick="deleteMatch(${m.id})" title="Remove">&#10005;</button>
+          </div>
+        </div>
+        <div class="match-meta">${formatDate(m.date)}${m.competition ? ' &middot; ' + esc(m.competition) : ''}</div>
+      </div>
+    `).join('');
+  }
+
+  // ── Teams ──
+  function addTeam() {
+    const name    = document.getElementById('t-name').value.trim();
+    const league  = document.getElementById('t-league').value.trim();
+    const country = document.getElementById('t-country').value.trim();
+    const notes   = document.getElementById('t-notes').value.trim();
+
+    if (!name) {
+      alert('Please enter a Team Name.');
+      return;
+    }
+
+    const teams = load('barca_teams');
+    teams.unshift({ name, league, country, notes, id: Date.now() });
+    save('barca_teams', teams);
+    renderTeams();
+
+    ['t-name','t-league','t-country','t-notes'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  function deleteTeam(id) {
+    save('barca_teams', load('barca_teams').filter(t => t.id !== id));
+    renderTeams();
+  }
+
+  function renderTeams() {
+    const teams = load('barca_teams');
+    const list = document.getElementById('team-list');
+    if (!teams.length) {
+      list.innerHTML = '<p class="empty-state">No teams scouted yet.</p>';
+      return;
+    }
+    list.innerHTML = teams.map(t => `
+      <div class="team-badge" style="position:relative">
+        <button class="btn-del" style="position:absolute;top:4px;right:4px" onclick="deleteTeam(${t.id})" title="Remove">&#10005;</button>
+        <div class="team-icon">🛡️</div>
+        <div class="team-name">${esc(t.name)}</div>
+        <div class="team-meta">${[t.league, t.country].filter(Boolean).map(esc).join(' &middot; ')}</div>
+        ${t.notes ? `<div class="team-notes">${esc(t.notes)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ── Utilities ──
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      });
+    } catch { return dateStr; }
+  }
+
+  function renderAll() {
+    renderPlayers();
+    renderMatches();
+    renderTeams();
+  }
+
+  // ── Init ──
+  window.addEventListener('hashchange', checkAuth);
+
+  (function init() {
+    if (sessionStorage.getItem('loggedIn')) {
+      renderAll();
+      showPage('home');
+    } else {
+      showPage('welcome');
+    }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prosperity — 3 Days of Learning</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #03050f;
+      --surface: #080d1a;
+      --border: rgba(255,255,255,0.1);
+      --blue: #38bdf8;
+      --blue-deep: #3b82f6;
+      --orange: #fb923c;
+      --lime: #a3e635;
+      --purple: #a78bfa;
+      --teal: #2dd4bf;
+      --text: #f1f5f9;
+      --muted: #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      /* page frame — subtle side glow */
+      border-left: 3px solid transparent;
+      border-right: 3px solid transparent;
+      border-image: linear-gradient(to bottom, var(--blue), var(--purple), var(--orange), var(--lime)) 1;
+    }
+
+    /* ── RAINBOW TOP BAR ── */
+    .top-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--orange), var(--lime), var(--teal));
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 4px;
+      left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 2.5rem;
+      background: rgba(3,5,15,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1.5px solid rgba(56,189,248,0.2);
+    }
+
+    .nav-brand {
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--blue), var(--lime));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links { display: flex; gap: 0.5rem; }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: rgba(56,189,248,0.5);
+      background: rgba(56,189,248,0.06);
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--blue-deep), var(--purple));
+      border-color: transparent;
+      color: #fff;
+      border-radius: 8px;
+    }
+
+    .nav-btn.primary:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid rgba(56,189,248,0.25);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 15%, rgba(56,189,248,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(163,230,53,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 55% 5%,  rgba(251,146,60,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(163,230,53,0.08);
+      border: 1.5px solid rgba(163,230,53,0.35);
+      color: var(--lime);
+      padding: 0.4rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      background: var(--lime);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--lime);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(3.2rem, 9vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.0;
+      margin-bottom: 1.25rem;
+    }
+
+    .grad-blue {
+      background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .grad-lime {
+      background: linear-gradient(135deg, var(--lime), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 460px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.22s;
+      letter-spacing: 0.01em;
+      border: none;
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(56,189,248,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-blue:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 36px rgba(56,189,248,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: rgba(56,189,248,0.06);
+      transform: translateY(-3px);
+    }
+
+    .btn-orange {
+      background: linear-gradient(135deg, #ea580c, var(--orange));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(251,146,60,0.3);
+    }
+
+    .btn-orange:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 36px rgba(251,146,60,0.5);
+    }
+
+    .btn-lime {
+      background: linear-gradient(135deg, #65a30d, var(--lime));
+      color: #000;
+      box-shadow: 0 0 20px rgba(163,230,53,0.3);
+    }
+
+    .btn-lime:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 36px rgba(163,230,53,0.5);
+    }
+
+    /* expand button */
+    .btn-expand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .d1 .btn-expand:hover, .d1 .btn-expand.open { border-color: var(--blue); color: var(--blue); background: rgba(56,189,248,0.06); }
+    .d2 .btn-expand:hover, .d2 .btn-expand.open { border-color: var(--orange); color: var(--orange); background: rgba(251,146,60,0.06); }
+    .d3 .btn-expand:hover, .d3 .btn-expand.open { border-color: var(--lime); color: var(--lime); background: rgba(163,230,53,0.06); }
+
+    /* ── STATS ── */
+    .hero-stats {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      flex-wrap: wrap;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 1.5rem 3rem;
+      border-right: 1.5px solid rgba(255,255,255,0.1);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-num.blue   { color: var(--blue); text-shadow: 0 0 20px rgba(56,189,248,0.4); }
+    .stat-num.orange { color: var(--orange); text-shadow: 0 0 20px rgba(251,146,60,0.4); }
+    .stat-num.lime   { color: var(--lime); text-shadow: 0 0 20px rgba(163,230,53,0.4); }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scroll-line {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, rgba(56,189,248,0.5), transparent);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section-wrap {
+      border-top: 2px solid transparent;
+      border-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent) 1;
+    }
+
+    section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.75rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+    }
+
+    .sl-blue   { color: var(--blue);   background: rgba(56,189,248,0.08);  border: 1px solid rgba(56,189,248,0.2); }
+    .sl-orange { color: var(--orange); background: rgba(251,146,60,0.08);  border: 1px solid rgba(251,146,60,0.2); }
+    .sl-lime   { color: var(--lime);   background: rgba(163,230,53,0.08);  border: 1px solid rgba(163,230,53,0.2); }
+    .sl-purple { color: var(--purple); background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); }
+
+    .section-title {
+      font-size: clamp(1.9rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 540px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── DAY CARDS ── */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .day-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .day-card.d1 {
+      border: 2px solid rgba(56,189,248,0.3);
+      border-top: 3px solid var(--blue);
+    }
+    .day-card.d1:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56,189,248,0.6);
+      box-shadow: 0 16px 48px rgba(56,189,248,0.15);
+    }
+
+    .day-card.d2 {
+      border: 2px solid rgba(251,146,60,0.3);
+      border-top: 3px solid var(--orange);
+    }
+    .day-card.d2:hover {
+      transform: translateY(-6px);
+      border-color: rgba(251,146,60,0.6);
+      box-shadow: 0 16px 48px rgba(251,146,60,0.15);
+    }
+
+    .day-card.d3 {
+      border: 2px solid rgba(163,230,53,0.3);
+      border-top: 3px solid var(--lime);
+    }
+    .day-card.d3:hover {
+      transform: translateY(-6px);
+      border-color: rgba(163,230,53,0.6);
+      box-shadow: 0 16px 48px rgba(163,230,53,0.15);
+    }
+
+    .day-num {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.5rem;
+    }
+
+    .d1 .day-num { color: var(--blue); }
+    .d2 .day-num { color: var(--orange); }
+    .d3 .day-num { color: var(--lime); }
+
+    .day-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .day-card > p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .day-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .day-pill {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .d1 .day-pill { background: rgba(56,189,248,0.12);  color: var(--blue);   border: 1px solid rgba(56,189,248,0.25); }
+    .d2 .day-pill { background: rgba(251,146,60,0.12);  color: var(--orange); border: 1px solid rgba(251,146,60,0.25); }
+    .d3 .day-pill { background: rgba(163,230,53,0.12);  color: var(--lime);   border: 1px solid rgba(163,230,53,0.25); }
+
+    .day-extra {
+      display: none;
+      margin-top: 1.25rem;
+      border-top: 1.5px solid rgba(255,255,255,0.08);
+      padding-top: 1rem;
+    }
+
+    .day-extra.open { display: block; }
+
+    .day-extra ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .day-extra li {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .day-extra li::before {
+      content: '→';
+      flex-shrink: 0;
+    }
+
+    .d1 .day-extra li::before { color: var(--blue); }
+    .d2 .day-extra li::before { color: var(--orange); }
+    .d3 .day-extra li::before { color: var(--lime); }
+
+    /* ── QUOTE SECTION ── */
+    .quote-section {
+      text-align: center;
+      padding: 6rem 2rem;
+      position: relative;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, transparent, rgba(251,146,60,0.4), rgba(163,230,53,0.4), transparent) 1;
+    }
+
+    blockquote {
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      max-width: 700px;
+      margin: 0 auto 1.25rem;
+    }
+
+    blockquote em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--orange), var(--lime));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .quote-attr {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── MOMENTS ── */
+    .moments-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .moment-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 1.75rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .moment-card.hl-blue   { border: 1.5px solid rgba(56,189,248,0.3);  border-left: 3px solid var(--blue); }
+    .moment-card.hl-orange { border: 1.5px solid rgba(251,146,60,0.3);  border-left: 3px solid var(--orange); }
+    .moment-card.hl-lime   { border: 1.5px solid rgba(163,230,53,0.3);  border-left: 3px solid var(--lime); }
+    .moment-card.hl-purple { border: 1.5px solid rgba(167,139,250,0.3); border-left: 3px solid var(--purple); }
+
+    .moment-card:hover { transform: translateY(-4px); }
+    .moment-card.hl-blue:hover   { border-color: rgba(56,189,248,0.6);  border-left-color: var(--blue); }
+    .moment-card.hl-orange:hover { border-color: rgba(251,146,60,0.6);  border-left-color: var(--orange); }
+    .moment-card.hl-lime:hover   { border-color: rgba(163,230,53,0.6);  border-left-color: var(--lime); }
+    .moment-card.hl-purple:hover { border-color: rgba(167,139,250,0.6); border-left-color: var(--purple); }
+
+    .moment-card.wide { grid-column: 1 / -1; }
+
+    .moment-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+
+    .moment-card h4 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .moment-card p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.65;
+    }
+
+    .quote-inline {
+      font-style: italic;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-left: 2px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* ── TOOLS ── */
+    .tools-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .tool-row {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .tool-row.t1 { border: 1.5px solid rgba(56,189,248,0.25); }
+    .tool-row.t2 { border: 1.5px solid rgba(251,146,60,0.25); }
+    .tool-row.t3 { border: 1.5px solid rgba(163,230,53,0.25); }
+
+    .tool-row.t1:hover { border-color: rgba(56,189,248,0.6);  transform: translateX(6px); }
+    .tool-row.t2:hover { border-color: rgba(251,146,60,0.6);  transform: translateX(6px); }
+    .tool-row.t3:hover { border-color: rgba(163,230,53,0.6);  transform: translateX(6px); }
+
+    .tool-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .t1 .tool-dot { background: var(--blue);   box-shadow: 0 0 10px rgba(56,189,248,0.7); }
+    .t2 .tool-dot { background: var(--orange);  box-shadow: 0 0 10px rgba(251,146,60,0.7); }
+    .t3 .tool-dot { background: var(--lime);    box-shadow: 0 0 10px rgba(163,230,53,0.7); }
+
+    .tool-name { font-weight: 700; font-size: 0.95rem; min-width: 140px; }
+
+    .tool-desc { color: var(--muted); font-size: 0.88rem; }
+
+    .tool-badge {
+      margin-left: auto;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.85rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .t1 .tool-badge { background: rgba(56,189,248,0.1);  color: var(--blue);   border: 1px solid rgba(56,189,248,0.25); }
+    .t2 .tool-badge { background: rgba(251,146,60,0.1);  color: var(--orange); border: 1px solid rgba(251,146,60,0.25); }
+    .t3 .tool-badge { background: rgba(163,230,53,0.1);  color: var(--lime);   border: 1px solid rgba(163,230,53,0.25); }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-block {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 1.5rem 1.75rem;
+    }
+
+    .skill-block.sb-blue   { border: 1.5px solid rgba(56,189,248,0.3);  border-top: 3px solid var(--blue); }
+    .skill-block.sb-orange { border: 1.5px solid rgba(251,146,60,0.3);  border-top: 3px solid var(--orange); }
+    .skill-block.sb-lime   { border: 1.5px solid rgba(163,230,53,0.3);  border-top: 3px solid var(--lime); }
+
+    .skill-block-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1.25rem;
+    }
+
+    .sb-blue   .skill-block-label { color: var(--blue); }
+    .sb-orange .skill-block-label { color: var(--orange); }
+    .sb-lime   .skill-block-label { color: var(--lime); }
+
+    .skill-row { margin-bottom: 1rem; }
+    .skill-row:last-child { margin-bottom: 0; }
+
+    .skill-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .skill-name { font-size: 0.88rem; font-weight: 600; }
+
+    .skill-pct {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .sb-blue   .skill-pct { color: var(--blue); }
+    .sb-orange .skill-pct { color: var(--orange); }
+    .sb-lime   .skill-pct { color: var(--lime); }
+
+    .bar-track {
+      height: 7px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sb-blue   .bar-fill { background: linear-gradient(90deg, var(--blue-deep), var(--blue)); box-shadow: 0 0 8px rgba(56,189,248,0.5); }
+    .sb-orange .bar-fill { background: linear-gradient(90deg, #ea580c, var(--orange)); box-shadow: 0 0 8px rgba(251,146,60,0.5); }
+    .sb-lime   .bar-fill { background: linear-gradient(90deg, #65a30d, var(--lime)); box-shadow: 0 0 8px rgba(163,230,53,0.5); }
+
+    /* ── BACK TO TOP ── */
+    .back-to-top { display: flex; justify-content: center; padding: 3rem 2rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 2px solid rgba(56,189,248,0.2);
+      padding: 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    footer strong { color: var(--text); }
+
+    .footer-tags {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .ftag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.85rem;
+      border-radius: 6px;
+    }
+
+    .ftag.ft-blue   { color: var(--blue);   background: rgba(56,189,248,0.06);  border: 1px solid rgba(56,189,248,0.25); }
+    .ftag.ft-orange { color: var(--orange); background: rgba(251,146,60,0.06);  border: 1px solid rgba(251,146,60,0.25); }
+    .ftag.ft-lime   { color: var(--lime);   background: rgba(163,230,53,0.06);  border: 1px solid rgba(163,230,53,0.25); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .moments-grid { grid-template-columns: 1fr; }
+      .moment-card.wide { grid-column: 1; }
+      .nav-links { display: none; }
+      .hero-stats { flex-direction: column; gap: 0; }
+      .stat { border-right: none; border-bottom: 1.5px solid rgba(255,255,255,0.1); }
+      .stat:last-child { border-bottom: none; }
+      .tool-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- RAINBOW TOP BAR -->
+<div class="top-bar"></div>
+
+<!-- NAV -->
+<nav id="top">
+  <span class="nav-brand">Prosperity &bull; 3 Days</span>
+  <div class="nav-links">
+    <a href="#days"    class="nav-btn">Days</a>
+    <a href="#moments" class="nav-btn">Reflections</a>
+    <a href="#tools"   class="nav-btn">Tools</a>
+    <a href="#moments" class="nav-btn primary">My Journey</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag"><span class="dot"></span>&nbsp;Training Complete</div>
+
+  <h1><span class="grad-blue">3 Days</span> of Exploring<br>in the <span class="grad-lime">Jungle of Tech</span></h1>
+
+  <p class="hero-sub">A personal review of the Jamf Pro training — APIs, Webhooks, and AI. By Prosperity.</p>
+
+  <div class="hero-ctas">
+    <a href="#days"    class="btn btn-blue">&#x25BE;&nbsp; Explore My Journey</a>
+    <a href="#moments" class="btn btn-outline">Read My Reflections</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num blue" data-count="3">0</div>
+      <div class="stat-label">Days</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num orange">3</div>
+      <div class="stat-label">Topics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num lime">1</div>
+      <div class="stat-label">Big Takeaway</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</div>
+
+<!-- DAYS -->
+<div class="section-wrap">
+  <section id="days">
+    <span class="section-label sl-blue">&#x25CF;&nbsp; What we covered</span>
+    <h2 class="section-title">Three days, three topics.</h2>
+    <p class="section-desc">Each day built on the last — from git basics and APIs to automation to AI-native development.</p>
+
+    <div class="days-grid">
+
+      <div class="day-card d1">
+        <p class="day-num">Day 01</p>
+        <h3>Git &amp; Jamf Pro API</h3>
+        <p>Branching, commits, and PRs — then straight into authenticating with tokens and querying real computer inventory from a live Jamf Pro instance.</p>
+        <div class="day-card-footer">
+          <span class="day-pill">API &amp; Git</span>
+          <button class="btn-expand" data-target="extra-1">Details &#x25BE;</button>
+        </div>
+        <div class="day-extra" id="extra-1">
+          <ul>
+            <li>Created a personal branch and opened a pull request</li>
+            <li>Generated a bearer token via the Jamf Pro API</li>
+            <li>Queried computer inventory and read the JSON response</li>
+            <li>Invalidated tokens after use — proper API hygiene</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="day-card d2">
+        <p class="day-num">Day 02</p>
+        <h3>VMs, API &amp; Webhooks</h3>
+        <p>Spun up a Tart VM, created categories in Jamf via POST requests in Postman, then set up webhooks to fire automated responses to device events.</p>
+        <div class="day-card-footer">
+          <span class="day-pill">Automation</span>
+          <button class="btn-expand" data-target="extra-2">Details &#x25BE;</button>
+        </div>
+        <div class="day-extra" id="extra-2">
+          <ul>
+            <li>First time using a virtual machine — a computer inside a computer</li>
+            <li>Created a Jamf category using a POST request in Postman</li>
+            <li>Saw real API responses come back in the terminal</li>
+            <li>Configured a webhook to trigger on device events</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="day-card d3">
+        <p class="day-num">Day 03</p>
+        <h3>AI &amp; Claude Code</h3>
+        <p>Using Claude Code to build real things fast. Not just prompting — thinking in the Compound Engineering loop: Plan, Work, Review, Compound.</p>
+        <div class="day-card-footer">
+          <span class="day-pill">AI-Native Dev</span>
+          <button class="btn-expand" data-target="extra-3">Details &#x25BE;</button>
+        </div>
+        <div class="day-extra" id="extra-3">
+          <ul>
+            <li>First impression: Claude Code responds very quickly</li>
+            <li>Built two full sites — one-shot and planned builds</li>
+            <li>Learned Plan &rarr; Work &rarr; Review &rarr; Compound loop</li>
+            <li>Context is everything — the agent only knows what you give it</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <blockquote>&ldquo;I really want to <em>dwell much</em> in Claude Code.&rdquo;</blockquote>
+  <p class="quote-attr">— Prosperity, end of Day 2 reflection</p>
+  <a href="#tools" class="btn btn-orange" style="margin-top:1.5rem;">See what I'm taking forward &rarr;</a>
+</div>
+
+<!-- MOMENTS -->
+<div class="section-wrap">
+  <section id="moments">
+    <span class="section-label sl-orange">&#x25CF;&nbsp; Honest reflection</span>
+    <h2 class="section-title">The real moments.</h2>
+    <p class="section-desc">Not the slides — the parts that actually stuck.</p>
+
+    <div class="moments-grid">
+
+      <div class="moment-card hl-blue">
+        <div class="moment-icon">&#x1F4BB;</div>
+        <h4>The VM Moment</h4>
+        <p>First time ever using a virtual machine. A computer inside a computer — used for testing without touching anything real. That one clicked fast.</p>
+        <p class="quote-inline">"That is a visual machine just being used for tests."</p>
+      </div>
+
+      <div class="moment-card hl-orange">
+        <div class="moment-icon">&#x26A1;</div>
+        <h4>The API Click</h4>
+        <p>Sending a POST request and getting your own category back in the response. Making something exist in Jamf Pro via code — that's the moment it becomes real.</p>
+        <p class="quote-inline">"Post and I got my category."</p>
+      </div>
+
+      <div class="moment-card hl-purple">
+        <div class="moment-icon">&#x1F4AA;</div>
+        <h4>Hardest Thing</h4>
+        <p>Presentations. Standing up and communicating what you built and why — harder than the tech itself. That's the skill people underestimate most.</p>
+      </div>
+
+      <div class="moment-card hl-lime">
+        <div class="moment-icon">&#x1F9E0;</div>
+        <h4>The AI Shift</h4>
+        <p>AI isn't magic and it isn't a threat — it's a tool. The better context you give it, the better it works. Compound Engineering changed how I think about building.</p>
+        <p class="quote-inline">"Claude Code responds very quickly."</p>
+      </div>
+
+      <div class="moment-card wide hl-blue">
+        <div class="moment-icon">&#x1F31F;</div>
+        <h4>Biggest Shift in Thinking</h4>
+        <p>Plan first, build second, review always — and carry the knowledge forward so the next session starts smarter than the last. The API transmits data from one place to another. AI is the same thing. You control what it does by what you give it. That's the whole game.</p>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- TOOLS -->
+<div class="section-wrap">
+  <section id="tools">
+    <span class="section-label sl-lime">&#x25CF;&nbsp; What's next</span>
+    <h2 class="section-title">Tools I'll actually use.</h2>
+    <p class="section-desc">The things leaving this training that go straight back to work with me.</p>
+
+    <div class="tools-list">
+      <div class="tool-row t1">
+        <div class="tool-dot"></div>
+        <span class="tool-name">Claude Code</span>
+        <span class="tool-desc">AI-native development — the tool I want to dwell much in.</span>
+        <span class="tool-badge">Primary Pick</span>
+      </div>
+      <div class="tool-row t2">
+        <div class="tool-dot"></div>
+        <span class="tool-name">Jamf Pro API</span>
+        <span class="tool-desc">Token auth, inventory queries, and scripted automation at scale.</span>
+        <span class="tool-badge">Day 01</span>
+      </div>
+      <div class="tool-row t3">
+        <div class="tool-dot"></div>
+        <span class="tool-name">Webhooks</span>
+        <span class="tool-desc">Event-driven triggers — making systems talk to each other automatically.</span>
+        <span class="tool-badge">Day 02</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SKILLS UNLOCKED -->
+<div class="section-wrap">
+  <section id="skills">
+    <span class="section-label sl-purple">&#x25CF;&nbsp; Skills Unlocked</span>
+    <h2 class="section-title">What I can now do.</h2>
+    <p class="section-desc">From zero to actually doing it — three days, real skills.</p>
+
+    <div class="skills-grid">
+
+      <div class="skill-block sb-blue">
+        <p class="skill-block-label">Day 01 &mdash; Git &amp; API</p>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Git Branching &amp; PRs</span>
+            <span class="skill-pct">85%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">API Token Auth</span>
+            <span class="skill-pct">80%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="80"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Reading JSON Responses</span>
+            <span class="skill-pct">90%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-block sb-orange">
+        <p class="skill-block-label">Day 02 &mdash; VMs &amp; Webhooks</p>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Virtual Machines</span>
+            <span class="skill-pct">75%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">POST Requests in Postman</span>
+            <span class="skill-pct">85%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Webhook Configuration</span>
+            <span class="skill-pct">70%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="70"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-block sb-lime">
+        <p class="skill-block-label">Day 03 &mdash; AI &amp; Claude</p>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Prompting with Context</span>
+            <span class="skill-pct">90%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Compound Engineering Loop</span>
+            <span class="skill-pct">88%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="88"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta">
+            <span class="skill-name">Building with Claude Code</span>
+            <span class="skill-pct">95%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-width="95"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<div class="back-to-top">
+  <a href="#top" class="btn btn-lime">&#x2191;&nbsp; Back to Top</a>
+</div>
+
+<footer>
+  Built by <strong>Prosperity</strong> &nbsp;&middot;&nbsp; Jamf Pro Training &nbsp;&middot;&nbsp; 2026 &nbsp;&middot;&nbsp; Made with Claude Code
+  <div class="footer-tags">
+    <span class="ftag ft-blue">Git &amp; API</span>
+    <span class="ftag ft-orange">Webhooks &amp; VMs</span>
+    <span class="ftag ft-lime">AI-Native Dev</span>
+  </div>
+</footer>
+
+<script>
+  // ── Expand buttons ──
+  document.querySelectorAll('.btn-expand').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-target');
+      var extra = document.getElementById(targetId);
+      var isOpen = extra.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.innerHTML = isOpen ? 'Close &#x25B4;' : 'Details &#x25BE;';
+    });
+  });
+
+  // ── Stat counter animation ──
+  function animateCounter(el, target, duration) {
+    var start = 0;
+    var step = target / (duration / 16);
+    var timer = setInterval(function() {
+      start += step;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = Math.floor(start);
+    }, 16);
+  }
+
+  // ── Intersection Observer — trigger on scroll into view ──
+  var observed = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+
+      // Skill bars
+      entry.target.querySelectorAll('.bar-fill[data-width]').forEach(function(bar) {
+        bar.style.width = bar.getAttribute('data-width') + '%';
+      });
+
+      // Stat counters
+      entry.target.querySelectorAll('.stat-num[data-count]').forEach(function(el) {
+        animateCounter(el, parseInt(el.getAttribute('data-count')), 900);
+      });
+
+      observed.unobserve(entry.target);
+    });
+  }, { threshold: 0.2 });
+
+  // Observe skills section
+  var skillsSection = document.querySelector('#skills');
+  if (skillsSection) observed.observe(skillsSection);
+
+  // Observe hero stats
+  var heroStats = document.querySelector('.hero-stats');
+  if (heroStats) observed.observe(heroStats);
+</script>
+
+</body>
+</html>

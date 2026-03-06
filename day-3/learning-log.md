@@ -10,11 +10,11 @@ Fill in each section at the checkpoint — just a few sentences is plenty.
 
 **What did your one-shot page look like? What did you notice about it?**
 
->
+>I was not pleased
 
 **How did it compare to what you expected?**
 
->
+> it was literally bad
 
 ---
 
@@ -22,11 +22,11 @@ Fill in each section at the checkpoint — just a few sentences is plenty.
 
 **What was the planning process like? What did you spend the most time on?**
 
->
+> I spent most of time trying to choose the perfect color of my website
 
 **What is the biggest difference between the planned page and the one-shot?**
 
->
+>The planned page heard more details compared to the one shot.
 
 ---
 
@@ -34,11 +34,11 @@ Fill in each section at the checkpoint — just a few sentences is plenty.
 
 **When you looked at your page, what matched your plan and what did not?**
 
->
+>The color was not the one that l chose and the buttons were not working.
 
 **What did the agent catch that you missed?**
 
->
+>Nothing 
 
 ---
 
@@ -46,12 +46,12 @@ Fill in each section at the checkpoint — just a few sentences is plenty.
 
 **What surprised you about working with AI this way?**
 
->
+>I was surprised that you can create a website within two minutes by just describing.
 
 **If you were telling a friend about this workshop, what would you say about working with AI?**
 
->
+>AI is just a tool it needs people to fill it with detailed information so that it  gives us exactly what we want.
 
 **Which principle or idea from today will you remember?**
 
->
+>I had to create my own principle, ""I will not work alone because we are better together"
