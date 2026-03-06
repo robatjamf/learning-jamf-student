@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crown's Crowns | A Royal Guide</title>
+  <style>
+    :root {
+      --bg: #0c0b08;
+      --surface: #141210;
+      --surface2: #1c1a15;
+      --border: #2a2620;
+      --text: #e8e2d4;
+      --muted: #6b6355;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: rgba(201,168,76,0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 80px 24px 60px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .crown-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 12px rgba(201,168,76,0.4));
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 400;
+      color: var(--gold-light);
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .header-rule {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 32px;
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+    }
+
+    .header-rule::before,
+    .header-rule::after {
+      content: "";
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+
+    .header-rule::after {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      max-width: 680px;
+      margin: 60px auto;
+      padding: 0 24px;
+      text-align: center;
+      color: #9a9080;
+      font-style: italic;
+      font-size: 1.05rem;
+    }
+
+    /* ── CROWN GRID ── */
+    .crowns-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    .crowns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    .crown-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .crown-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-3px);
+    }
+
+    .crown-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    .card-type {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .card-body h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .owner-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .owner-flag {
+      font-size: 1.1rem;
+    }
+
+    .owner-name {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-style: normal;
+    }
+
+    .card-body p {
+      font-size: 0.88rem;
+      color: #7a7060;
+      line-height: 1.7;
+    }
+
+    .card-detail {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 20px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .detail-label {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: -apple-system, sans-serif;
+      font-style: normal;
+    }
+
+    .detail-value {
+      font-size: 0.8rem;
+      color: #aaa090;
+      font-family: -apple-system, sans-serif;
+      font-style: normal;
+    }
+
+    /* ── QUOTE ── */
+    .quote-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    .quote-section blockquote {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      font-style: italic;
+      letter-spacing: 0.3px;
+      line-height: 1.6;
+    }
+
+    .quote-section cite {
+      display: block;
+      margin-top: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-style: normal;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-family: -apple-system, sans-serif;
+      font-style: normal;
+    }
+
+    footer .crown-sig {
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <span class="crown-icon">&#9819;</span>
+  <h1>Crown's Crowns</h1>
+  <p>A curated guide to the world's most legendary crowns — who made them, who wears them, and who owns them today.</p>
+  <div class="header-rule">&#10022;</div>
+</header>
+
+<p class="intro">
+  Every crown tells a story of power, ceremony, and history.
+  Here are six of the most significant crowns ever made.
+</p>
+
+<!-- ── CROWN CARDS ── -->
+<div class="crowns-wrapper">
+  <p class="section-title">The World's Great Crowns</p>
+
+  <div class="crowns-grid">
+
+    <!-- 1. Imperial State Crown -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=800&q=80"
+        alt="Imperial State Crown of the United Kingdom — jewels and velvet"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Ceremonial Crown</p>
+        <h2>The Imperial State Crown</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127468;&#127463;</span>
+          <span class="owner-name">The British Royal Family &mdash; King Charles III</span>
+        </div>
+        <p>
+          One of the most jewel-encrusted crowns in existence, set with 2,868 diamonds,
+          17 sapphires, 11 emeralds, and 269 pearls. It is worn by the British monarch at
+          the State Opening of Parliament each year — not at the coronation itself.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">1937</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Tower of London</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Diamonds</span>
+            <span class="detail-value">2,868</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Crown of Saint Edward -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1612799497880-4d59e5f8e3c2?w=800&q=80"
+        alt="Gold crown representing the Crown of Saint Edward"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Coronation Crown</p>
+        <h2>The Crown of Saint Edward</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127468;&#127463;</span>
+          <span class="owner-name">The British Royal Family &mdash; King Charles III</span>
+        </div>
+        <p>
+          The most sacred crown in the British regalia, used only at the moment of coronation.
+          Solid gold, weighing over 2 kg, it is modelled on a crown belonging to Edward the
+          Confessor in the 11th century. King Charles III wore it in May 2023.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">1661</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Tower of London</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Weight</span>
+            <span class="detail-value">2.23 kg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Imperial Crown of Russia -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80"
+        alt="Imperial grandeur representing the Russian Imperial Crown"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Imperial Crown</p>
+        <h2>The Imperial Crown of Russia</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127479;&#127482;</span>
+          <span class="owner-name">The Russian Federation &mdash; Kremlin Armoury, Moscow</span>
+        </div>
+        <p>
+          Created for the coronation of Catherine the Great in 1762, this crown features
+          4,936 diamonds, 75 pearls, and a 398-carat red spinel at its peak — one of the
+          largest in the world. It was used for every Russian Imperial coronation until 1917.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">1762</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Kremlin, Moscow</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Diamonds</span>
+            <span class="detail-value">4,936</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Iron Crown of Lombardy -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
+        alt="Ancient iron and gold representing the Iron Crown of Lombardy"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Ancient Crown</p>
+        <h2>The Iron Crown of Lombardy</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127470;&#127481;</span>
+          <span class="owner-name">The Italian State &mdash; Cathedral of Monza, Italy</span>
+        </div>
+        <p>
+          One of the oldest royal insignia in existence, dating to the 4th or 5th century.
+          The inner iron band is said to be forged from a nail of the True Cross. Used to
+          crown Charlemagne, Frederick Barbarossa, and Napoleon Bonaparte.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">4th Century</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Monza, Italy</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Age</span>
+            <span class="detail-value">~1,600 years</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Crown of Charlemagne -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80"
+        alt="Medieval architecture representing the legacy of Charlemagne's crown"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Medieval Crown</p>
+        <h2>The Imperial Crown of the Holy Roman Empire</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127462;&#127481;</span>
+          <span class="owner-name">Republic of Austria &mdash; Kunsthistorisches Museum, Vienna</span>
+        </div>
+        <p>
+          Known as the Crown of Charlemagne, this octagonal crown is one of the most
+          iconic medieval artifacts in the world. Used to crown Holy Roman Emperors for
+          over 600 years, it is now preserved in Vienna and is considered a UNESCO treasure.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">~962 AD</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Vienna, Austria</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Used for</span>
+            <span class="detail-value">600+ years</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Crown of the Andes -->
+    <div class="crown-card">
+      <img
+        src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80"
+        alt="Emerald mountains representing the origin of the Crown of the Andes"
+        loading="lazy"
+      />
+      <div class="card-body">
+        <p class="card-type">Colonial Crown</p>
+        <h2>The Crown of the Andes</h2>
+        <div class="owner-row">
+          <span class="owner-flag">&#127482;&#127480;</span>
+          <span class="owner-name">The Metropolitan Museum of Art &mdash; New York, USA</span>
+        </div>
+        <p>
+          Crafted in colonial Colombia between 1593 and 1599, this crown is set with
+          442 emeralds totalling over 1,500 carats — more emeralds than any other object
+          in the world. Originally made for a statue of the Virgin Mary in Popay&aacute;n,
+          Colombia. Acquired by the Met in 2015.
+        </p>
+        <div class="card-detail">
+          <div class="detail-item">
+            <span class="detail-label">Made</span>
+            <span class="detail-value">1593 &ndash; 1599</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">The Met, New York</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Emeralds</span>
+            <span class="detail-value">442</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── QUOTE ── -->
+<div class="quote-section">
+  <blockquote>
+    "A crown is merely a hat that lets the rain in."
+  </blockquote>
+  <cite>&mdash; Frederick the Great, King of Prussia</cite>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>Curated by <span class="crown-sig">Crown</span> &mdash; March 2026</p>
+  <p style="margin-top:6px; color:#3a3530;">Every crown has a story. Every story has a crown.</p>
+</footer>
+
+</body>
+</html>

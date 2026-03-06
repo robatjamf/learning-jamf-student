@@ -33,15 +33,15 @@ Jamf is a leading Mobile Device Management and security software platform design
 
 **Which persona did your group map?** 
 
->
+> IT enterprices
 
 **What were the biggest pain points in their workflow?**
 
->
+> Our biggest main point was changes being made overwritten by new updates and manual process with new hires.
 
 **If you could build one thing to help that persona, what would it be?**
 
->
+>   Lots of moniters that will show different tickets so that the person doesnt feel overwhelmed getting to change screens multiple times.
 
 ---
 

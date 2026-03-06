@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APIs & Personas | Jamf Pro</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --surface2: #181818;
+      --border: #222;
+      --text: #e0e0e0;
+      --muted: #555;
+      --blue: #60a5fa;
+      --green: #34d399;
+      --purple: #a78bfa;
+      --amber: #fbbf24;
+      --red: #f87171;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    /* ── DARK OVERLAY BANNER ── */
+    .overlay-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .overlay-banner .quote-mark {
+      font-size: 2rem;
+      color: rgba(255,255,255,0.1);
+      font-family: Georgia, serif;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .overlay-banner p {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.3px;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .overlay-banner strong {
+      color: #fff;
+      font-style: normal;
+    }
+
+    .banner-close {
+      position: absolute;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+
+    .banner-close:hover { color: #fff; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 120px 24px 80px;
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+
+    .tag-blue { color: var(--blue); border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.07); }
+    .tag-purple { color: var(--purple); border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 .api { color: var(--blue); }
+    .hero h1 .persona { color: var(--purple); }
+
+    .hero p {
+      color: #777;
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .section h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 18px;
+    }
+
+    .section > p {
+      color: #888;
+      margin-bottom: 18px;
+    }
+
+    .section > p strong { color: #ccc; }
+
+    /* ── API FLOW ── */
+    .api-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 36px 0;
+      overflow-x: auto;
+    }
+
+    .flow-node {
+      flex: 1;
+      min-width: 120px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flow-node .node-icon { font-size: 1.8rem; }
+    .flow-node .node-title { font-size: 0.82rem; font-weight: 700; color: #fff; }
+    .flow-node .node-sub { font-size: 0.7rem; color: var(--muted); }
+
+    .flow-node.highlight-blue { border-color: rgba(96,165,250,0.35); background: rgba(96,165,250,0.05); }
+    .flow-node.highlight-green { border-color: rgba(52,211,153,0.35); background: rgba(52,211,153,0.05); }
+
+    .flow-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .flow-arrow .arrow-label { font-size: 0.6rem; color: var(--muted); white-space: nowrap; }
+    .flow-arrow .arrow-sym { color: #333; font-size: 1rem; }
+
+    /* ── METHOD PILLS ── */
+    .methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .method-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .method-card .method-name {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+      font-family: "SF Mono", monospace;
+    }
+
+    .m-get { background: rgba(52,211,153,0.1); color: var(--green); }
+    .m-post { background: rgba(96,165,250,0.1); color: var(--blue); }
+    .m-put { background: rgba(251,191,36,0.1); color: var(--amber); }
+    .m-delete { background: rgba(248,113,113,0.1); color: var(--red); }
+
+    .method-card p { font-size: 0.78rem; color: #666; }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #8b949e;
+    }
+
+    .c-url { color: var(--blue); }
+    .c-method { color: var(--green); font-weight: 700; }
+    .c-key { color: #79c0ff; }
+    .c-val { color: #a5d6ff; }
+    .c-str { color: #a8ff78; }
+    .c-comment { color: #3d4450; font-style: italic; }
+
+    /* ── PERSONA CARDS ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      margin: 32px 0;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .persona-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+    }
+
+    .p-it::before { background: var(--blue); }
+    .p-admin::before { background: var(--purple); }
+    .p-edu::before { background: var(--green); }
+    .p-sec::before { background: var(--red); }
+
+    .persona-avatar {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .persona-role {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .p-it .persona-role { color: var(--blue); }
+    .p-admin .persona-role { color: var(--purple); }
+    .p-edu .persona-role { color: var(--green); }
+    .p-sec .persona-role { color: var(--red); }
+
+    .persona-card h3 {
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .persona-card p {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    .pain-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .pain-point {
+      font-size: 0.78rem;
+      color: #888;
+      font-style: italic;
+      padding: 8px 12px;
+      background: var(--surface2);
+      border-radius: 6px;
+      border-left: 2px solid var(--border);
+    }
+
+    .p-it .pain-point { border-left-color: var(--blue); }
+    .p-admin .pain-point { border-left-color: var(--purple); }
+    .p-edu .pain-point { border-left-color: var(--green); }
+    .p-sec .pain-point { border-left-color: var(--red); }
+
+    /* ── HOW THEY CONNECT ── */
+    .connect-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 0.85rem;
+    }
+
+    .connect-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .connect-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #191919;
+      color: #888;
+      vertical-align: top;
+    }
+
+    .connect-table td:first-child { color: #ccc; font-weight: 500; }
+
+    .connect-table tr:last-child td { border-bottom: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── DARK OVERLAY BANNER ── -->
+<div class="overlay-banner" id="banner">
+  <span class="quote-mark">"</span>
+  <p><strong>There is no such thing as a stupid question.</strong> Every question you ask is a step toward understanding.</p>
+  <span class="quote-mark">"</span>
+  <button class="banner-close" onclick="document.getElementById('banner').style.display='none'" title="Dismiss">&#10005;</button>
+</div>
+
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-tags">
+    <span class="tag tag-blue">Jamf Pro APIs</span>
+    <span class="tag tag-purple">Personas</span>
+  </div>
+  <h1>
+    <span class="api">APIs</span> &amp; <span class="persona">Personas</span><br />at Jamf Pro
+  </h1>
+  <p>
+    How Jamf Pro's API works, what you can do with it,
+    and who is actually using it — the people behind the screens.
+  </p>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ── SECTION: APIs ── -->
+<div class="section">
+  <p class="section-eyebrow" style="color: var(--blue);">Part 1</p>
+  <h2>The Jamf Pro API</h2>
+
+  <p>
+    Jamf Pro exposes a <strong>REST API</strong> that lets you control almost everything
+    the dashboard can do — programmatically. Instead of clicking through the UI, you send
+    HTTP requests and get data back as JSON.
+  </p>
+
+  <p>
+    Think of the API as a remote control for Jamf Pro. You send a command, Jamf acts on it,
+    and sends you a response. Automated, repeatable, and fast.
+  </p>
+
+  <!-- Flow Diagram -->
+  <div class="api-flow">
+    <div class="flow-node highlight-blue">
+      <span class="node-icon">&#128187;</span>
+      <span class="node-title">Your Script</span>
+      <span class="node-sub">Postman / Python / curl</span>
+    </div>
+    <div class="flow-arrow">
+      <span class="arrow-label">HTTP Request</span>
+      <span class="arrow-sym">&rarr;</span>
+    </div>
+    <div class="flow-node">
+      <span class="node-icon">&#128274;</span>
+      <span class="node-title">Auth Token</span>
+      <span class="node-sub">Bearer token</span>
+    </div>
+    <div class="flow-arrow">
+      <span class="arrow-sym">&rarr;</span>
+    </div>
+    <div class="flow-node">
+      <span class="node-icon">&#9881;</span>
+      <span class="node-title">Jamf Pro API</span>
+      <span class="node-sub">api/v1/...</span>
+    </div>
+    <div class="flow-arrow">
+      <span class="arrow-label">JSON Response</span>
+      <span class="arrow-sym">&larr;</span>
+    </div>
+    <div class="flow-node highlight-green">
+      <span class="node-icon">&#128202;</span>
+      <span class="node-title">Your Data</span>
+      <span class="node-sub">devices, users, policies</span>
+    </div>
+  </div>
+
+  <!-- HTTP Methods -->
+  <div class="methods">
+    <div class="method-card">
+      <span class="method-name m-get">GET</span>
+      <p>Read data. List all managed computers, get a device's details, fetch a policy.</p>
+    </div>
+    <div class="method-card">
+      <span class="method-name m-post">POST</span>
+      <p>Create something new. Add a user, create a group, enroll a device.</p>
+    </div>
+    <div class="method-card">
+      <span class="method-name m-put">PUT</span>
+      <p>Update something that already exists. Change a user's name or email.</p>
+    </div>
+    <div class="method-card">
+      <span class="method-name m-delete">DELETE</span>
+      <p>Remove something. Delete a device record or remove a group membership.</p>
+    </div>
+  </div>
+
+  <!-- Code Example -->
+  <div class="code-block">
+    <pre><span class="c-comment"># Step 1: Get a bearer token</span>
+<span class="c-method">POST</span>  <span class="c-url">https://yourjamf.jamfcloud.com/api/v1/auth/token</span>
+<span class="c-key">Authorization:</span> <span class="c-val">Basic [base64 credentials]</span>
+
+<span class="c-comment"># Step 2: List all managed computers</span>
+<span class="c-method">GET</span>   <span class="c-url">https://yourjamf.jamfcloud.com/api/v1/computers-inventory</span>
+<span class="c-key">Authorization:</span> <span class="c-val">Bearer [token]</span>
+<span class="c-key">Accept:</span>        <span class="c-val">application/json</span>
+
+<span class="c-comment"># Step 3: Update a user's display name</span>
+<span class="c-method">PUT</span>   <span class="c-url">https://yourjamf.jamfcloud.com/api/v1/users/42</span>
+<span class="c-key">Content-Type:</span> <span class="c-val">application/json</span>
+<span class="c-str">{ "username": "crown", "fullName": "Crown M." }</span></pre>
+  </div>
+
+  <p>
+    Every API call needs a <strong>bearer token</strong> for authentication — you get one
+    by logging in via the API first. Tokens expire, so automation scripts refresh them automatically.
+  </p>
+</div>
+
+
+<!-- ── SECTION: PERSONAS ── -->
+<div class="section">
+  <p class="section-eyebrow" style="color: var(--purple);">Part 2</p>
+  <h2>Personas at Jamf Pro</h2>
+
+  <p>
+    A persona is a profile of the <strong>type of person</strong> who uses Jamf Pro — their role,
+    their goals, and their pain points. Understanding personas helps you build the right
+    features for the right people instead of guessing.
+  </p>
+
+  <p>
+    Jamf Pro serves very different kinds of users. Here are four that came up in the workshop:
+  </p>
+
+  <!-- Persona Cards -->
+  <div class="persona-grid">
+
+    <div class="persona-card p-it">
+      <span class="persona-avatar">&#128104;&#8205;&#128187;</span>
+      <p class="persona-role">IT Administrator</p>
+      <h3>The IT Admin</h3>
+      <p>Manages hundreds of devices across the organisation. Needs to deploy, update, and secure devices at scale — fast.</p>
+      <p class="pain-label">Biggest Pain Point</p>
+      <div class="pain-point">"I spend half my day on manual tasks that should be automated."</div>
+    </div>
+
+    <div class="persona-card p-admin">
+      <span class="persona-avatar">&#128105;&#8205;&#128188;</span>
+      <p class="persona-role">System Administrator</p>
+      <h3>The Sys Admin</h3>
+      <p>Focuses on policies, scripts, and configuration profiles. Needs precision — one wrong policy can affect every device.</p>
+      <p class="pain-label">Biggest Pain Point</p>
+      <div class="pain-point">"Testing changes on a live fleet is terrifying. I need a staging environment."</div>
+    </div>
+
+    <div class="persona-card p-edu">
+      <span class="persona-avatar">&#128104;&#8205;&#127979;</span>
+      <p class="persona-role">Education IT</p>
+      <h3>The School Tech Lead</h3>
+      <p>Deploying iPads and MacBooks to students and staff. Needs to set up devices fast at the start of each school year.</p>
+      <p class="pain-label">Biggest Pain Point</p>
+      <div class="pain-point">"We have 1,200 devices to configure and school starts in 3 days."</div>
+    </div>
+
+    <div class="persona-card p-sec">
+      <span class="persona-avatar">&#128737;</span>
+      <p class="persona-role">Security Engineer</p>
+      <h3>The Security Lead</h3>
+      <p>Cares about compliance, encryption, and who has access to what. Uses Jamf to enforce security policies across the fleet.</p>
+      <p class="pain-label">Biggest Pain Point</p>
+      <div class="pain-point">"I need to know every unencrypted device in the org — right now."</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ── SECTION: HOW THEY CONNECT ── -->
+<div class="section" style="border-bottom: none;">
+  <p class="section-eyebrow" style="color: var(--green);">Putting It Together</p>
+  <h2>How APIs serve each Persona</h2>
+
+  <p>
+    The API is not one-size-fits-all. Each persona uses it differently
+    — or uses tools built on top of it to serve their specific needs.
+  </p>
+
+  <table class="connect-table">
+    <thead>
+      <tr>
+        <th>Persona</th>
+        <th>How They Use the Jamf API</th>
+        <th>Key Endpoints</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IT Admin</td>
+        <td>Automates bulk device updates, runs nightly scripts to check compliance</td>
+        <td>computers-inventory, policies, patch-management</td>
+      </tr>
+      <tr>
+        <td>Sys Admin</td>
+        <td>Pushes configuration profiles via API, deploys scripts remotely</td>
+        <td>scripts, configuration-profiles, commands</td>
+      </tr>
+      <tr>
+        <td>School Tech Lead</td>
+        <td>Mass-enrolls student devices at term start via automated workflows</td>
+        <td>mobile-devices, prestage-enrollments, departments</td>
+      </tr>
+      <tr>
+        <td>Security Lead</td>
+        <td>Queries device compliance status, triggers remote lock or wipe if needed</td>
+        <td>device-enrollments, mdm-commands, computer-management</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    This is why <strong>persona mapping matters before you build</strong> — the same API can
+    serve completely different needs. Knowing who you are building for changes what you build
+    and how you design it.
+  </p>
+</div>
+
+
+<footer>
+  <p>APIs &amp; Personas at Jamf Pro &mdash; Crown &mdash; March 2026</p>
+</footer>
+
+</body>
+</html>
