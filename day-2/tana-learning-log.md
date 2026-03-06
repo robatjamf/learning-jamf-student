@@ -24,7 +24,7 @@ Your personal reflections from Day 2. Fill in each section at the checkpoint —
 
 **How would you explain "a computer inside a computer" to a friend?**
 
->
+>it is a machine inside the actual machine that you can right code for testing. It is a testing machine.
 
 ---
 
@@ -36,23 +36,23 @@ Your personal reflections from Day 2. Fill in each section at the checkpoint —
 
 **The API is like a restaurant — you (client) send an order through the waiter (API) to the kitchen (server) and get food (data) back. Does that analogy make sense to you? How would you explain it?**
 
->
+>an API is a messenger that takes request from one system and returns data from another system
 
 **What did you create using a POST request?**
 
->
+>created a category on the computers with my name
 
 ---
 
 ## After Block 4 — Webhooks
 
-**Push vs pull — what is the difference in your own words?**
+**What did you learn about webhooks?**
 
 >
 
 **What did the webhook payload look like when it arrived? What information was in it?**
 
->
+>the webhook has the name and the URL
 
 ---
 
@@ -60,7 +60,7 @@ Your personal reflections from Day 2. Fill in each section at the checkpoint —
 
 **What clicked for you today?**
 
->
+>the workflow of api and webhook, creating a vitual machine
 
 **What is still fuzzy or confusing?**
 
@@ -68,4 +68,4 @@ Your personal reflections from Day 2. Fill in each section at the checkpoint —
 
 **What do you want to explore on Day 3?**
 
->
+>looking forward to using claude

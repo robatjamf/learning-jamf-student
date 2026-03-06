@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Tana</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #232635;
+      --border: #2e3150;
+      --accent: #6c7bff;
+      --accent2: #a78bfa;
+      --text: #e2e4f0;
+      --muted: #8b8fa8;
+      --green: #34d399;
+      --pink: #f472b6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(167, 139, 250, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(108, 123, 255, 0.1) 0%, transparent 60%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232e3150' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-tagline strong { color: var(--accent2); }
+
+    .location {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .location-dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Sections ── */
+    main { max-width: 860px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+
+    section { margin-bottom: 5rem; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── About block ── */
+    .about-text {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.9;
+      max-width: 640px;
+    }
+
+    .about-text p { margin-bottom: 1rem; }
+    .about-text p:last-child { margin-bottom: 0; }
+
+    /* ── Interest cards ── */
+    .interest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .interest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interest-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 12px 12px 0 0;
+    }
+
+    .interest-card .icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .interest-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .interest-card p { font-size: 0.87rem; color: var(--muted); }
+
+    /* ── How I show up ── */
+    .trait-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 520px) { .trait-grid { grid-template-columns: 1fr; } }
+
+    .trait-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .trait-card .trait-type {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .strength .trait-type { color: var(--green); }
+    .blindspot .trait-type { color: var(--pink); }
+
+    .trait-card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── Values ── */
+    .value-block {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(108, 123, 255, 0.08));
+      border: 1px solid rgba(108, 123, 255, 0.25);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .value-word {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .value-block p { color: var(--muted); max-width: 400px; margin: 0 auto; }
+
+    /* ── Goal ── */
+    .goal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .goal-number {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--border);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .goal-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .goal-card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── Workshop moment ── */
+    .moment {
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 1.5rem 2rem;
+    }
+
+    .moment blockquote {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.8;
+    }
+
+    .moment cite { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">About Me</div>
+      <h1>Tana</h1>
+      <p class="hero-tagline">A girl who loves technology &amp; the people around her. <strong>Future founder.</strong></p>
+      <div class="location">
+        <span class="location-dot"></span>
+        Victoria Falls, Zimbabwe
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- WHO I AM -->
+    <section>
+      <div class="section-label">Who I Am</div>
+      <h2>The short version</h2>
+      <div class="about-text">
+        <p>I'm Tana, from Victoria Falls — one of the most iconic places on earth, and the place I call home. I'm the person people come to when they need to be heard. Listening isn't just something I do — it's who I am.</p>
+        <p>Technology found me, and I haven't looked back. Not just as a skill — as something I genuinely love. I'm learning, building, and figuring out what it means to be a girl in tech who creates things that matter.</p>
+      </div>
+    </section>
+
+    <!-- INTERESTS -->
+    <section>
+      <div class="section-label">What I Love</div>
+      <h2>How I spend my time</h2>
+      <div class="interest-grid">
+        <div class="interest-card">
+          <span class="icon">🎬</span>
+          <h3>Korean Cinema</h3>
+          <p>K-dramas, K-movies — hours disappear and I don't notice. The storytelling pulls you in and doesn't let go.</p>
+        </div>
+        <div class="interest-card">
+          <span class="icon">📖</span>
+          <h3>Reading Novels</h3>
+          <p>When I'm not watching, I'm reading. A good book is its own kind of escape — quieter, but just as deep.</p>
+        </div>
+        <div class="interest-card">
+          <span class="icon">💻</span>
+          <h3>Technology</h3>
+          <p>It's not just a career path — it's genuinely something I love. Learning new tools, understanding how things work under the hood.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW I SHOW UP -->
+    <section>
+      <div class="section-label">How I Work</div>
+      <h2>Strengths and honest blind spots</h2>
+      <div class="trait-grid">
+        <div class="trait-card strength">
+          <div class="trait-type">Strength</div>
+          <h3>I listen.</h3>
+          <p>People come to me when they need someone to actually hear them. That's a real skill — rarer than people think.</p>
+        </div>
+        <div class="trait-card strength">
+          <div class="trait-type">Strength</div>
+          <h3>I help.</h3>
+          <p>My go-to is to show up when people need support. Not just tech help — people help.</p>
+        </div>
+        <div class="trait-card blindspot">
+          <div class="trait-type">Working on it</div>
+          <h3>Keeping conversations alive.</h3>
+          <p>I know I struggle to keep people engaged in a conversation. I'm aware of it — and that's already half the battle.</p>
+        </div>
+        <div class="trait-card blindspot">
+          <div class="trait-type">Working on it</div>
+          <h3>Tech confidence.</h3>
+          <p>Still building my voice in technical spaces. Day by day, that's changing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUES -->
+    <section>
+      <div class="section-label">What I Won't Compromise On</div>
+      <h2>My anchor</h2>
+      <div class="value-block">
+        <div class="value-word">Family</div>
+        <p>No matter where the career goes, no matter what gets built — family comes first. That doesn't change.</p>
+      </div>
+    </section>
+
+    <!-- GOAL -->
+    <section>
+      <div class="section-label">Where I'm Headed</div>
+      <h2>The goal</h2>
+      <div class="goal-card">
+        <div class="goal-number">→</div>
+        <div>
+          <h3>Independent. Financially free. Present for family.</h3>
+          <p>I want to be an independent girl who can support her family — mostly with finances. That's the real goal. And success isn't some distant milestone for me. Success is when I've achieved even the smallest things. Every step counts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKSHOP MOMENT -->
+    <section>
+      <div class="section-label">Workshop Insight</div>
+      <h2>The thing that stuck</h2>
+      <div class="moment">
+        <blockquote>"No answer or question is wrong or useless. What you say might open up a way for someone else to ask and understand."</blockquote>
+        <cite>— Tana, Day 1 Learning Log</cite>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Tana &mdash; Victoria Falls &mdash; Future Founder</p>
+    <p style="margin-top:0.4rem; font-size:0.75rem;">Built during the Jamf Pro &amp; AI-Native Dev Workshop, Day 3</p>
+  </footer>
+
+</body>
+</html>
