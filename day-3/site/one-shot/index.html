@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amanda's Jamf Training Review</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0d0d0d;
+      color: #e8e8e8;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 60px 24px 40px;
+      text-align: center;
+      border-bottom: 2px solid #4a90d9;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(74, 144, 217, 0.15) 0%, transparent 70%);
+    }
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #1e3a5f, #4a90d9);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      border: 3px solid #4a90d9;
+      position: relative;
+      z-index: 1;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header p {
+      margin-top: 8px;
+      color: #a0b4cc;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 14px;
+      background: rgba(74, 144, 217, 0.2);
+      border: 1px solid #4a90d9;
+      color: #7ab8f5;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    .day-section {
+      margin-bottom: 40px;
+    }
+
+    .day-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #4a90d9;
+      margin-bottom: 12px;
+    }
+
+    .day-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: #161b27;
+      border: 1px solid #252d3d;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card-icon {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #7ab8f5;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: #c0ccd8;
+    }
+
+    .highlight {
+      border-left: 3px solid #4a90d9;
+      padding-left: 14px;
+    }
+
+    .highlight p {
+      font-style: italic;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .tag {
+      background: rgba(74, 144, 217, 0.12);
+      border: 1px solid rgba(74, 144, 217, 0.35);
+      color: #7ab8f5;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #1e2535;
+      margin: 36px 0;
+    }
+
+    .fuzzy-bar {
+      background: #161b27;
+      border: 1px solid #252d3d;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .fuzzy-bar h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #e07b54;
+      margin-bottom: 8px;
+    }
+
+    .fuzzy-bar p {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: #c0ccd8;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #3d4f63;
+      font-size: 0.8rem;
+      border-top: 1px solid #1a1f2c;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="avatar">&#128049;</div>
+  <h1>Amanda</h1>
+  <p>Jamf Pro Training &mdash; 3-Day Workshop Review</p>
+  <div class="badge">March 2026</div>
+</header>
+
+<main>
+
+  <!-- DAY 1 -->
+  <div class="day-section">
+    <div class="day-label">Day 1</div>
+    <div class="day-title">Context, Jamf Overview &amp; Persona Mapping</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#127758;</div>
+        <h3>Global Tech Traditions</h3>
+        <p>Shared <strong>NotebookLM</strong> &mdash; the Gemini-powered tool that turns large information into digestible podcasts and flashcards. Learned about <strong>Dia</strong>, an AI browser that surfaces only what you need.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#127963;</div>
+        <h3>What Is Jamf?</h3>
+        <p>Jamf simplifies Apple device management so end users have a seamless experience without feeling restricted. Surprised to learn how many sectors Jamf serves &mdash; including building companies.</p>
+      </div>
+
+      <div class="card full-width highlight">
+        <h3>Persona Mapped &mdash; K-12 IT Coordinator</h3>
+        <p>Key pain points: heavy manual workload, tight school budget, and teachers lacking tech skills. Top idea: invest in teacher training to distribute the load and build internal capacity.</p>
+      </div>
+
+      <div class="card full-width">
+        <div class="card-icon">&#129414;</div>
+        <h3>Biggest Takeaway</h3>
+        <p>"After the rubber duck exercise, I learnt there is no wrong answer. We all had the same task &mdash; 'Draw a duck' &mdash; and every interpretation was different and creative. Together we can create amazing things; every idea just needs to be actualised."</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- DAY 2 -->
+  <div class="day-section">
+    <div class="day-label">Day 2</div>
+    <div class="day-title">VMs, APIs &amp; Webhooks</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128187;</div>
+        <h3>Virtual Machines</h3>
+        <p>Enrolled a Tart VM into a Jamf Pro instance via a configuration profile. Best analogy: <em>"Your computer is a big house. Each VM is a smaller room with its own rules &mdash; its own little house inside."</em></p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#127859;</div>
+        <h3>APIs</h3>
+        <p>Made a POST to create a new category. First attempt returned <strong>401 Unauthorized</strong> &mdash; a missing bearer token. Fixed it and successfully created a computer category in Jamf Pro.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#128268;</div>
+        <h3>Webhooks</h3>
+        <p>Webhooks fire automatically when an event occurs &mdash; no human request needed. The payload contained device data that looked opaque without knowing the device IDs.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#9989;</div>
+        <h3>What Clicked</h3>
+        <p>Virtual machines finally made complete sense after building one from scratch and enrolling it live.</p>
+      </div>
+    </div>
+
+    <div class="fuzzy-bar" style="margin-top: 16px;">
+      <h3>Still Fuzzy</h3>
+      <p>Webhooks vs. APIs feel clear in theory (webhooks are automatic; APIs need a request), but in practice during the live demo it was hard to tell them apart moment-to-moment. Something to revisit.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- DAY 3 -->
+  <div class="day-section">
+    <div class="day-label">Day 3</div>
+    <div class="day-title">AI-Native Development &amp; Compound Engineering</div>
+
+    <div class="card-grid">
+      <div class="card full-width">
+        <div class="card-icon">&#129302;</div>
+        <h3>Working with Claude Code</h3>
+        <p>Applied the Compound Engineering loop &mdash; Plan, Work, Review, Compound &mdash; to build this very page. First interaction with a true AI-native development workflow.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <div class="card">
+        <h3>Skills Unlocked This Week</h3>
+        <div class="tag-row">
+          <span class="tag">Git branching</span>
+          <span class="tag">Jamf Pro basics</span>
+          <span class="tag">API requests</span>
+          <span class="tag">Postman</span>
+          <span class="tag">Tart VMs</span>
+          <span class="tag">Webhooks</span>
+          <span class="tag">Claude Code</span>
+          <span class="tag">HTML</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Built with Claude Code &mdash; Jamf Pro Training Workshop &mdash; Amanda &bull; Favorite animal: Black Panther
+</footer>
+
+</body>
+</html>

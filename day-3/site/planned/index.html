@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amanda — Jamf Workshop Review</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f5f5f7;
+      --surface:   #ffffff;
+      --text:      #1d1d1f;
+      --secondary: #6e6e73;
+      --accent:    #0071e3;
+      --border:    rgba(0,0,0,0.08);
+      --shadow:    0 2px 24px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.13);
+      --radius:    18px;
+      --radius-sm: 12px;
+      --ease:      cubic-bezier(0.4,0,0.2,1);
+      /* dark palette */
+      --dark-bg:      #0a0f1e;
+      --dark-surface: rgba(255,255,255,0.06);
+      --dark-border:  rgba(255,255,255,0.10);
+      --dark-text:    #f5f5f7;
+      --dark-secondary: rgba(255,255,255,0.55);
+      --dark-accent:  #60a5fa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,15,30,0.80);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      height: 52px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-inner {
+      max-width: 980px; width: 100%;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-size: 0.9rem; font-weight: 600; color: #f5f5f7; letter-spacing: -0.01em; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; color: rgba(255,255,255,0.55);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #f5f5f7; }
+
+    /* ─── ANIMATE ON SCROLL ─── */
+    .animate {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+    }
+    .animate.delay-1 { transition-delay: 0.1s; }
+    .animate.delay-2 { transition-delay: 0.2s; }
+    .animate.delay-3 { transition-delay: 0.3s; }
+    .animate.delay-4 { transition-delay: 0.4s; }
+    .animate.visible  { opacity: 1; transform: translateY(0); }
+
+    /* ─── LAYOUT ─── */
+    section { padding: 96px 24px; }
+    .container { max-width: 980px; margin: 0 auto; }
+
+    .eyebrow {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700; letter-spacing: -0.03em;
+      line-height: 1.1; color: var(--text);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.1rem; color: var(--secondary);
+      line-height: 1.6; max-width: 560px;
+      margin-bottom: 56px;
+    }
+
+    /* ─── TINTED LIGHT SECTION ─── */
+    .tinted-section { background: #eef4ff; }
+    .tinted-section .compare-row { background: #deeaff; }
+
+    /* ─── DARK SECTION ─── */
+    .dark-section { background: #0a0f1e; }
+    .dark-section .eyebrow { color: #60a5fa; }
+    .dark-section .section-title { color: #f5f5f7; }
+    .dark-section .section-sub  { color: rgba(255,255,255,0.55); }
+    .dark-section .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+    }
+    .dark-section .card h3 { color: #f5f5f7; }
+    .dark-section .card p  { color: rgba(255,255,255,0.55); }
+    .dark-section .card-icon { background: rgba(255,255,255,0.07); }
+    .dark-section .quote-block {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-left: 4px solid #60a5fa;
+      box-shadow: none;
+    }
+    .dark-section .quote-text { color: #f5f5f7; }
+    .dark-section .quote-attr { color: rgba(255,255,255,0.45); }
+    .dark-section .pain-list li { color: rgba(255,255,255,0.55); border-bottom-color: rgba(255,255,255,0.08); }
+    .dark-section .pain-dot { background: #60a5fa; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #070c1a 0%, #0d1b3e 45%, #070c1a 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 55% at 50% 35%,
+        rgba(100,180,255,0.20) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 720px; position: relative; z-index: 1; }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(96,165,250,0.12);
+      color: #93c5fd;
+      border: 1px solid rgba(96,165,250,0.25);
+      border-radius: 40px;
+      padding: 6px 18px;
+      font-size: 0.82rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+    }
+    .hero-name {
+      font-size: clamp(3rem, 9vw, 6.5rem);
+      font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1; color: #f5f5f7;
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: rgba(255,255,255,0.55); line-height: 1.5;
+      margin-bottom: 48px; letter-spacing: -0.01em;
+    }
+    .hero-meta {
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+    }
+    .hero-meta-item { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero-meta-num {
+      font-size: 2.2rem; font-weight: 700; letter-spacing: -0.03em;
+      color: #f5f5f7; white-space: nowrap;
+      height: 2.8rem; display: flex; align-items: center; justify-content: center;
+    }
+    .hero-meta-num.text-stat {
+      font-size: 1.25rem; letter-spacing: -0.01em;
+    }
+    .hero-meta-label {
+      font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 4px;
+      letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600;
+    }
+    .hero-divider {
+      width: 1px; background: rgba(255,255,255,0.12);
+      align-self: stretch;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .card h3 {
+      font-size: 1rem; font-weight: 700; margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .card p {
+      font-size: 0.9rem; color: var(--secondary); line-height: 1.65;
+    }
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+    }
+    /* coloured card icons (light sections) */
+    .icon-blue   { background: rgba(0,113,227,0.10); }
+    .icon-purple { background: rgba(130,80,220,0.10); }
+    .icon-teal   { background: rgba(0,180,160,0.10); }
+    .icon-green  { background: rgba(52,199,89,0.10); }
+    .icon-orange { background: rgba(255,140,0,0.10); }
+
+    /* ─── EXPANDABLE NOTES ─── */
+    .notes-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; background: none; border: none; cursor: pointer;
+      padding: 18px 24px;
+      text-align: left;
+    }
+    .notes-toggle-label {
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .notes-chevron {
+      width: 20px; height: 20px; flex-shrink: 0;
+      border-radius: 50%; background: rgba(0,113,227,0.10);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.35s var(--ease), background 0.15s;
+      font-size: 0.65rem; color: var(--accent);
+    }
+    .notes-block {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+    }
+    .notes-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s var(--ease);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+    .notes-body.open { max-height: 600px; }
+    .notes-toggle[aria-expanded="true"] .notes-chevron { transform: rotate(180deg); background: rgba(0,113,227,0.15); }
+    .notes-inner {
+      padding: 0 24px 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .note-item {}
+    .note-q {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase; color: var(--secondary);
+      margin-bottom: 5px;
+    }
+    .note-a {
+      font-size: 0.9rem; color: var(--text); line-height: 1.65;
+    }
+    .note-divider {
+      border: none; border-top: 1px solid var(--border);
+    }
+    /* tinted section adjustments */
+    .tinted-section .notes-block { background: #fff; }
+    .tinted-section .notes-toggle-label { color: var(--accent); }
+    .tinted-section .note-divider { border-top-color: rgba(0,0,0,0.07); }
+
+    /* ─── QUOTE BLOCK ─── */
+    .quote-block {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px 40px;
+      border-left: 4px solid var(--accent);
+    }
+    .quote-text {
+      font-size: 1.15rem; font-style: italic;
+      color: var(--text); line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .quote-attr {
+      font-size: 0.82rem; color: var(--secondary); font-weight: 600;
+    }
+
+    /* ─── PERSONA SECTION ─── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 640px) { .persona-grid { grid-template-columns: 1fr; } }
+
+    .pain-list { list-style: none; }
+    .pain-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.9rem; color: var(--secondary); line-height: 1.55;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .pain-list li:last-child { border-bottom: none; }
+    .pain-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0; margin-top: 7px;
+    }
+
+    /* ─── API vs WEBHOOK COMPARISON ─── */
+    .compare-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 32px;
+      border-top: 4px solid transparent;
+    }
+    .compare-card.api   { border-top-color: #0071e3; }
+    .compare-card.webhook { border-top-color: #34c759; }
+    .compare-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .compare-card.api .compare-label { color: #0071e3; }
+    .compare-card.webhook .compare-label { color: #34c759; }
+    .compare-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; }
+    .compare-rows { display: flex; flex-direction: column; gap: 12px; }
+    .compare-row { background: var(--bg); border-radius: var(--radius-sm); padding: 12px 16px; }
+    .compare-row-label { font-size: 0.72rem; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .compare-row-val { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+
+    /* ─── COMMANDS ─── */
+    .command-block {
+      background: #0a2150;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .command-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(0,0,0,0.30);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .command-title { font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.75); }
+    .copy-btn {
+      font-size: 0.75rem; font-weight: 600; color: #60a5fa;
+      background: none; border: none; cursor: pointer; padding: 4px 8px;
+      border-radius: 6px; transition: background 0.15s;
+    }
+    .copy-btn:hover { background: rgba(96,165,250,0.12); }
+    .copy-btn.copied { color: #34c759; }
+    .command-body {
+      padding: 20px;
+      font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+      font-size: 0.82rem; line-height: 1.7;
+      color: #7dd3fc;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background: rgba(0,0,0,0.15);
+    }
+
+    /* ─── FLASHCARDS ─── */
+    #flashcards { background: var(--bg); }
+    .flashcard-wrapper {
+      max-width: 560px; margin: 0 auto;
+      text-align: center;
+    }
+    .flashcard-counter {
+      font-size: 0.82rem; color: var(--secondary);
+      margin-bottom: 24px; font-weight: 500;
+    }
+    .flashcard-scene {
+      width: 100%; height: 260px;
+      perspective: 1000px;
+      cursor: pointer;
+      margin-bottom: 28px;
+    }
+    .flashcard-card {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s var(--ease);
+      border-radius: var(--radius);
+    }
+    .flashcard-card.flipped { transform: rotateY(180deg); }
+    .fc-front, .fc-back {
+      position: absolute; inset: 0;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+    }
+    .fc-front {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .fc-front .fc-term {
+      font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .fc-front .fc-hint {
+      font-size: 0.8rem; color: var(--secondary);
+    }
+    .fc-back {
+      background: linear-gradient(135deg, #0050a3 0%, #0071e3 100%);
+      transform: rotateY(180deg);
+    }
+    .fc-back .fc-def {
+      font-size: 0.95rem; color: #fff; line-height: 1.65;
+      text-align: center; margin-bottom: 12px;
+    }
+    .fc-back .fc-analogy {
+      font-size: 0.8rem; color: rgba(255,255,255,0.7);
+      font-style: italic; line-height: 1.5; text-align: center;
+    }
+    .flashcard-nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px;
+    }
+    .fc-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.1rem;
+      transition: background 0.15s, transform 0.1s;
+      color: var(--text); box-shadow: var(--shadow);
+    }
+    .fc-btn:hover { background: #e8e8ed; }
+    .fc-btn:active { transform: scale(0.94); }
+    .fc-hint-tap { font-size: 0.78rem; color: var(--secondary); margin-top: 16px; }
+
+    /* ─── COMPOUND LOOP ─── */
+    .loop-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .loop-step {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+    }
+    .loop-step-num {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+    .loop-step h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .loop-step p { font-size: 0.85rem; color: var(--secondary); line-height: 1.55; }
+
+    .principles-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .principle-item {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .principle-num {
+      font-size: 1.5rem; font-weight: 800; color: rgba(0,0,0,0.07);
+      flex-shrink: 0; line-height: 1; letter-spacing: -0.04em;
+    }
+    .principle-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .principle-body p { font-size: 0.82rem; color: var(--secondary); line-height: 1.5; }
+
+    /* ─── SKILLS ─── */
+    #skills {
+      background: linear-gradient(145deg, #0050c8 0%, #0071e3 60%, #0082ff 100%);
+    }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+    .skill-pill {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 40px;
+      padding: 8px 18px;
+      font-size: 0.85rem; font-weight: 500;
+      color: #f5f5f7;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .skill-pill:hover {
+      background: rgba(255,255,255,0.13);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #070c1a;
+      text-align: center; padding: 48px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.8rem; color: rgba(255,255,255,0.35);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 640px) {
+      section { padding: 72px 20px; }
+      .nav-links { display: none; }
+      .card { padding: 24px; }
+      .hero-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">Amanda</span>
+    <ul class="nav-links">
+      <li><a href="#day1">Day 1</a></li>
+      <li><a href="#day2">Day 2</a></li>
+      <li><a href="#clarifier">API vs Webhook</a></li>
+      <li><a href="#flashcards">Flashcards</a></li>
+      <li><a href="#day3">Day 3</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="animate">
+      <span class="hero-tag">Jamf Pro Workshop &middot; March 2026</span>
+    </div>
+    <h1 class="hero-name animate delay-1">Amanda.</h1>
+    <p class="hero-sub animate delay-2">
+      Three days. Apple device management, APIs, virtual machines,<br>and AI-native development. Here&rsquo;s what I learned.
+    </p>
+    <div class="hero-meta animate delay-3">
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">3</div>
+        <div class="hero-meta-label">Days</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">20+</div>
+        <div class="hero-meta-label">New concepts</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">1</div>
+        <div class="hero-meta-label">VM enrolled</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num text-stat">Black Panther</div>
+        <div class="hero-meta-label">Spirit animal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DAY 1 ─── -->
+<section id="day1">
+  <div class="container">
+    <p class="eyebrow animate">Day 1</p>
+    <h2 class="section-title animate">Jamf, personas,<br>and a rubber duck.</h2>
+    <p class="section-sub animate">Understanding what Jamf does, who it helps, and why diverse perspectives matter.</p>
+
+    <div class="card-grid" style="margin-bottom: 20px;">
+      <div class="card animate delay-1">
+        <div class="card-icon icon-blue">&#127963;</div>
+        <h3>What is Jamf?</h3>
+        <p>Jamf is a software company that simplifies the use of Apple devices for end users. It makes the process as seamless as possible so users enjoy their experience and don&rsquo;t feel restricted.</p>
+        <p style="margin-top:10px;">It serves industries far beyond what you&rsquo;d expect &mdash; including building companies. The range of customers is vast.</p>
+      </div>
+      <div class="card animate delay-2">
+        <div class="card-icon icon-purple">&#127758;</div>
+        <h3>AI tools I shared</h3>
+        <p><strong>NotebookLM</strong> &mdash; A Gemini-powered app that turns large amounts of information into digestible podcasts and flashcards.</p>
+        <p style="margin-top:10px;"><strong>Dia</strong> &mdash; An AI browser that summarises everything you see into what you specifically need.</p>
+      </div>
+    </div>
+
+    <div class="persona-grid" style="margin-bottom: 20px;">
+      <div class="card animate delay-1">
+        <p class="eyebrow" style="margin-bottom: 8px;">Persona mapped</p>
+        <h3 style="margin-bottom: 16px;">K-12 IT Coordinator</h3>
+        <ul class="pain-list">
+          <li><span class="pain-dot"></span>Heavy manual workload with no automation</li>
+          <li><span class="pain-dot"></span>Tight school budgets leave little room for tools</li>
+          <li><span class="pain-dot"></span>Teachers lack the tech skills to self-serve</li>
+        </ul>
+        <p style="margin-top: 16px; font-size: 0.85rem; color: var(--secondary);">
+          <strong style="color: var(--text);">What I&rsquo;d build:</strong> A teacher training programme so they can share the load and build internal capacity.
+        </p>
+      </div>
+      <div class="quote-block animate delay-2" style="display:flex; flex-direction:column; justify-content:center;">
+        <p class="quote-text">&ldquo;After the rubber duck exercise I learnt there is no wrong answer. We all had the same task &mdash; &lsquo;Draw a duck&rsquo; &mdash; and every interpretation was different and creative. Together we can create amazing things; every idea just needs to be actualised.&rdquo;</p>
+        <p class="quote-attr">Biggest takeaway from Day 1</p>
+      </div>
+    </div>
+
+    <div class="notes-block animate">
+      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
+        <span class="notes-toggle-label">My reflections from Day 1</span>
+        <span class="notes-chevron">&#9660;</span>
+      </button>
+      <div class="notes-body">
+        <div class="notes-inner">
+          <div class="note-item">
+            <div class="note-q">What stood out from the icebreakers?</div>
+            <div class="note-a">I know most of my classmates but I learnt a lot of new things about my facilitators. Nate is a musician. Rob can speak 4 languages &mdash; English, Dutch, German&hellip; Josh comes from a teaching background. Salty liquorice is not nice.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What did I share in Global Tech Traditions?</div>
+            <div class="note-a">I spoke about NotebookLM &mdash; a Gemini AI powered app which helps you digest large bits of information into easy understandable podcasts and flashcards. The tool I learned about was Dia, an AI browser which summarises all the information you see into what you specifically need.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What surprised me about Jamf?</div>
+            <div class="note-a">I did not know that Jamf worked with building companies and was shocked to see that they also work in such fields. I got to understand how vast their types of customers are.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What am I curious about going into Day 2?</div>
+            <div class="note-a">I am definitely looking forward to seeing what we will do with Claude and how it all works with the different technologies I already know.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DAY 2 ─── -->
+<section id="day2" class="tinted-section">
+  <div class="container">
+    <p class="eyebrow animate">Day 2</p>
+    <h2 class="section-title animate">VMs, APIs,<br>and webhooks.</h2>
+    <p class="section-sub animate">Hands-on with real infrastructure. Enrolled a virtual Mac, made API calls, and watched events fire in real time.</p>
+
+    <div class="card-grid-3">
+      <div class="card animate delay-1">
+        <div class="card-icon icon-teal">&#128187;</div>
+        <h3>Virtual Machines</h3>
+        <p>Used Tart to create a macOS VM, downloaded a configuration profile, and enrolled it in Jamf Pro.</p>
+        <p style="margin-top:12px;"><em>&ldquo;Your computer is a big house. A VM is one of the rooms inside &mdash; its own little house with its own rules.&rdquo;</em></p>
+      </div>
+      <div class="card animate delay-2">
+        <div class="card-icon icon-orange">&#128268;</div>
+        <h3>APIs</h3>
+        <p>Made a POST request in Postman to create a new category in Jamf Pro.</p>
+        <p style="margin-top:12px;">First attempt: <strong>401 Unauthorized</strong> &mdash; no bearer token. Fixed it, got the token, request succeeded.</p>
+        <p style="margin-top:8px;"><em>APIs are like a restaurant waiter &mdash; they carry your request to the kitchen and bring the data back.</em></p>
+      </div>
+      <div class="card animate delay-3">
+        <div class="card-icon icon-green">&#128276;</div>
+        <h3>Webhooks</h3>
+        <p>Watched a webhook fire automatically when a Smart Group membership changed.</p>
+        <p style="margin-top:12px;">The payload contained device data that looks opaque from the outside &mdash; unless you know the device IDs.</p>
+        <p style="margin-top:8px;"><em>A webhook is a doorbell &mdash; you don&rsquo;t check the door every 5 minutes; it rings when someone arrives.</em></p>
+      </div>
+    </div>
+
+    <div class="quote-block animate" style="margin-top: 20px;">
+      <p class="quote-text">&ldquo;It finally made sense how virtual machines work, and I got to create my own, which I really enjoyed.&rdquo;</p>
+      <p class="quote-attr">What clicked on Day 2</p>
+    </div>
+
+    <div class="notes-block animate">
+      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
+        <span class="notes-toggle-label">My reflections from Day 2</span>
+        <span class="notes-chevron">&#9660;</span>
+      </button>
+      <div class="notes-body">
+        <div class="notes-inner">
+          <div class="note-item">
+            <div class="note-q">What did I do with my Tart VM?</div>
+            <div class="note-a">I downloaded a configuration profile on my VM and managed to enroll it in my Jamf Pro instance.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What API calls did I make in Postman?</div>
+            <div class="note-a">I made a POST to create a new category and at first I received a 401 because I didn&rsquo;t have a token &mdash; which means I wasn&rsquo;t authorised. Once I got the token it worked and I successfully created a category for computers in Jamf Pro.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What I learnt about webhooks</div>
+            <div class="note-a">Webhooks are a way to send feedback when an event has occurred. They are automatic and do not really require human input as much. The payload looked like a bunch of information &mdash; hard to read unless you know the device IDs.</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What is still fuzzy?</div>
+            <div class="note-a">The difference between webhooks and APIs. Theoretically I know the difference &mdash; webhooks are automatic, APIs need human interaction. But when doing it practically, I could not tell the difference between the API call and the webhook in the moment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── API vs WEBHOOK ─── -->
+<section id="clarifier">
+  <div class="container">
+    <p class="eyebrow animate">Still fuzzy? Let&rsquo;s fix that.</p>
+    <h2 class="section-title animate">API vs Webhook.</h2>
+    <p class="section-sub animate">The theory is clear. Here&rsquo;s a side-by-side to make the practical difference stick.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card api animate delay-1">
+        <div class="compare-label">API</div>
+        <h3>You ask. It answers.</h3>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="compare-row-label">Who starts it?</div>
+            <div class="compare-row-val">You do &mdash; your code sends a request</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">When?</div>
+            <div class="compare-row-val">Whenever you choose to call it</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">Analogy</div>
+            <div class="compare-row-val">Calling a restaurant to order food</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">Example you did</div>
+            <div class="compare-row-val">POST to create a Jamf category via curl</div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-card webhook animate delay-2">
+        <div class="compare-label" style="color:#34c759;">Webhook</div>
+        <h3>It tells you. You listen.</h3>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="compare-row-label">Who starts it?</div>
+            <div class="compare-row-val">The server &mdash; when an event happens</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">When?</div>
+            <div class="compare-row-val">Automatically, the moment something changes</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">Analogy</div>
+            <div class="compare-row-val">A push notification landing on your phone</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-row-label">Example you saw</div>
+            <div class="compare-row-val">Jamf fired a payload when device joined Smart Group</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card animate" style="margin-top:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+      <div style="font-size:2rem;">&#128161;</div>
+      <p style="font-size:0.95rem; color:var(--secondary); line-height:1.6;">
+        <strong style="color:var(--text);">The practical tell:</strong> If you wrote curl or clicked &ldquo;Send&rdquo; in Postman, that was an API call. If you just watched something appear on webhook.site without doing anything, that was a webhook firing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMMANDS ─── -->
+<section id="commands" style="background: #0c2d6b;">
+  <div class="container">
+    <p class="eyebrow animate" style="color:#93c5fd;">Reference</p>
+    <h2 class="section-title animate" style="color:#ffffff;">Commands you ran.</h2>
+    <p class="section-sub animate" style="color:rgba(255,255,255,0.65);">The actual curl commands from Day 2. Click to copy any of them.</p>
+
+    <div class="animate delay-1">
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">1. Get a bearer token</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token"</div>
+      </div>
+    </div>
+
+    <div class="animate delay-2">
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">2. Save the token to a variable</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">TOKEN=$(curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token" \
+  | jq -r '.token')</div>
+      </div>
+    </div>
+
+    <div class="animate delay-3">
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">3. List all computers</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq .</div>
+      </div>
+    </div>
+
+    <div class="animate delay-4">
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">4. Update an Extension Attribute (triggers the webhook!)</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;Amanda&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FLASHCARDS ─── -->
+<section id="flashcards">
+  <div class="container">
+    <p class="eyebrow animate" style="text-align:center;">Interactive</p>
+    <h2 class="section-title animate" style="text-align:center;">Flashcards.</h2>
+    <p class="section-sub animate" style="text-align:center; margin: 0 auto 56px;">Click any card to flip it and reveal the definition.</p>
+
+    <div class="flashcard-wrapper animate">
+      <div class="flashcard-counter">
+        Card <span id="fc-current">1</span> of <span id="fc-total">20</span>
+      </div>
+
+      <div class="flashcard-scene" id="fc-scene" onclick="flipCard()">
+        <div class="flashcard-card" id="fc-card">
+          <div class="fc-front">
+            <div class="fc-term" id="fc-term">MDM</div>
+            <div class="fc-hint">Tap to reveal</div>
+          </div>
+          <div class="fc-back">
+            <div class="fc-def" id="fc-def">Loading...</div>
+            <div class="fc-analogy" id="fc-analogy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-nav">
+        <button class="fc-btn" onclick="prevCard()" aria-label="Previous card">&#8592;</button>
+        <button class="fc-btn" onclick="flipCard()" style="width:auto; border-radius:40px; padding:0 20px; font-size:0.82rem; font-weight:600;">Flip</button>
+        <button class="fc-btn" onclick="nextCard()" aria-label="Next card">&#8594;</button>
+      </div>
+      <p class="fc-hint-tap">Use arrow keys or swipe to navigate</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DAY 3 ─── -->
+<section id="day3" class="tinted-section">
+  <div class="container">
+    <p class="eyebrow animate">Day 3</p>
+    <h2 class="section-title animate">The Compound<br>Engineering loop.</h2>
+    <p class="section-sub animate">A framework for working with AI that applies to any tool, now or in the future.</p>
+
+    <div class="loop-steps">
+      <div class="loop-step animate delay-1">
+        <div class="loop-step-num">01 &mdash; Plan</div>
+        <h4>Define before you build</h4>
+        <p>Gather context, ask the agent questions, surface risks. The plan IS the work. Execution is confirmation.</p>
+      </div>
+      <div class="loop-step animate delay-2">
+        <div class="loop-step-num">02 &mdash; Work</div>
+        <h4>Execute with AI</h4>
+        <p>Build within the plan. Stay in scope. If you&rsquo;re watching code write itself, you skipped the important part.</p>
+      </div>
+      <div class="loop-step animate delay-3">
+        <div class="loop-step-num">03 &mdash; Review</div>
+        <h4>Your eyes first</h4>
+        <p>Open it. Use it. Click things. Compare to your plan. Then ask the agent what it missed.</p>
+      </div>
+      <div class="loop-step animate delay-4">
+        <div class="loop-step-num">04 &mdash; Compound</div>
+        <h4>Distill the session</h4>
+        <p>Run /compound. Capture decisions, tradeoffs, dead ends. The next session starts smarter.</p>
+      </div>
+    </div>
+
+    <div class="notes-block animate" style="margin-bottom: 48px;">
+      <button class="notes-toggle" onclick="toggleNotes(this)" aria-expanded="false">
+        <span class="notes-toggle-label">My reflections from Day 3</span>
+        <span class="notes-chevron">&#9660;</span>
+      </button>
+      <div class="notes-body">
+        <div class="notes-inner">
+          <div class="note-item">
+            <div class="note-q">What surprised me about working with AI this way?</div>
+            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">What would I tell a friend about working with AI?</div>
+            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
+          </div>
+          <hr class="note-divider" />
+          <div class="note-item">
+            <div class="note-q">Which principle will I remember?</div>
+            <div class="note-a" style="color: var(--secondary); font-style: italic;">Fill this in after the session &mdash; open day-3/learning-log.md</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="animate" style="font-size:1.3rem; font-weight:700; margin-bottom:20px; letter-spacing:-0.02em;">7 Transferable Principles</h3>
+    <div class="principles-list">
+      <div class="principle-item animate delay-1">
+        <div class="principle-num">01</div>
+        <div class="principle-body">
+          <h4>Context is everything</h4>
+          <p>The agent only knows what you tell it. Quality output = quality context.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-1">
+        <div class="principle-num">02</div>
+        <div class="principle-body">
+          <h4>Planning &gt; building</h4>
+          <p>80% planning, 20% building. The plan is the real work.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-2">
+        <div class="principle-num">03</div>
+        <div class="principle-body">
+          <h4>Share your mental model</h4>
+          <p>The agent starts from zero every time. Transfer your picture of the goal.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-2">
+        <div class="principle-num">04</div>
+        <div class="principle-body">
+          <h4>Review against the plan</h4>
+          <p>Your judgment comes first. Then ask the agent for what you missed.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-3">
+        <div class="principle-num">05</div>
+        <div class="principle-body">
+          <h4>Recognise when to quit</h4>
+          <p>Sunk cost is a trap. Starting fresh with better context is the skill.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-3">
+        <div class="principle-num">06</div>
+        <div class="principle-body">
+          <h4>It&rsquo;s a conversation</h4>
+          <p>Not a command line. Collaborate, ask questions, refine together.</p>
+        </div>
+      </div>
+      <div class="principle-item animate delay-4">
+        <div class="principle-num">07</div>
+        <div class="principle-body">
+          <h4>Compound your sessions</h4>
+          <p>Distill everything. Make the next session inherit what you figured out.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SKILLS ─── -->
+<section id="skills">
+  <div class="container" style="text-align:center;">
+    <p class="eyebrow animate" style="color:#60a5fa;">All three days</p>
+    <h2 class="section-title animate" style="color:#f5f5f7;">Skills unlocked.</h2>
+    <p class="section-sub animate" style="margin: 0 auto 48px; color:rgba(255,255,255,0.5);">Everything I can now do that I couldn&rsquo;t before.</p>
+    <div class="skills-wrap animate" style="justify-content:center;">
+      <span class="skill-pill">Git branching &amp; PRs</span>
+      <span class="skill-pill">Jamf Pro basics</span>
+      <span class="skill-pill">MDM concepts</span>
+      <span class="skill-pill">Persona mapping</span>
+      <span class="skill-pill">Journey mapping</span>
+      <span class="skill-pill">Tart VMs</span>
+      <span class="skill-pill">macOS VM enrollment</span>
+      <span class="skill-pill">REST APIs</span>
+      <span class="skill-pill">Bearer token auth</span>
+      <span class="skill-pill">Postman</span>
+      <span class="skill-pill">curl commands</span>
+      <span class="skill-pill">JSON &amp; XML</span>
+      <span class="skill-pill">Webhooks</span>
+      <span class="skill-pill">Event-driven integrations</span>
+      <span class="skill-pill">Claude Code</span>
+      <span class="skill-pill">Compound Engineering</span>
+      <span class="skill-pill">Prompt design</span>
+      <span class="skill-pill">AI-native development</span>
+      <span class="skill-pill">HTML &amp; CSS</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built with Claude Code using the Compound Engineering loop &mdash; Jamf Workshop &middot; March 2026 &middot; Amanda
+</footer>
+
+<script>
+  /* ─── EXPANDABLE NOTES ─── */
+  function toggleNotes(btn) {
+    const body = btn.nextElementSibling;
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', !expanded);
+    body.classList.toggle('open', !expanded);
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+
+  /* ─── COPY TO CLIPBOARD ─── */
+  function copyCmd(btn) {
+    const body = btn.closest('.command-block').querySelector('.command-body');
+    // decode HTML entities back to text for copying
+    const txt = body.innerText;
+    navigator.clipboard.writeText(txt).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  /* ─── FLASHCARDS ─── */
+  const cards = [
+    { term: 'MDM', def: 'Mobile Device Management — a system for managing many devices from one place: pushing settings, installing apps, enforcing security rules.', analogy: 'Like a school principal who can set rules for every classroom at once, instead of walking to each room individually.' },
+    { term: 'Jamf', def: 'An MDM platform specialised for Apple devices — iPhone, iPad, Mac, and Apple TV — used by businesses, schools, hospitals, and more.', analogy: 'The control tower for an entire Apple fleet.' },
+    { term: 'API', def: 'Application Programming Interface — a way for software to talk to other software. You send a request, and get data back.', analogy: 'A restaurant: you (client) tell the waiter (API) what you want, the waiter tells the kitchen (server), and brings back your food (data).' },
+    { term: 'REST', def: 'A style of API that uses simple actions over the web: GET (read), POST (create), PUT (update), DELETE (remove).', analogy: 'Four verbs that describe everything you can do with data.' },
+    { term: 'Bearer Token', def: 'A code that proves you\'ve already authenticated. You get it once, then attach it to every request.', analogy: 'A wristband at an event — show ID at the door once, flash the wristband everywhere else.' },
+    { term: 'JSON', def: 'JavaScript Object Notation — a structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes.', analogy: 'Like filling out a form: each field has a label and a value. {"name": "Amanda"} is JSON.' },
+    { term: 'Webhook', def: 'A URL that receives data automatically when something happens. The server tells you — you don\'t have to keep asking.', analogy: 'A doorbell. You don\'t check the door every 5 minutes; it rings when someone arrives.' },
+    { term: 'Polling vs Pushing', def: 'Two ways to get updates. Polling = you keep asking. Pushing = the system tells you when there\'s news.', analogy: '"Are we there yet?" (polling) vs "I\'ll tell you when we get there." (pushing)' },
+    { term: 'Virtual Machine', def: 'A computer running inside another computer. It has its own operating system and behaves like a separate machine.', analogy: 'A snow globe — its own little world inside your world. You can reset it or delete it without affecting your real computer.' },
+    { term: 'Tart', def: 'A command-line tool for running macOS virtual machines on Apple Silicon Macs.', analogy: 'Key commands: tart clone (copy), tart run (start), tart stop (shutdown), tart ip (find its address).' },
+    { term: '401 Unauthorized', def: 'An HTTP error code meaning you made a request without proper authentication — the server won\'t respond until you prove who you are.', analogy: 'Trying to get into a club without showing your ID. The bouncer turns you away.' },
+    { term: 'Agent', def: 'An AI helper that doesn\'t just talk — it can actually do things: read files, write code, run commands.', analogy: 'Like a really smart assistant who can type on your keyboard, not just give you advice.' },
+    { term: 'Context Window', def: 'How much the agent can remember in one conversation. When it fills up, it starts forgetting earlier parts.', analogy: 'A whiteboard — you can keep writing, but eventually you run out of space and have to erase something.' },
+    { term: 'Hallucination', def: 'When an AI says something that sounds correct but isn\'t. It\'s not lying — it\'s guessing confidently without knowing it\'s wrong.', analogy: 'Someone giving you confident directions to a place they\'ve never been.' },
+    { term: 'Prompt', def: 'What you say to an AI to tell it what you want. Vague prompts get vague results; specific prompts get useful results.', analogy: '"Make me food" vs "Grilled cheese on sourdough, please."' },
+    { term: 'Plan Mode', def: 'When the agent stops and shows you what it\'s going to do before it does it. You can approve, adjust, or say no.', analogy: 'Looking at the blueprint before the builder starts construction.' },
+    { term: 'Compounding', def: 'Distilling everything from a session — decisions, tradeoffs, dead ends — into a reference that future sessions build on.', analogy: 'A pilot\'s logbook. Every flight recorded so the next pilot inherits all that experience.' },
+    { term: 'Integration', def: 'Code that makes two software systems talk to each other automatically, without anyone copying data by hand.', analogy: 'Online shopping — the cart talks to payments, payments talk to shipping. Seamless.' },
+    { term: 'Persona', def: 'A fictional character representing a real type of user, used to understand different people\'s needs and pain points.', analogy: 'Four workshop personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.' },
+    { term: 'Rubber Duck Debugging', def: 'Explaining your problem out loud — to a rubber duck, a colleague, or anyone — forces you to articulate it clearly, often revealing the answer.', analogy: 'The duck doesn\'t answer. But explaining it to the duck does.' },
+  ];
+
+  let currentIndex = 0;
+  let isFlipped = false;
+
+  function updateCard() {
+    const card = cards[currentIndex];
+    document.getElementById('fc-term').textContent = card.term;
+    document.getElementById('fc-def').textContent = card.def;
+    document.getElementById('fc-analogy').textContent = card.analogy;
+    document.getElementById('fc-current').textContent = currentIndex + 1;
+    document.getElementById('fc-total').textContent = cards.length;
+  }
+
+  function flipCard() {
+    isFlipped = !isFlipped;
+    document.getElementById('fc-card').classList.toggle('flipped', isFlipped);
+  }
+
+  function nextCard() {
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    currentIndex = (currentIndex + 1) % cards.length;
+    setTimeout(updateCard, 180);
+  }
+
+  function prevCard() {
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+    setTimeout(updateCard, 180);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft')  prevCard();
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+  });
+
+  // Touch/swipe
+  let touchStartX = 0;
+  document.getElementById('fc-scene').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('fc-scene').addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { diff > 0 ? nextCard() : prevCard(); }
+    else { flipCard(); }
+  });
+
+  updateCard();
+</script>
+
+</body>
+</html>
