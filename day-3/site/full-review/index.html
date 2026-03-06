@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naishe — 3-Day Workshop Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #fdf6e8;
+      --bg-mid:      #f5ecd4;
+      --bg-card:     #ffffff;
+      --green:       #62b856;
+      --green-dk:    #4a9a3f;
+      --green-lt:    #85cc7a;
+      --green-pale:  rgba(98,184,86,0.10);
+      --text:        #2a3828;
+      --text-mid:    #3d5239;
+      --muted:       rgba(42,56,40,0.45);
+      --beige:       #b8894a;
+      --beige-lt:    #d4a96e;
+      --beige-pale:  rgba(184,137,74,0.12);
+      --border:      rgba(98,184,86,0.18);
+      --border-beige:rgba(184,137,74,0.22);
+      --shadow:      0 2px 16px rgba(42,56,40,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 400;
+      line-height: 1.65;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── TOP BAR ── */
+    #topbar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 28px;
+      background: rgba(253,246,232,0.94);
+      border-bottom: 1px solid rgba(98,184,86,0.15);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    .brand-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--green-dk);
+      letter-spacing: 0.02em;
+    }
+    #page-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    #page-counter {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ── PAGE CONTAINER ── */
+    #pages {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── INDIVIDUAL PAGES ── */
+    .page {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      padding: 0 32px;
+      overflow: hidden;
+    }
+    .page.active { display: flex; }
+
+    .page-inner {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 0 16px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(98,184,86,0.2) transparent;
+    }
+    .page-inner::-webkit-scrollbar { width: 4px; }
+    .page-inner::-webkit-scrollbar-track { background: transparent; }
+    .page-inner::-webkit-scrollbar-thumb { background: rgba(98,184,86,0.2); border-radius: 4px; }
+
+    .page-content { max-width: 860px; margin: 0 auto; width: 100%; }
+
+    /* ── BOTTOM NAV ── */
+    #bottomnav {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 14px 28px;
+      border-top: 1px solid rgba(98,184,86,0.12);
+      background: rgba(253,246,232,0.94);
+    }
+    .nav-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid rgba(98,184,86,0.25);
+      background: var(--green-pale);
+      color: var(--green-dk);
+      font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s;
+    }
+    .nav-btn:hover { background: rgba(98,184,86,0.2); border-color: var(--green); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+    .dots { display: flex; gap: 7px; align-items: center; }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(98,184,86,0.2);
+      cursor: pointer; transition: all 0.2s; border: none; padding: 0;
+    }
+    .dot.active { background: var(--green); width: 22px; border-radius: 4px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'Inter', sans-serif; font-size: 0.68rem;
+      font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--green);
+      display: block; margin-bottom: 6px;
+    }
+    .section-label.beige { color: var(--beige); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(98,184,86,0.14);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+    }
+    .card-beige {
+      background: linear-gradient(135deg, #fdf5e4, #faf0d8);
+      border: 1px solid var(--border-beige);
+      border-radius: 16px;
+      padding: 20px 22px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .card p, .card-beige p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .card-icon { font-size: 1.3rem; margin-bottom: 8px; }
+
+    /* ── QUOTE BLOCK ── */
+    .quote-block {
+      border-left: 3px solid var(--green);
+      background: var(--green-pale);
+      border-radius: 0 12px 12px 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .quote-block.beige {
+      border-left-color: var(--beige);
+      background: var(--beige-pale);
+    }
+    .quote-block p {
+      font-size: 0.96rem;
+      font-style: italic;
+      color: var(--text-mid);
+    }
+    .quote-block cite {
+      display: block;
+      font-size: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ── BADGE / TAG ── */
+    .tag {
+      display: inline-block;
+      background: var(--green-pale); border: 1px solid rgba(98,184,86,0.22);
+      color: var(--green-dk); border-radius: 20px;
+      padding: 3px 12px; font-size: 0.7rem; font-weight: 500;
+    }
+    .tag-beige {
+      display: inline-block;
+      background: var(--beige-pale); border: 1px solid rgba(184,137,74,0.22);
+      color: var(--beige); border-radius: 20px;
+      padding: 3px 12px; font-size: 0.7rem; font-weight: 500;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 0 16px;
+      padding-bottom: 24px;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-line { display: flex; flex-direction: column; align-items: center; }
+    .timeline-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--green); border: 2px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--green);
+      flex-shrink: 0; margin-top: 4px;
+    }
+    .timeline-dot.beige { background: var(--beige); box-shadow: 0 0 0 2px var(--beige); }
+    .timeline-connector { width: 2px; flex: 1; background: var(--border); margin-top: 6px; }
+    .timeline-content h3 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .timeline-content p { font-size: 0.84rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── STAT ROW ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .stat {
+      text-align: center;
+      padding: 20px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 900;
+      color: var(--green); line-height: 1; margin-bottom: 4px;
+    }
+    .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+
+    /* ── PRINCIPLE BANNER ── */
+    .principle {
+      background: linear-gradient(135deg, var(--green-dk) 0%, var(--green) 100%);
+      border-radius: 18px;
+      padding: 36px 32px;
+      text-align: center;
+      margin: 24px 0;
+    }
+    .principle p {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 700; color: #ffffff; line-height: 1.4;
+    }
+    .principle cite {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      margin-top: 10px; font-style: normal;
+    }
+
+    /* ── FLASHCARDS ── */
+    .fc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .flashcard-wrap {
+      perspective: 1000px;
+      height: 170px;
+      cursor: pointer;
+    }
+    .flashcard-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d;
+    }
+    .flashcard-wrap.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 14px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .flashcard-front {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+    .flashcard-back {
+      background: linear-gradient(135deg, var(--green-dk), var(--green));
+      border: none;
+      transform: rotateY(180deg);
+    }
+    .flashcard-front .fc-label {
+      font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 8px;
+    }
+    .flashcard-front h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text);
+    }
+    .flashcard-front .fc-hint {
+      font-size: 0.66rem; color: var(--muted);
+      margin-top: 10px;
+    }
+    .flashcard-back p {
+      font-size: 0.78rem; color: #ffffff; line-height: 1.5;
+    }
+    .flashcard-back .fc-analogy {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* ── QUIZ ── */
+    .quiz-question { margin-bottom: 28px; }
+    .quiz-question h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem; font-weight: 600;
+      color: var(--text); margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+      cursor: pointer;
+      font-size: 0.86rem; color: var(--text-mid);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .quiz-option:hover { border-color: var(--green); background: var(--green-pale); }
+    .quiz-option.correct { border-color: var(--green); background: var(--green-pale); color: var(--green-dk); font-weight: 600; }
+    .quiz-option.wrong { border-color: #e05555; background: rgba(224,85,85,0.08); color: #c04040; }
+    .quiz-option.disabled { cursor: not-allowed; }
+    .quiz-option .opt-letter {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+    }
+    .quiz-score {
+      text-align: center;
+      padding: 28px;
+      background: var(--green-pale);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-top: 16px;
+    }
+    .quiz-score h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; color: var(--green-dk); margin-bottom: 8px;
+    }
+    .quiz-score p { font-size: 0.88rem; color: var(--muted); }
+    .quiz-restart {
+      margin-top: 14px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+      font-size: 0.84rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .quiz-restart:hover { background: var(--green-dk); border-color: var(--green-dk); }
+    .quiz-progress {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .quiz-progress-bar {
+      flex: 1; height: 4px; background: var(--border);
+      border-radius: 4px; overflow: hidden;
+    }
+    .quiz-progress-fill {
+      height: 100%; background: var(--green);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .quiz-progress-text { font-size: 0.76rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── GRATITUDE ── */
+    .gratitude-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-beige);
+      border-radius: 18px;
+      padding: 28px 28px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .gratitude-card .grat-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-pale), var(--beige-pale));
+      border: 2px solid var(--border-beige);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 14px;
+    }
+    .gratitude-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .gratitude-card .grat-role {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--beige); margin-bottom: 12px;
+    }
+    .gratitude-card p {
+      font-size: 0.86rem; color: var(--muted); line-height: 1.65;
+    }
+
+    /* ── UTILITIES ── */
+    .mt-2 { margin-top: 8px; }
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+    .mb-4 { margin-bottom: 16px; }
+    .text-muted { color: var(--muted); font-size: 0.87rem; }
+    .gap-2 { gap: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <span class="brand-name">Naishe Rowland</span>
+    <span id="page-title">Workshop Review</span>
+    <span id="page-counter">1 / 7</span>
+  </div>
+
+  <!-- PAGES -->
+  <div id="pages">
+
+    <!-- ══ PAGE 1: COVER ══ -->
+    <div class="page active" data-title="Home">
+      <div class="page-inner">
+        <div class="page-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;text-align:center;padding:20px 0;">
+          <span class="section-label" style="justify-content:center;">Jamf Pro Workshop · 3 Days</span>
+          <h1 style="font-size:clamp(2rem,5vw,3.4rem);font-weight:900;line-height:1.15;margin:8px 0 16px;">
+            Learning to manage Apple.<br>
+            <span style="color:var(--green);">Learning to work with AI.</span>
+          </h1>
+          <p class="text-muted" style="max-width:480px;margin:0 auto 28px;font-size:0.95rem;">
+            A personal review by an Afro-beats artist who came in curious and left with new tools — for devices, APIs, and how to actually talk to AI.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;">
+            <span class="tag">Apple Device Management</span>
+            <span class="tag">Jamf Pro</span>
+            <span class="tag-beige">API & Automation</span>
+            <span class="tag-beige">Webhooks</span>
+            <span class="tag">Claude Code</span>
+            <span class="tag">AI-Native Dev</span>
+          </div>
+          <div class="stat-row" style="max-width:560px;width:100%;">
+            <div class="stat"><div class="stat-number">3</div><div class="stat-label">Days</div></div>
+            <div class="stat"><div class="stat-number">20</div><div class="stat-label">Flashcards</div></div>
+            <div class="stat"><div class="stat-number">10</div><div class="stat-label">Quiz Questions</div></div>
+            <div class="stat"><div class="stat-number">4</div><div class="stat-label">People to Thank</div></div>
+          </div>
+          <p class="text-muted mt-4" style="font-size:0.78rem;">Use the arrows below to navigate →</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 2: DAY 1 ══ -->
+    <div class="page" data-title="Day 1">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label">Day 1</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:20px;">Welcome, Context & Empathy</h2>
+
+          <div class="card-grid mb-4">
+            <div class="card">
+              <div class="card-icon">🌍</div>
+              <h3>Cultural Exchange</h3>
+              <p>Discovered <strong>roadmap.sh</strong> — a tool for learning coding paths. Shared <strong>DaVinci Resolve</strong> for creating educational video content.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🍎</div>
+              <h3>What Jamf Actually Is</h3>
+              <p>Expected a simple MDM console. Found a full platform: Jamf Pro, Jamf Protect, Jamf Connect, Jamf School, and more.</p>
+            </div>
+            <div class="card-beige">
+              <div class="card-icon">🔐</div>
+              <h3>Security Analyst Persona</h3>
+              <p>Pain points: too many alerts, phishing emails, unpatched devices. Dream tool: auto-filter and vet security reports automatically.</p>
+            </div>
+          </div>
+
+          <div class="quote-block">
+            <p>"Jamf isn't just an MDM vendor — it's becoming a full Apple-focused platform that blends device management, security, and identity into one stack."</p>
+            <cite>— Naishe, End of Day 1</cite>
+          </div>
+
+          <p class="text-muted mt-4">Going into Day 2, the big question was: <em>how does Claude Code actually work as a coding assistant?</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 3: DAY 2 ══ -->
+    <div class="page" data-title="Day 2">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label beige">Day 2</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:20px;">APIs, Virtual Machines & Automation</h2>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-line">
+                <div class="timeline-dot"></div>
+                <div class="timeline-connector"></div>
+              </div>
+              <div class="timeline-content">
+                <h3>Virtual Machines — A Computer Inside a Computer</h3>
+                <p>Ran brew update and upgrade. Learned about the <code style="font-size:0.8rem;background:var(--green-pale);padding:1px 6px;border-radius:4px;">mole</code> command. The analogy: a VM is a mini-house built inside your main house — its own rooms, its own rules, same hardware.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-line">
+                <div class="timeline-dot beige"></div>
+                <div class="timeline-connector"></div>
+              </div>
+              <div class="timeline-content">
+                <h3>API Bootcamp — The Restaurant Analogy</h3>
+                <p>Made real API calls in Postman. Used POST requests to create categories on devices. You = customer, API = waiter, server = kitchen. Send an order, get data back.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-line">
+                <div class="timeline-dot"></div>
+              </div>
+              <div class="timeline-content">
+                <h3>Webhooks — Push vs Pull</h3>
+                <p>Push: server sends data when an event fires. Pull: you ask for it when you need it. Received a live webhook payload — structured JSON showing what happened, when, and which resource was affected.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="quote-block beige mt-6">
+            <p>"When the webhook payload arrived, I was excited — it contained structured JSON data describing the event that triggered it."</p>
+            <cite>— Naishe, After Block 4</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 4: DAY 3 ══ -->
+    <div class="page" data-title="Day 3">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label">Day 3</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px;">AI-Native Development with Claude Code</h2>
+          <p class="text-muted mb-4">Two rounds of building the same page revealed everything about how to work with AI.</p>
+
+          <div class="card-grid mb-4">
+            <div class="card">
+              <div class="card-icon">⚡</div>
+              <h3>Round 1 — One-Shot</h3>
+              <p>No context given. Got ocean blue colors. No Afro-beats. No green and beige. Technically fine — completely impersonal.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🎯</div>
+              <h3>Round 2 — Planned Build</h3>
+              <p>Gave AI everything: favorite colors, identity as an Afro-beats artist, layout preferences. The page came back as <em>mine</em>.</p>
+            </div>
+            <div class="card-beige">
+              <div class="card-icon">🔍</div>
+              <h3>The Review Step</h3>
+              <p>Switched from scrollable to per-section pages. The agent caught the color mismatch — ocean blue vs. the green and beige I actually felt.</p>
+            </div>
+          </div>
+
+          <div class="principle">
+            <p>"AI will use what we told it — and not use what we didn't."</p>
+            <cite>Naishe Rowland — Day 3 Learning Log</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 5: FLASHCARDS ══ -->
+    <div class="page" data-title="Flashcards">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label">Study Tool</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:6px;">Flashcards</h2>
+          <p class="text-muted mb-4" style="font-size:0.82rem;">Click any card to flip it and see the definition. Scroll down to see all 20 terms.</p>
+
+          <div class="fc-grid" id="fc-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 6: QUIZ ══ -->
+    <div class="page" data-title="Quiz">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label beige">Test Yourself</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:6px;">Workshop Quiz</h2>
+          <p class="text-muted mb-4" style="font-size:0.82rem;">10 questions covering all 3 days. Select an answer to continue.</p>
+
+          <div class="quiz-progress">
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quiz-fill" style="width:0%"></div>
+            </div>
+            <span class="quiz-progress-text" id="quiz-progress-text">0 / 10</span>
+          </div>
+
+          <div id="quiz-area"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE 7: GRATITUDE ══ -->
+    <div class="page" data-title="Gratitude">
+      <div class="page-inner">
+        <div class="page-content">
+          <span class="section-label beige">With Gratitude</span>
+          <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px;">Thank You</h2>
+          <p class="text-muted mb-4">Three days doesn't happen without the people who show up to make it happen.</p>
+
+          <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="gratitude-card">
+              <div class="grat-avatar">🌟</div>
+              <h3>Kelly</h3>
+              <div class="grat-role">Facilitator</div>
+              <p>For creating the space, setting the tone, and making sure every person in the room felt welcome from day one.</p>
+            </div>
+            <div class="gratitude-card">
+              <div class="grat-avatar">🛠️</div>
+              <h3>Rob</h3>
+              <div class="grat-role">Technical Lead</div>
+              <p>For breaking down complex Jamf concepts into something that actually made sense, and for the patience to do it more than once.</p>
+            </div>
+            <div class="gratitude-card">
+              <div class="grat-avatar">🔗</div>
+              <h3>Josh</h3>
+              <div class="grat-role">Instructor</div>
+              <p>For the API deep-dives, the Postman sessions, and making webhooks exciting instead of scary.</p>
+            </div>
+            <div class="gratitude-card">
+              <div class="grat-avatar">🤖</div>
+              <h3>Nate</h3>
+              <div class="grat-role">Claude Code Guide</div>
+              <p>For teaching the Compound Engineering loop and showing that AI works best when you bring the context. Day 3 wouldn't have landed without you.</p>
+            </div>
+          </div>
+
+          <div class="quote-block mt-6" style="text-align:center;">
+            <p>"I would tell them that AI is not the problem — it's our lack of context. It's how we interact with it that makes the difference."</p>
+            <cite>— Naishe Rowland, End of Day 3</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- BOTTOM NAV -->
+  <div id="bottomnav">
+    <button class="nav-btn" id="prev-btn" disabled>&#8592;</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="next-btn">&#8594;</button>
+  </div>
+
+  <script>
+    // ── PAGE NAVIGATION ──
+    const pages    = document.querySelectorAll('.page');
+    const dotsEl   = document.getElementById('dots');
+    const prevBtn  = document.getElementById('prev-btn');
+    const nextBtn  = document.getElementById('next-btn');
+    const titleEl  = document.getElementById('page-title');
+    const counterEl= document.getElementById('page-counter');
+    let current = 0;
+
+    // Build dots
+    pages.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(d);
+    });
+
+    function goTo(n) {
+      pages[current].classList.remove('active');
+      dotsEl.children[current].classList.remove('active');
+      current = n;
+      pages[current].classList.add('active');
+      dotsEl.children[current].classList.add('active');
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === pages.length - 1;
+      titleEl.textContent = pages[current].dataset.title;
+      counterEl.textContent = (current + 1) + ' / ' + pages.length;
+    }
+
+    prevBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+    nextBtn.addEventListener('click', () => { if (current < pages.length - 1) goTo(current + 1); });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' && current < pages.length - 1) goTo(current + 1);
+      if (e.key === 'ArrowLeft'  && current > 0)               goTo(current - 1);
+    });
+
+    // ── FLASHCARDS ──
+    const cards = [
+      { term: 'MDM',           def: 'Mobile Device Management. A system for managing many devices from one place — pushing settings, installing apps, enforcing security rules.', analogy: 'A school principal who can set rules for every classroom at once.' },
+      { term: 'Jamf Pro',      def: 'An Apple-focused MDM platform used by companies, schools, and governments to deploy, configure, monitor, and protect Apple devices at scale.', analogy: 'The command centre for every Apple device in an organisation.' },
+      { term: 'API',           def: 'Application Programming Interface. A way for software to talk to other software — you send a request and get data back.', analogy: 'A restaurant: you tell the waiter what you want, the kitchen prepares it, the waiter brings it back.' },
+      { term: 'REST',          def: 'A style of API that uses simple actions over the web: GET (read), POST (create), PUT (update), DELETE (remove).', analogy: 'GET = read something. POST = create something. PUT = update something. DELETE = remove it.' },
+      { term: 'JSON',          def: 'JavaScript Object Notation. A structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes.', analogy: 'Like filling out a form — each field has a label and a value.' },
+      { term: 'Bearer Token',  def: 'A code that proves you have already logged in. You get it once, then use it for all your requests until it expires.', analogy: 'A wristband at an event — show your ID once at the door, flash the wristband everywhere else.' },
+      { term: 'Postman',       def: 'A tool for testing APIs. Like a web browser, but for API requests instead of web pages.', analogy: 'Type the address, pick the action (GET, POST), see what comes back.' },
+      { term: 'Virtual Machine', def: 'A computer running inside another computer. It has its own operating system and behaves like a separate machine.', analogy: 'A snow globe — a little world inside your world. Reset or discard without affecting the main machine.' },
+      { term: 'Webhook',       def: 'A URL that receives data automatically when something happens — instead of you asking "anything new?" over and over.', analogy: 'A doorbell. You don\'t check the door every five minutes — it rings when someone arrives.' },
+      { term: 'Push vs Pull',  def: 'Push = the server sends data to you when an event fires. Pull = you request data from the server when you need it.', analogy: 'Pull: "Are we there yet?" Push: "I\'ll tell you when we get there."' },
+      { term: 'Integration',   def: 'Code that makes two software systems talk to each other automatically without manual copying of data.', analogy: 'Like online shopping — cart talks to payment, payment talks to shipping, all automatically.' },
+      { term: 'Persona',       def: 'A fictional character representing a real type of user. Used to understand different people\'s needs and pain points.', analogy: 'Day 1 personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.' },
+      { term: 'Agent',         def: 'A helper that doesn\'t just talk — it can actually do things: read files, write code, run commands.', analogy: 'A really smart assistant who can type on your keyboard, not just give you advice.' },
+      { term: 'Context',       def: 'Everything the agent knows about what you\'re trying to do. The more you tell it, the better it understands.', analogy: 'Asking someone to grab your jacket — they need to know where you live, what it looks like, and where you left it.' },
+      { term: 'Prompt',        def: 'What you say to the agent to tell it what you want. The quality of the output depends on the quality of the prompt.', analogy: '"Make me food" gets you something random. "Grilled cheese with tomato on sourdough" gets you exactly what you want.' },
+      { term: 'Plan Mode',     def: 'When the agent stops to show you what it\'s going to do before it does it. You can approve, reject, or change the plan.', analogy: 'Looking at the blueprint before building the house.' },
+      { term: 'One-Shot Prompting', def: 'Telling the agent what you want in one go and expecting a finished result. No planning, no back-and-forth. Usually doesn\'t reflect who you are.', analogy: 'Texting a friend "get me a birthday present for mom" with no other info.' },
+      { term: 'Hallucination', def: 'When the agent says something that sounds right but isn\'t. It\'s not lying — it\'s filling in gaps it doesn\'t know about.', analogy: '"Turn left at the big tree" — but there\'s no tree. They\'re confident and wrong.' },
+      { term: 'Context Window', def: 'How much the agent can remember in one conversation. When it fills up, earlier information starts to fade.', analogy: 'A whiteboard — you can keep writing, but eventually you run out of space.' },
+      { term: 'Compounding',   def: 'Distilling everything from a session — decisions, tradeoffs, dead ends — into a reference that future sessions build on.', analogy: 'A pilot\'s logbook. Every flight recorded so the next pilot starts with full context instead of figuring it out from scratch.' },
+    ];
+
+    // Render all flashcards as a scrollable grid
+    const fcGrid = document.getElementById('fc-grid');
+    cards.forEach((c, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'flashcard-wrap';
+      wrap.innerHTML = `
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <span class="fc-label">Term ${i + 1}</span>
+            <h3>${c.term}</h3>
+            <span class="fc-hint">tap to flip</span>
+          </div>
+          <div class="flashcard-back">
+            <p>${c.def}</p>
+            <p class="fc-analogy">${c.analogy}</p>
+          </div>
+        </div>`;
+      wrap.addEventListener('click', () => wrap.classList.toggle('flipped'));
+      fcGrid.appendChild(wrap);
+    });
+
+    // ── QUIZ ──
+    const questions = [
+      {
+        q: 'What is Jamf Pro primarily used for?',
+        opts: ['Managing Windows PCs at scale', 'Managing Apple devices at scale', 'Editing videos and media', 'Running virtual machines'],
+        ans: 1
+      },
+      {
+        q: 'In the restaurant analogy, what does the API represent?',
+        opts: ['The customer placing an order', 'The kitchen that prepares the food', 'The waiter who takes the order and returns the food', 'The menu listing available options'],
+        ans: 2
+      },
+      {
+        q: 'What is a Bearer Token used for?',
+        opts: ['Storing device settings', 'Proving you have already authenticated without re-sending your password', 'Formatting JSON data', 'Triggering webhooks'],
+        ans: 1
+      },
+      {
+        q: 'What is the difference between PUSH and PULL in webhooks?',
+        opts: ['Push is slower than pull', 'Pull sends data automatically; push requires a request', 'Push sends data automatically when an event fires; pull requires you to request it', 'They are the same thing'],
+        ans: 2
+      },
+      {
+        q: 'What is a Virtual Machine (VM)?',
+        opts: ['A cloud storage service', 'A computer running inside another computer with its own OS', 'A type of API request', 'A Jamf configuration profile'],
+        ans: 1
+      },
+      {
+        q: 'What did Naishe\'s one-shot page lack that the planned build delivered?',
+        opts: ['Navigation buttons', 'Personality, favourite colours (green & beige), and identity as an Afro-beats artist', 'A quiz section', 'A footer'],
+        ans: 1
+      },
+      {
+        q: 'What does JSON stand for?',
+        opts: ['Java Syntax Object Notation', 'JavaScript Object Notation', 'Just Structured Output Notation', 'Joint System Operation Network'],
+        ans: 1
+      },
+      {
+        q: 'Which REST method is used to CREATE a new resource?',
+        opts: ['GET', 'DELETE', 'PUT', 'POST'],
+        ans: 3
+      },
+      {
+        q: 'What is "context" in the context of working with AI?',
+        opts: ['The programming language you use', 'The colour scheme of your page', 'Everything the agent knows about what you\'re trying to do', 'The number of tokens in a response'],
+        ans: 2
+      },
+      {
+        q: 'What is the core principle Naishe took away from Day 3?',
+        opts: ['AI always gives the right answer', 'AI will use what we told it and not use what we didn\'t', 'More prompts always means better results', 'AI works best without any context'],
+        ans: 1
+      },
+    ];
+
+    let quizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function renderQuiz() {
+      const area = document.getElementById('quiz-area');
+      const fill = document.getElementById('quiz-fill');
+      const prog = document.getElementById('quiz-progress-text');
+
+      if (quizIndex >= questions.length) {
+        const pct = Math.round((score / questions.length) * 100);
+        let msg = pct === 100 ? 'Perfect score! 🎉' : pct >= 70 ? 'Great work! 💪' : 'Keep reviewing — you\'ve got this!';
+        area.innerHTML = `
+          <div class="quiz-score">
+            <h3>${score} / ${questions.length}</h3>
+            <p>${pct}% — ${msg}</p>
+            <button class="quiz-restart" onclick="restartQuiz()">Try Again</button>
+          </div>`;
+        fill.style.width = '100%';
+        prog.textContent = questions.length + ' / ' + questions.length;
+        return;
+      }
+
+      const q = questions[quizIndex];
+      fill.style.width = ((quizIndex / questions.length) * 100) + '%';
+      prog.textContent = (quizIndex + 1) + ' / ' + questions.length;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const optsHtml = q.opts.map((o, i) => `
+        <button class="quiz-option" onclick="selectAnswer(${i})">
+          <span class="opt-letter">${letters[i]}</span>
+          ${o}
+        </button>`).join('');
+
+      area.innerHTML = `
+        <div class="quiz-question">
+          <h3>Q${quizIndex + 1}. ${q.q}</h3>
+          <div class="quiz-options">${optsHtml}</div>
+        </div>`;
+      answered = false;
+    }
+
+    function selectAnswer(i) {
+      if (answered) return;
+      answered = true;
+      const q = questions[quizIndex];
+      const opts = document.querySelectorAll('.quiz-option');
+      opts.forEach(o => o.classList.add('disabled'));
+      opts[i].classList.add(i === q.ans ? 'correct' : 'wrong');
+      if (i !== q.ans) opts[q.ans].classList.add('correct');
+      if (i === q.ans) score++;
+      setTimeout(() => { quizIndex++; renderQuiz(); }, 1100);
+    }
+
+    function restartQuiz() {
+      quizIndex = 0; score = 0; answered = false;
+      document.getElementById('quiz-fill').style.width = '0%';
+      renderQuiz();
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>
