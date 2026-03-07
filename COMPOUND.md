@@ -236,3 +236,97 @@ The setup screen shows the count of questions in the selected filter ("X questio
 2. **Resources link verification** — Open `resources.html` and check every external link.
 3. **Git commit** — Stage and commit the Session 2 changes (quiz.js and notes.html). Decide on the three deleted learning-log.md files.
 4. **PR to main** — When satisfied, open a PR from branch `ron` into `main`.
+
+---
+
+## Session 3 — Mobile UX Fixes + Nav Dropdown Bug (2026-03-08)
+
+### What We Fixed
+
+Two commits in this session, both CSS-only, no HTML or JS changes.
+
+**Commit 1: Mobile UX improvements across all five pages** (`4678615`)
+Implemented a 14-bug Mobile UX Improvement Plan. All changes in `style.css` and `components.css`.
+
+| ID | Problem | Fix |
+|----|---------|-----|
+| G1 | Nav hamburger breakpoint was 700px — nav links overflowed on landscape phones | Raised breakpoint to 768px |
+| G2 | Mobile dropdown appeared behind page content | Added `z-index: 99` to `.nav-links` inside the 768px media query |
+| G3 | Too much dead space at top of pages on mobile | Reduced `.page-content` padding-top from `nav + 48px` to `nav + 24px` at ≤ 768px |
+| G4 | Side padding too wide on very small phones | `.container` padding reduced to `--space-md` (16px) at ≤ 480px |
+| H1 | Hero section too tall on mobile | Reduced hero padding at ≤ 600px |
+| H2 | Accordion tap targets too wide-padded | Reduced summary/body padding at ≤ 600px |
+| H3 | Day cards used 32px padding on mobile | Reduced to 24px (`--space-lg`) at ≤ 600px |
+| Q1 | Quiz mode radio cards overflowed horizontally | Changed `.radio-group` to `flex-direction: column` at ≤ 600px |
+| Q2 | Question card padding too large on mobile | Reduced to `--space-lg` at ≤ 600px |
+| C1 | Cheatsheet section padding too large on mobile | Reduced to `--space-lg` at ≤ 600px |
+| N1 | Notes sidebar was an 18-item vertical wall on mobile | Converted to horizontal scrollable pill strip with hidden scrollbar at ≤ 768px |
+| N2 | Note section padding too large on mobile | Reduced to `--space-lg` at ≤ 600px |
+| R1 | Code blocks in Resources overflowed card boundaries | Added `min-width: 0` to `.step-content` (allows flex child to shrink below content width) |
+| R2 | Resource card padding too large on mobile | Reduced to `--space-lg` at ≤ 600px |
+
+Three media query blocks were added/extended:
+- `style.css`: extended `@media (max-width: 768px)` + new `@media (max-width: 480px)`
+- `components.css`: updated `@media (max-width: 768px)` (nav breakpoint, z-index, pill strip) + new `@media (max-width: 600px)` (all padding reductions, radio stack, min-width fix)
+
+**Commit 2: Fix closed nav dropdown overlapping navbar** (follow-up bug)
+
+The G2 fix (adding `z-index: 99` to `.nav-links`) introduced a new visual bug: a black rectangle covering most of the navbar, with only the bottom few pixels of nav content visible below it.
+
+Root cause (CSS stacking context deep-dive):
+- `.navbar` has `position: fixed; z-index: 100` — this creates its own stacking context
+- `.nav-links` is a child of `.navbar` and has `position: fixed; z-index: 99` (from the G2 fix)
+- `z-index: 99` inside `.navbar`'s stacking context means `.nav-links` paints ON TOP of navbar siblings (brand text, toggle) — not on top of page content as intended
+- The closed dropdown uses `transform: translateY(-110%)`, which is not enough to push the element fully off-screen: with a ~216px dropdown and `top: 60px`, the bottom edge sits at y≈38px — inside the navbar area
+- Result: the bottom ~38px of the closed dropdown (solid dark background in dark mode) painted over the top portion of the navbar
+
+The math for `-110%`: for `translateY(-110%)` to fully push the dropdown above y=0, the dropdown would need to be **600px tall**. A 5-item mobile menu is ~216px. `-110%` was always insufficient — the z-index change just made the overlap newly visible.
+
+Fix: changed `transform: translateY(-110%)` to `transform: translateY(calc(-100% - var(--nav-height) - 1px))`.
+
+This guarantees: `top + height - (100% + nav-height + 1px) = 60 + h - h - 60 - 1 = -1px`. The bottom edge is always 1px above the top of the viewport, regardless of dropdown height.
+
+---
+
+### Decisions Made
+
+**Only CSS changes — no HTML or JS**
+The Mobile UX plan was scoped to CSS from the start. All layout issues were solvable at the presentation layer. This keeps the fix focused and makes it easy to revert.
+
+**Notes sidebar pill strip rather than a separate mobile layout**
+The alternative was to just collapse or hide the sidebar on mobile. The pill strip is better: it preserves navigation affordance (you can still jump between topics) while using horizontal space efficiently. The scrollbar is hidden but the strip is scrollable — common pattern on mobile.
+
+**`min-width: 0` for code overflow (R1), not `overflow-x: scroll` on the pre**
+The issue was that `.step-content` (a flex child) can't shrink below its content width by default. Adding `overflow-x: auto` to the `<pre>` won't help if the flex child itself doesn't shrink. `min-width: 0` fixes it at the correct level — the flex child can now compress, and the pre's existing `overflow-x: auto` handles the scroll.
+
+**`calc(-100% - var(--nav-height) - 1px)` over a fixed large value like `-200%`**
+A large fixed percentage would work for typical content but is a magic number. The calc approach is semantically clear: "move the element up by exactly its own height plus the navbar height plus a 1px buffer." It will remain correct even if the dropdown grows with more nav items.
+
+---
+
+### Tradeoffs
+
+**z-index: 99 on `.nav-links` stays, despite the stacking context issue**
+The original reason for z-index: 99 was to ensure the open dropdown appears above page content. That requirement is still valid. The fix targets the root cause (transform not moving element fully off-screen) rather than removing the z-index and accepting that the open dropdown might render under other positioned elements.
+
+**No `pointer-events: none` added to the closed state**
+Was considered as an additional guard — if the element is in the viewport area when closed, pointer events would hit it. But with the calc fix, the element is guaranteed off-screen, making this unnecessary. Prefer the minimum change.
+
+---
+
+### Current State
+
+**Working:**
+- All 5 pages render correctly on desktop and mobile
+- Mobile nav hamburger collapses at 768px breakpoint (covers all standard phones and small tablets)
+- Nav dropdown slides down cleanly, no black rectangle artifact
+- Notes sidebar converts to horizontal pill strip on mobile
+- Quiz mode selector stacks vertically on narrow screens
+- Code blocks in Resources scroll within their cards
+- All padding scales down appropriately on ≤ 600px screens
+- All Session 1 and 2 functionality unchanged
+
+**Still to do:**
+- Ron's take callouts for the other 17 notes sections
+- Resources page external link verification
+- PR from branch `ron` into `main`

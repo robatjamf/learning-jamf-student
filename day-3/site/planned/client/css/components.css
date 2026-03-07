@@ -104,7 +104,7 @@
     padding: var(--space-md);
     gap: var(--space-xs);
     margin: 0;
-    transform: translateY(-110%);
+    transform: translateY(calc(-100% - var(--nav-height) - 1px));
     transition: transform var(--transition-slow);
     box-shadow: var(--shadow-md);
     z-index: 99;
