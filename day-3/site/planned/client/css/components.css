@@ -91,7 +91,7 @@
   transition: transform var(--transition), opacity var(--transition);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .nav-toggle { display: flex; }
   .theme-toggle { order: 3; }
 
@@ -107,9 +107,44 @@
     transform: translateY(-110%);
     transition: transform var(--transition-slow);
     box-shadow: var(--shadow-md);
+    z-index: 99;
   }
 
   .nav-links.open { transform: translateY(0); }
+
+  /* Notes sidebar → horizontal scrollable pill strip */
+  .notes-sidebar {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .notes-sidebar h4 {
+    display: none;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: var(--space-xs);
+    padding-bottom: var(--space-xs);
+  }
+
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+
+  .sidebar-nav li {
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav a {
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    padding: 5px 12px;
+  }
 }
 
 /* === CARD === */
@@ -788,3 +823,51 @@ td code { white-space: nowrap; }
 .link-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 .link-list li:last-child { border-bottom: none; }
 .link-list .link-desc { display: block; font-size: 0.8rem; color: var(--text-tertiary); margin-top: 2px; }
+
+/* === MOBILE PADDING REDUCTIONS (≤ 600px) === */
+@media (max-width: 600px) {
+  .page-content {
+    padding-top: calc(var(--nav-height) + var(--space-lg));
+  }
+
+  .hero {
+    padding: var(--space-2xl) 0 var(--space-lg);
+  }
+
+  .accordion summary {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .accordion-body {
+    padding: 0 var(--space-lg) var(--space-lg);
+  }
+
+  .card,
+  .day-card {
+    padding: var(--space-lg);
+  }
+
+  .note-section,
+  .cheatsheet-section,
+  .question-card,
+  .resource-card {
+    padding: var(--space-lg);
+  }
+
+  .results-card {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .radio-group {
+    flex-direction: column;
+  }
+
+  .radio-card {
+    min-width: unset;
+    flex: unset;
+  }
+
+  .step-content {
+    min-width: 0;
+  }
+}
