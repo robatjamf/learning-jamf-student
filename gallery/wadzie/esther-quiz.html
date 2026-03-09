@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Well Do You Know Esther?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffeaa7 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      padding: 40px 48px;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #e05c8a;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+
+    /* ---- SETUP PHASE ---- */
+    .setup-label {
+      display: block;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .setup-field {
+      margin-bottom: 18px;
+    }
+
+    input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #f0c0d0;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, input[type="date"]:focus {
+      border-color: #e05c8a;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #e05c8a, #f4a261);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      margin-top: 12px;
+    }
+
+    /* ---- PROGRESS BAR ---- */
+    .progress-wrap {
+      background: #fce4ec;
+      border-radius: 99px;
+      height: 10px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e05c8a, #f4a261);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* ---- QUIZ PHASE ---- */
+    .question-num {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e05c8a;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .feedback {
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .feedback.correct {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .feedback.wrong {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* ---- RESULT PHASE ---- */
+    #result-section {
+      text-align: center;
+      animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e05c8a, #f4a261);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: #fff;
+    }
+
+    .score-circle .score-num {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .score-circle .score-denom {
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+
+    .result-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #e05c8a;
+      margin-bottom: 8px;
+    }
+
+    .result-msg {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 28px;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ======== SETUP PHASE ======== -->
+  <div id="setup-section">
+    <h1>About Esther</h1>
+    <p class="subtitle">Fill in the real answers — then we'll quiz you.</p>
+
+    <form id="setup-form">
+      <div class="setup-field">
+        <label class="setup-label">What is Esther's birthday?</label>
+        <input type="text" name="birthday" placeholder="e.g. March 14 or 14 March 2000" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her favourite colour?</label>
+        <input type="text" name="colour" placeholder="e.g. Lavender" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her go-to comfort food?</label>
+        <input type="text" name="food" placeholder="e.g. Mac and cheese" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her dream travel destination?</label>
+        <input type="text" name="travel" placeholder="e.g. Japan" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her biggest pet peeve?</label>
+        <input type="text" name="peeve" placeholder="e.g. People being late" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her favourite music genre or artist?</label>
+        <input type="text" name="music" placeholder="e.g. SZA or R&B" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her love language?</label>
+        <input type="text" name="love_language" placeholder="e.g. Words of affirmation" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What does she do when she's stressed?</label>
+        <input type="text" name="stressed" placeholder="e.g. Goes for a walk" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What's her favourite movie or show?</label>
+        <input type="text" name="show" placeholder="e.g. Insecure" required>
+      </div>
+      <div class="setup-field">
+        <label class="setup-label">What would Esther order at a restaurant?</label>
+        <input type="text" name="order" placeholder="e.g. Pasta, always" required>
+      </div>
+      <button type="submit" class="btn">Start the Quiz!</button>
+    </form>
+  </div>
+
+  <!-- ======== QUIZ PHASE ======== -->
+  <div id="quiz-section" class="hidden">
+    <h1>How Well Do You Know Esther?</h1>
+    <p class="subtitle">Let's find out...</p>
+
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <div class="question-num" id="question-num">Question 1 of 10</div>
+    <div class="question-text" id="question-text"></div>
+
+    <div class="setup-field">
+      <input type="text" id="quiz-answer" placeholder="Your answer..." autocomplete="off">
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="btn" id="submit-answer-btn">Submit Answer</button>
+  </div>
+
+  <!-- ======== RESULT PHASE ======== -->
+  <div id="result-section" class="hidden">
+    <h1>Results</h1>
+    <p class="subtitle">How did you do?</p>
+
+    <div class="score-circle">
+      <span class="score-num" id="final-score">0</span>
+      <span class="score-denom">/ 10</span>
+    </div>
+
+    <div class="result-title" id="result-title"></div>
+    <div class="result-msg" id="result-msg"></div>
+
+    <button class="btn secondary" id="retry-btn">Try Again</button>
+  </div>
+
+</div>
+
+<script>
+  const QUESTIONS = [
+    { key: 'birthday',      text: "What is Esther's birthday?" },
+    { key: 'colour',        text: "What's her favourite colour?" },
+    { key: 'food',          text: "What's her go-to comfort food?" },
+    { key: 'travel',        text: "What's her dream travel destination?" },
+    { key: 'peeve',         text: "What's her biggest pet peeve?" },
+    { key: 'music',         text: "What's her favourite music genre or artist?" },
+    { key: 'love_language', text: "What's her love language?" },
+    { key: 'stressed',      text: "What does she do when she's stressed?" },
+    { key: 'show',          text: "What's her favourite movie or show?" },
+    { key: 'order',         text: "What would Esther order at a restaurant?" },
+  ];
+
+  const RATINGS = [
+    { min: 9, title: "You basically ARE Esther",    msg: "Seriously — do you two share a brain? Esther would be touched." },
+    { min: 7, title: "Ride or die bestie",           msg: "You know your girl. She's lucky to have you." },
+    { min: 5, title: "Good friend, could text more", msg: "Solid! A few gaps, but the foundation is strong." },
+    { min: 3, title: "You know her name at least",   msg: "There's work to do. Schedule a long catch-up call." },
+    { min: 0, title: "Are you sure you're friends?", msg: "Maybe start by asking Esther about herself... like, today." },
+  ];
+
+  let answers = {};
+  let currentQ = 0;
+  let score = 0;
+  let awaitingNext = false;
+
+  // ---- Setup ----
+  document.getElementById('setup-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    for (const [k, v] of data.entries()) answers[k] = v.trim();
+    startQuiz();
+  });
+
+  function startQuiz() {
+    currentQ = 0;
+    score = 0;
+    awaitingNext = false;
+    document.getElementById('setup-section').classList.add('hidden');
+    document.getElementById('result-section').classList.add('hidden');
+    document.getElementById('quiz-section').classList.remove('hidden');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = QUESTIONS[currentQ];
+    document.getElementById('question-num').textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
+    document.getElementById('question-text').textContent = q.text;
+    document.getElementById('quiz-answer').value = '';
+    document.getElementById('quiz-answer').focus();
+
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'none';
+    fb.className = 'feedback';
+
+    const pct = (currentQ / QUESTIONS.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    document.getElementById('submit-answer-btn').textContent = 'Submit Answer';
+    awaitingNext = false;
+  }
+
+  document.getElementById('quiz-answer').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('submit-answer-btn').click();
+  });
+
+  document.getElementById('submit-answer-btn').addEventListener('click', function() {
+    if (awaitingNext) {
+      currentQ++;
+      if (currentQ >= QUESTIONS.length) {
+        showResult();
+      } else {
+        loadQuestion();
+      }
+      return;
+    }
+
+    const userAns = document.getElementById('quiz-answer').value.trim().toLowerCase();
+    const correctAns = answers[QUESTIONS[currentQ].key].toLowerCase();
+    const fb = document.getElementById('feedback');
+
+    if (userAns === correctAns) {
+      score++;
+      fb.className = 'feedback correct';
+      fb.textContent = 'Correct!';
+    } else {
+      fb.className = 'feedback wrong';
+      fb.textContent = `Not quite. The answer was: "${answers[QUESTIONS[currentQ].key]}"`;
+    }
+
+    fb.style.display = 'block';
+    document.getElementById('submit-answer-btn').textContent =
+      currentQ + 1 < QUESTIONS.length ? 'Next Question' : 'See Results';
+    awaitingNext = true;
+  });
+
+  function showResult() {
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('quiz-section').classList.add('hidden');
+    const rs = document.getElementById('result-section');
+    rs.classList.remove('hidden');
+    // re-trigger animation
+    rs.style.animation = 'none';
+    rs.offsetHeight; // reflow
+    rs.style.animation = '';
+
+    document.getElementById('final-score').textContent = score;
+    const rating = RATINGS.find(r => score >= r.min);
+    document.getElementById('result-title').textContent = rating.title;
+    document.getElementById('result-msg').textContent = rating.msg;
+  }
+
+  document.getElementById('retry-btn').addEventListener('click', function() {
+    startQuiz();
+  });
+</script>
+
+</body>
+</html>

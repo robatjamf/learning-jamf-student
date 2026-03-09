@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCRI Workshop March 4-6 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #151515;
+      color: #e5e5e5;
+      min-height: 100vh;
+    }
+
+    /* Lock screen */
+    #lock {
+      position: fixed;
+      inset: 0;
+      background: #151515;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    #lock h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #999;
+      margin-bottom: 1.25rem;
+    }
+    #lock input {
+      font-size: 1.1rem;
+      padding: 0.7rem 1rem;
+      border: 2px solid #333;
+      border-radius: 10px;
+      text-align: center;
+      width: 200px;
+      outline: none;
+      background: #1e1e1e;
+      color: #e5e5e5;
+    }
+    #lock input::placeholder { color: #555; }
+    #lock input:focus { border-color: #555; }
+    #lock input.error {
+      border-color: #f43f5e;
+      animation: shake 0.35s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    #lock button {
+      margin-top: 1rem;
+      padding: 0.65rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: #333;
+      color: #e5e5e5;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    #lock button:hover { background: #444; transform: scale(1.04); }
+    #lock button:active { transform: scale(0.97); }
+    #lock .hint {
+      margin-top: 0.6rem;
+      font-size: 0.8rem;
+      color: #f43f5e;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+
+    /* Gallery */
+    #gallery {
+      display: none;
+      padding: 3rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #e5e5e5;
+    }
+
+    /* Student sites section */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      display: block;
+      border-radius: 14px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      transition: transform 0.15s;
+    }
+    .card:hover { transform: translateY(-3px) rotate(-1deg); }
+    .card:active { transform: scale(0.97); }
+    .card .initial {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.2);
+      margin: 0 auto 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .card .name { font-size: 1.05rem; }
+    .card .label {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #444;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div id="lock">
+    <h2>Enter password</h2>
+    <input type="password" id="pin" placeholder="Password" autofocus>
+    <button onclick="checkPin()">Unlock</button>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div id="gallery">
+    <div class="header">
+      <h1>MCRI Workshop March 4-6 2026</h1>
+    </div>
+
+    <div class="section-label">Student Sites</div>
+    <div class="grid"></div>
+
+    <div class="footer">MCRI</div>
+  </div>
+
+  <script>
+    var students = [
+      { name: 'Amanda', href: 'amanda/index.html', bg: '#f43f5e' },
+      { name: 'Crown', href: 'crown/index.html', bg: '#f97316' },
+      { name: 'Lucile', href: 'lucile/index.html', bg: '#10b981' },
+      { name: 'Octavia', href: 'octavia/index.html', bg: '#8b5cf6' },
+      { name: 'Pride', href: 'pride/index.html', bg: '#eab308' },
+      { name: 'Prosperity', href: 'prosperity/index.html', bg: '#06b6d4' },
+      { name: 'Ron', href: 'ron/index.html', bg: '#3b82f6' },
+      { name: 'Sarah', href: 'sarah/index.html', bg: '#ec4899' },
+      { name: 'Sean', href: 'sean/index.html', bg: '#14b8a6' },
+      { name: 'Shine', href: 'shine/index.html', bg: '#a855f7' },
+      { name: 'Tana', href: 'tana/index.html', bg: '#ef4444' },
+      { name: 'Wadzie', href: 'wadzie/index.html', bg: '#22c55e' }
+    ];
+
+    var grid = document.querySelector('.grid');
+    students.forEach(function(s) {
+      var card = document.createElement('a');
+      card.className = 'card';
+      card.href = s.href;
+      card.style.background = s.bg;
+      card.innerHTML =
+        '<div class="initial">' + s.name[0] + '</div>' +
+        '<div class="name">' + s.name + '</div>' +
+        '<div class="label">View site</div>';
+      grid.appendChild(card);
+    });
+
+    var pin = document.getElementById('pin');
+    pin.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPin();
+    });
+
+    function checkPin() {
+      if (pin.value === 'MCRI') {
+        document.getElementById('lock').style.display = 'none';
+        document.getElementById('gallery').style.display = 'block';
+      } else {
+        pin.classList.add('error');
+        document.getElementById('hint').textContent = 'Nope, try again';
+        pin.value = '';
+        setTimeout(function() { pin.classList.remove('error'); }, 400);
+      }
+    }
+  </script>
+</body>
+</html>

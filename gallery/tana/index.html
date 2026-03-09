@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tana's Workshop Review — Jamf & AI-Native Dev</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #232635;
+      --border: #2e3150;
+      --accent: #6c7bff;
+      --accent2: #a78bfa;
+      --text: #e2e4f0;
+      --muted: #8b8fa8;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 17, 23, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      height: 56px;
+      overflow-x: auto;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    nav a:hover { color: var(--text); background: var(--surface2); }
+    nav .logo { color: var(--accent); font-weight: 700; font-size: 1rem; margin-right: auto; white-space: nowrap; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(108, 123, 255, 0.12) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 540px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    /* ── Layout ── */
+    main { max-width: 960px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+    section { margin-bottom: 5rem; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card ul { padding-left: 1.2rem; }
+    .card li { margin-bottom: 0.25rem; }
+
+    /* ── Learning Log Cards ── */
+    .log-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .log-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .log-card .day-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.75rem;
+    }
+
+    .log-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+    .log-card .quote {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 0.88rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Loop Diagram ── */
+    .loop-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .loop-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .loop-step {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .loop-step .step-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .loop-step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .loop-step p { font-size: 0.82rem; color: var(--muted); }
+
+    .loop-arrow {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.25rem;
+      margin: 0.5rem 0;
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; color: var(--accent2); white-space: nowrap; }
+    td .analogy { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; font-style: italic; }
+
+    /* ── Principles ── */
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .principle-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .principle-card .num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .principle-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .principle-card p { font-size: 0.87rem; color: var(--muted); }
+
+    /* ── Prompts ── */
+    .prompt-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .prompt-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+    }
+
+    .prompt-item .when {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-width: 150px;
+      flex-shrink: 0;
+    }
+
+    .prompt-item .cmd {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: var(--green);
+    }
+
+    /* ── Warning signs ── */
+    .warnings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .warning-card {
+      background: var(--surface);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 10px;
+      padding: 1.1rem;
+    }
+
+    .warning-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--red); margin-bottom: 0.35rem; }
+    .warning-card p { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Meta principle ── */
+    .meta {
+      background: linear-gradient(135deg, rgba(108, 123, 255, 0.1), rgba(167, 139, 250, 0.1));
+      border: 1px solid rgba(108, 123, 255, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .meta p {
+      font-size: 1.05rem;
+      color: var(--text);
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .meta strong { color: var(--accent2); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="logo">Tana's Workshop Review</span>
+    <a href="#journey">My Journey</a>
+    <a href="#loop">The Loop</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#principles">Principles</a>
+    <a href="#prompts">Prompts</a>
+  </nav>
+
+  <div class="hero">
+    <h1>3 Days. Jamf, APIs &amp; AI.</h1>
+    <p>A personal review of the Jamf Pro training workshop — covering device management, APIs, webhooks, and AI-native development.</p>
+    <div class="hero-badges">
+      <span class="badge">Jamf Pro</span>
+      <span class="badge">REST APIs</span>
+      <span class="badge">Webhooks</span>
+      <span class="badge">Virtual Machines</span>
+      <span class="badge">Claude Code</span>
+      <span class="badge">Compound Engineering</span>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- JOURNEY -->
+    <section id="journey">
+      <div class="section-label">Personal Reflection</div>
+      <h2>My Learning Journey</h2>
+      <p class="section-intro">Key moments and takeaways from each day of the workshop — in my own words.</p>
+
+      <div class="log-grid">
+
+        <div class="log-card">
+          <div class="day-tag">Day 1 — Context &amp; Personas</div>
+          <h3>What Jamf does</h3>
+          <div class="quote">Jamf is a company that helps manage and secure Apple devices. They never believe, always verify — Zero Trust.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 1 — Persona Mapping</div>
+          <h3>K-12 IT Coordinator</h3>
+          <div class="quote">Being the only IT person for 3 campuses. Managing large numbers of student devices across multiple education platforms.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 1 — If I could build one thing</div>
+          <h3>The Dashboard I'd build</h3>
+          <div class="quote">A single dashboard showing all student devices, security status, updates, and app usage in one place — automatically fixing common issues.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 1 — Biggest Takeaway</div>
+          <h3>No wrong questions</h3>
+          <div class="quote">No answer or question is wrong or useless. What you say might open up a way for someone else to ask and understand.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 2 — VMs</div>
+          <h3>A computer inside a computer</h3>
+          <div class="quote">It is a machine inside the actual machine that you can write code for testing. It is a testing machine.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 2 — APIs</div>
+          <h3>What an API is</h3>
+          <div class="quote">An API is a messenger that takes a request from one system and returns data from another system. I created a category on computers using a POST request.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 2 — What clicked</div>
+          <h3>Workflow clarity</h3>
+          <div class="quote">The workflow of APIs and webhooks, and creating a virtual machine — it all clicked today.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 2 — Looking ahead</div>
+          <h3>Day 3 excitement</h3>
+          <div class="quote">Looking forward to using Claude Code — seeing how AI fits into the actual development workflow.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 3 — One-Shot</div>
+          <h3>Better than expected</h3>
+          <div class="quote">It was cool and had a lot of information on it. It exceeded what I expected and I am very content with it.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 3 — Planned Build</div>
+          <h3>Questions no one ever asked</h3>
+          <div class="quote">It was quite interesting — I had to answer questions that no one had once asked me. The trickiest was describing myself in one sentence because I have never done it.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 3 — Review</div>
+          <h3>Nicely concluded</h3>
+          <div class="quote">It grouped the information and concluded in a very nice way. The agent caught the tech part of how I spend my time — something I also need to work on.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 3 — Working with AI</div>
+          <h3>Fast and fun</h3>
+          <div class="quote">This AI is different from others and fun to use. Working with AI is fun and easy — you just need to know the right way to ask questions.</div>
+        </div>
+
+        <div class="log-card">
+          <div class="day-tag">Day 3 — Principle to remember</div>
+          <h3>Mental Model</h3>
+          <div class="quote">Mental model is the framework in your mind — the picture you build before you ask the agent to build anything.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMPOUND LOOP -->
+    <section id="loop">
+      <div class="section-label">The Core Framework</div>
+      <h2>The Compound Engineering Loop</h2>
+      <p class="section-intro">The workflow for building well with AI. Planning is the work. Execution is confirmation.</p>
+
+      <div class="loop-container">
+        <div class="loop-steps">
+          <div class="loop-step">
+            <div class="step-num">Phase 1</div>
+            <h4>Plan</h4>
+            <p>Do I have enough context to build this?</p>
+          </div>
+          <div class="loop-step">
+            <div class="step-num">Phase 2</div>
+            <h4>Work</h4>
+            <p>Am I staying within the plan?</p>
+          </div>
+          <div class="loop-step">
+            <div class="step-num">Phase 3</div>
+            <h4>Review</h4>
+            <p>Does this match what I intended?</p>
+          </div>
+          <div class="loop-step">
+            <div class="step-num">Phase 4</div>
+            <h4>Compound</h4>
+            <p>What should the next session inherit?</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Quality Check</th>
+                <th>What It Means</th>
+                <th>Try Asking</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>What are we working with?</td>
+                <td>The agent knows the project — not just the task</td>
+                <td>"Look at my project and tell me what you see"</td>
+              </tr>
+              <tr>
+                <td>What are we building?</td>
+                <td>The goal is specific enough to act on</td>
+                <td>"Before you start, propose a plan"</td>
+              </tr>
+              <tr>
+                <td>What questions came up?</td>
+                <td>Unknowns surfaced and answered</td>
+                <td>"What questions do you have before we start?"</td>
+              </tr>
+              <tr>
+                <td>What needs your judgment?</td>
+                <td>Decisions only a human can make</td>
+                <td>"What could go wrong with this approach?"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem;">Warning Signs</div>
+      <p class="section-intro" style="margin-bottom:1rem;">Stop and restart if you see any of these.</p>
+      <div class="warnings">
+        <div class="warning-card">
+          <h4>Overcomplicated</h4>
+          <p>Solution keeps growing — more files, more steps, harder to follow.</p>
+        </div>
+        <div class="warning-card">
+          <h4>Context Filling Up</h4>
+          <p>Conversation is long, agent repeats itself or forgets earlier details.</p>
+        </div>
+        <div class="warning-card">
+          <h4>Approach Keeps Changing</h4>
+          <p>"Actually, let's try..." with no confident direction.</p>
+        </div>
+        <div class="warning-card">
+          <h4>You're Confused</h4>
+          <p>You can't explain what the agent is doing or why.</p>
+        </div>
+        <div class="warning-card">
+          <h4>Gut Says "Off"</h4>
+          <p>Something feels wrong, even if you can't articulate it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section id="glossary">
+      <div class="section-label">Key Terms</div>
+      <h2>Glossary</h2>
+      <p class="section-intro">Plain-language definitions for every term from the workshop.</p>
+
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h3 style="color:var(--accent2); margin-bottom:1rem;">Days 1–2 Terms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Term</th><th>What It Is</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MDM</td>
+                <td>
+                  Manage many devices from one place — push settings, install apps, enforce security rules.
+                  <div class="analogy">Like a school principal setting rules for every classroom at once.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>API</td>
+                <td>
+                  A way for software to talk to other software. Send a request, get data back.
+                  <div class="analogy">A waiter taking your order to the kitchen and bringing your food back.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>REST</td>
+                <td>
+                  A style of API using GET / POST / PUT / DELETE over the web.
+                  <div class="analogy">GET = read. POST = create. PUT = update. DELETE = remove.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>JSON</td>
+                <td>
+                  A structured format for data readable by humans and computers. Uses curly braces and key-value pairs.
+                  <div class="analogy">Like a form: each field has a label and a value. {"name": "Tana"}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Bearer Token</td>
+                <td>
+                  A code proving you've already logged in. Get it once, use it everywhere.
+                  <div class="analogy">A wristband at an event — show ID at the door, flash the band everywhere else.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Webhook</td>
+                <td>
+                  A URL that receives data when something happens. Server tells you instead of you asking.
+                  <div class="analogy">A doorbell — you don't check the door every 5 minutes, it rings when someone arrives.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Virtual Machine</td>
+                <td>
+                  A computer running inside another computer with its own OS.
+                  <div class="analogy">A snow globe — a little world inside your world. Reset or throw away without affecting the room.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Tart</td>
+                <td>
+                  A tool for running macOS VMs on Apple Silicon.
+                  <div class="analogy">Commands: tart clone, tart run, tart stop, tart ip</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Polling vs. Pushing</td>
+                <td>
+                  Two ways to get updates. Polling = you keep asking. Pushing = system tells you.
+                  <div class="analogy">"Are we there yet?" vs. "I'll tell you when we get there."</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Persona</td>
+                <td>
+                  A fictional character representing a real type of user, used to understand needs and pain points.
+                  <div class="analogy">Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Tech.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="color:var(--accent2); margin-bottom:1rem;">Day 3 — AI Terms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Term</th><th>What It Is</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Agent</td>
+                <td>
+                  A helper that doesn't just talk — it reads files, writes code, and runs commands.
+                  <div class="analogy">A smart assistant who can type on your keyboard, not just give advice.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Context</td>
+                <td>
+                  Everything the agent knows about what you're trying to do.
+                  <div class="analogy">Asking a stranger to grab your jacket — they need to know where you live, what it looks like, where you left it.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Prompt</td>
+                <td>
+                  What you say to the agent to tell it what you want.
+                  <div class="analogy">"Make me food" vs. "Make me a grilled cheese with tomato on sourdough."</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Context Window</td>
+                <td>
+                  How much the agent can remember in one conversation. Fills up over time.
+                  <div class="analogy">A whiteboard — eventually you run out of space and have to erase something.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Hallucination</td>
+                <td>
+                  When the agent says something that sounds right but isn't. Not lying — just guessing wrong.
+                  <div class="analogy">"Turn left at the big tree" — but there's no tree. They filled in the blank.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Compounding</td>
+                <td>
+                  Distilling decisions, tradeoffs, and discoveries into a reference that future sessions build on.
+                  <div class="analogy">A pilot's logbook — record the route, weather decisions, turbulence. Next pilot starts with all that context.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>One-Shot Prompting</td>
+                <td>
+                  Telling the agent everything in one go and expecting a finished result. Usually doesn't end well.
+                  <div class="analogy">"Get me a birthday present for mom" — they'll get something, but probably not what you had in mind.</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Quit / Restart</td>
+                <td>
+                  Stopping and starting over when things aren't working. This is smart, not giving up.
+                  <div class="analogy">You took a wrong turn. Faster to turn around now than keep driving and hope for the best.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section id="principles">
+      <div class="section-label">Transferable Knowledge</div>
+      <h2>7 Principles That Last</h2>
+      <p class="section-intro">These apply to Claude Code, Copilot, Cursor, or whatever AI tool comes next. Tools change. These don't.</p>
+
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="num">01</div>
+          <h3>Context Is Everything</h3>
+          <p>The quality of your output is determined by the quality of your context. The agent only knows what you tell it — your mental model, constraints, the "why" behind requirements.</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">02</div>
+          <h3>Planning &gt; Building</h3>
+          <p>80% planning, 20% building. If you're mostly watching the agent write code, you skipped the important part. The plan IS the work. Execution is confirmation.</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">03</div>
+          <h3>Share Your Mental Model</h3>
+          <p>The agent doesn't have it automatically. You've been thinking about this. Transfer that picture — "here's how I'm thinking about this..." — before you ask it to build.</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">04</div>
+          <h3>Recognize When to Quit</h3>
+          <p>Sunk cost is a trap. Starting over with better context is faster than pushing through a bad path. Quitting isn't failure — it's the skill.</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">05</div>
+          <h3>It's a Conversation</h3>
+          <p>Not a command line. Collaboration, not delegation. The best results come from back-and-forth: you share context, agent explores, you refine, together you build understanding.</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">06</div>
+          <h3>Review Against Your Plan</h3>
+          <p>Your eyes and judgment are the primary review tool. Open the output. Use it. Click the buttons. Does it match what you had in your head when you planned it?</p>
+        </div>
+        <div class="principle-card">
+          <div class="num">07</div>
+          <h3>Compound Your Sessions</h3>
+          <p>Distill every session into a persistent reference. Not just "what I learned" — decisions, tradeoffs, dead ends, the reasoning behind choices. Make the next session start smarter.</p>
+        </div>
+      </div>
+
+      <div class="meta" style="margin-top:2rem;">
+        <p><strong>The meta-principle:</strong> AI agents are powerful collaborators who lack your context. Your job is to bridge that gap — through thoughtful planning, clear communication, expert review, and the discipline to distill every session so the next one inherits everything you figured out.</p>
+      </div>
+    </section>
+
+    <!-- PROMPTS -->
+    <section id="prompts">
+      <div class="section-label">Quick Reference</div>
+      <h2>Prompts That Work</h2>
+      <p class="section-intro">Copy these into your next Claude Code session.</p>
+
+      <div class="prompt-list">
+        <div class="prompt-item">
+          <span class="when">Build shared understanding</span>
+          <span class="cmd">"Look at my project and tell me what you see"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Explore the problem</span>
+          <span class="cmd">"Walk me through how this works"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Surface risks early</span>
+          <span class="cmd">"What could go wrong with this approach?"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Get the agent's questions</span>
+          <span class="cmd">"What questions do you have before we start?"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Check understanding</span>
+          <span class="cmd">"Explain back to me what we're trying to do"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Find gaps after building</span>
+          <span class="cmd">"Based on our plan, what did we miss?"</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">Start fresh after a wrong turn</span>
+          <span class="cmd">"Let's start over. Here's what I've learned..."</span>
+        </div>
+        <div class="prompt-item">
+          <span class="when">End the session</span>
+          <span class="cmd">/compound</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Tana's Workshop Review &mdash; Jamf Pro &amp; AI-Native Development &mdash; 3 Days</p>
+    <p style="margin-top:0.4rem; font-size:0.75rem;">Built on Day 3 using the Compound Engineering loop</p>
+  </footer>
+
+</body>
+</html>

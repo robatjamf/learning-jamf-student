@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apple Device Management: My Notes — Amanda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:          #F7F5F2;
+      --paper:          #FFFFFF;
+      --sage-bg:        #EEF6F0;
+      --text:           #1A1A1A;
+      --text-light:     #555555;
+      --sticky-yellow:  #FFE566;
+      --sticky-green:   #95E06C;
+      --sticky-coral:   #FF6B6B;
+      --sticky-blue:    #5BC8F5;
+      --tape-amber:     rgba(255,185,0,0.50);
+      --tape-sage:      rgba(100,190,120,0.50);
+      --tape-blue:      rgba(60,170,220,0.50);
+      --terracotta:     #E8472A;
+      --olive:          #3DAA60;
+      --dark-brown:     #1E1E1E;
+      --darker-brown:   #111111;
+      --shadow-sm:      2px 4px 12px rgba(0,0,0,0.10);
+      --shadow-md:      4px 8px 24px rgba(0,0,0,0.14);
+      --shadow-lg:      6px 16px 40px rgba(0,0,0,0.18);
+      --hand: 'Permanent Marker', cursive;
+      --body: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLL ANIMATE ── */
+    .anim {
+      opacity: 0;
+      transform: translateY(36px) rotate(-0.8deg);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1);
+    }
+    .anim.d1 { transition-delay: 0.10s; }
+    .anim.d2 { transition-delay: 0.20s; }
+    .anim.d3 { transition-delay: 0.30s; }
+    .anim.d4 { transition-delay: 0.40s; }
+    .anim.visible { opacity: 1; transform: translateY(0) rotate(0deg); }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes wobble {
+      0%   { transform: rotate(var(--rot,0deg)); }
+      25%  { transform: rotate(calc(var(--rot,0deg) + 3deg)); }
+      75%  { transform: rotate(calc(var(--rot,0deg) - 3deg)); }
+      100% { transform: rotate(var(--rot,0deg)); }
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* ── COVER ── */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 24px;
+      background: #F0E8CC;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-tape-top {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 20px;
+      background: rgba(255,185,0,0.72);
+    }
+    .cover-tape-corner {
+      position: absolute;
+      width: 80px; height: 20px;
+      background: rgba(60,180,140,0.68);
+      border-radius: 2px;
+    }
+    .cover-tape-corner.tl { top: 48px; left: -16px; transform: rotate(-42deg); }
+    .cover-tape-corner.tr { top: 48px; right: -16px; transform: rotate(42deg); }
+    .cover-label {
+      font-family: var(--hand);
+      font-size: 1rem; color: var(--text-light);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .cover-title {
+      font-family: var(--hand);
+      font-size: clamp(2.6rem, 8vw, 5rem);
+      font-weight: 700; color: var(--text);
+      line-height: 1.1; margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .cover-sub {
+      font-size: 1.05rem; color: var(--text-light);
+      line-height: 1.7; max-width: 480px; margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+    .cover-stats {
+      display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+    .cover-stat {
+      background: var(--paper); border-radius: 8px;
+      padding: 14px 22px; box-shadow: var(--shadow-sm); text-align: center;
+    }
+    .cover-stat-num {
+      font-family: var(--hand); font-size: 2rem; font-weight: 700;
+      color: var(--terracotta); display: block;
+    }
+    .cover-stat-label {
+      font-size: 0.78rem; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    /* ── OWNERSHIP LABEL ── */
+    .ownership-label {
+      margin-top: 44px;
+      background: var(--paper);
+      border: 2px dashed rgba(0,0,0,0.18);
+      padding: 14px 32px 16px;
+      border-radius: 4px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      opacity: 0; animation: fadeUp 0.9s ease 1.0s forwards;
+      position: relative;
+    }
+    .ownership-label::before {
+      /* tape holding the label */
+      content: '';
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 18px; border-radius: 2px;
+      background: var(--tape-blue);
+    }
+    .ownership-line {
+      font-family: var(--body); font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-light);
+      display: block; margin-bottom: 4px;
+    }
+    .ownership-name {
+      font-family: var(--hand); font-size: 2.2rem; color: var(--text); display: block;
+    }
+
+    /* ── PHOTO CORNERS ── */
+    .photo-corner {
+      position: absolute; width: 18px; height: 18px;
+    }
+    .photo-corner::before, .photo-corner::after {
+      content: ''; position: absolute; background: #333; border-radius: 1px;
+    }
+    .photo-corner::before { width: 100%; height: 3px; top: 0; left: 0; }
+    .photo-corner::after  { width: 3px; height: 100%; top: 0; left: 0; }
+    .photo-corner.tl { top: 10px; left: 10px; }
+    .photo-corner.tr { top: 10px; right: 10px; transform: rotate(90deg); }
+    .photo-corner.bl { bottom: 10px; left: 10px; transform: rotate(-90deg); }
+    .photo-corner.br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+    /* ── PAGE NUMBER TAG ── */
+    .page-tag {
+      display: inline-block;
+      background: var(--sticky-yellow);
+      font-family: var(--hand); font-size: 1rem; color: var(--text);
+      padding: 4px 16px; border-radius: 2px;
+      box-shadow: var(--shadow-sm);
+      position: absolute; bottom: -12px; right: 32px;
+      transform: rotate(1.5deg);
+    }
+    .page-tag::before {
+      content: '';
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      width: 40px; height: 14px; border-radius: 2px;
+      background: var(--tape-amber);
+    }
+
+    /* ── EXTRA TAPE STRIP ── */
+    .tape-strip {
+      position: absolute;
+      height: 18px; border-radius: 2px;
+    }
+    .tape-strip.left {
+      width: 56px; left: -8px; top: 40%;
+      transform: rotate(-90deg);
+      background: var(--tape-sage);
+    }
+    .tape-strip.corner-right {
+      width: 60px; right: 24px; bottom: 20px;
+      transform: rotate(-6deg);
+      background: var(--tape-blue);
+    }
+    .tape-strip.corner-left {
+      width: 60px; left: 24px; bottom: 20px;
+      transform: rotate(5deg);
+      background: rgba(255,100,100,0.35);
+    }
+
+    /* ── TORN DIVIDER ── */
+    .torn { display: block; width: 100%; line-height: 0; }
+    .torn svg { display: block; width: 100%; }
+
+    /* ── DAY SECTIONS ── */
+    .day-section { padding: 72px 24px 56px; }
+    .day-section.alt { background: var(--sage-bg); }
+
+    /* ── STICKY NOTE ── */
+    .sticky {
+      display: inline-block;
+      padding: 18px 22px;
+      border-radius: 2px;
+      box-shadow: var(--shadow-md);
+      font-family: var(--hand);
+      font-size: 1.1rem; line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 24px;
+      max-width: 380px;
+      position: relative;
+    }
+    .sticky::before {
+      content: '';
+      position: absolute; top: -11px; left: 50%;
+      transform: translateX(-50%);
+      width: 56px; height: 16px; border-radius: 2px;
+    }
+    .sticky .sticky-attr {
+      display: block; margin-top: 8px;
+      font-size: 0.8rem; color: var(--text-light);
+    }
+    .sticky.yellow { background: var(--sticky-yellow); --rot: -2deg; transform: rotate(-2deg); }
+    .sticky.yellow::before { background: var(--tape-amber); }
+    .sticky.coral  { background: var(--sticky-coral);  --rot: 2deg;   transform: rotate(2deg); }
+    .sticky.coral::before  { background: rgba(210,130,120,0.4); }
+    .sticky.blue   { background: var(--sticky-blue);   --rot: -1.5deg; transform: rotate(-1.5deg); }
+    .sticky.blue::before   { background: var(--tape-blue); }
+    .sticky:hover { animation: wobble 0.45s ease; }
+
+    /* ── DAY CARD ── */
+    .day-card {
+      background: var(--paper);
+      border-radius: 8px; padding: 36px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .day-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .day-card::before {
+      content: '';
+      position: absolute; top: -11px; right: 48px;
+      width: 80px; height: 20px; border-radius: 2px;
+      transform: rotate(1deg);
+    }
+    .day-card.tape-amber::before { background: var(--tape-amber); }
+    .day-card.tape-sage::before  { background: var(--tape-sage); }
+    .day-card.tape-blue::before  { background: var(--tape-blue); }
+
+    .day-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+    .day-badge {
+      font-family: var(--hand); font-size: 1.1rem; font-weight: 700;
+      color: var(--paper); background: var(--terracotta);
+      padding: 6px 18px; border-radius: 4px;
+      box-shadow: var(--shadow-sm); white-space: nowrap; flex-shrink: 0;
+    }
+    .day-title {
+      font-family: var(--hand);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700; color: var(--text); line-height: 1.15;
+    }
+    .day-teaser {
+      font-size: 0.97rem; color: var(--text-light);
+      line-height: 1.7; max-width: 640px; margin-bottom: 24px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .chip {
+      background: var(--cream); border: 1px solid rgba(61,43,31,0.15);
+      color: var(--text); padding: 4px 12px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 500;
+    }
+
+    /* ── EXPAND BUTTON ── */
+    .expand-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--tape-amber);
+      border: none; padding: 9px 20px;
+      font-family: var(--hand); font-size: 1.05rem; color: var(--text);
+      cursor: pointer; border-radius: 3px; box-shadow: var(--shadow-sm);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .expand-btn:hover { background: rgba(220,168,80,0.65); transform: scale(1.03); }
+    .expand-btn .chev { transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1); }
+    .expand-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+    /* ── EXPANDABLE BODY ── */
+    .expand-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.65s cubic-bezier(0.16,1,0.3,1);
+    }
+    .expand-body.open { max-height: 3000px; }
+    .expand-inner { padding-top: 28px; display: flex; flex-direction: column; gap: 22px; }
+
+    /* ── NOTES PANEL (sticky-style) ── */
+    .notes-panel {
+      border-radius: 4px; padding: 24px 26px;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transform: translateX(-18px) rotate(-0.8deg);
+      transition: opacity 0.45s ease 0.08s, transform 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.08s;
+    }
+    .notes-panel.yellow { background: var(--sticky-yellow); }
+    .notes-panel.green  { background: var(--sticky-green); }
+    .notes-panel.blue   { background: var(--sticky-blue); }
+    .expand-body.open .notes-panel {
+      opacity: 1; transform: translateX(0) rotate(-0.6deg);
+    }
+    .panel-label {
+      font-family: var(--body); font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .note-item { margin-bottom: 14px; }
+    .note-item:last-child { margin-bottom: 0; }
+    .note-q { font-family: var(--body); font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .note-a { font-size: 0.93rem; color: var(--text); line-height: 1.65; }
+    .note-divider { border: none; border-top: 1px dashed rgba(61,43,31,0.2); margin: 12px 0; }
+
+    /* ── DIVE CARD ── */
+    .dive-card {
+      background: var(--paper);
+      border: 1px solid rgba(61,43,31,0.08);
+      border-radius: 8px; padding: 24px 26px;
+      box-shadow: var(--shadow-sm);
+      opacity: 0; transform: translateY(14px);
+      transition: opacity 0.45s ease 0.22s, transform 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.22s;
+    }
+    .expand-body.open .dive-card { opacity: 1; transform: translateY(0); }
+    .dive-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--sticky-green); color: var(--text);
+      padding: 3px 12px; border-radius: 20px;
+      font-family: var(--body); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .dive-card h4 {
+      font-family: var(--hand); font-size: 1.3rem; font-weight: 700;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .dive-card p { font-size: 0.93rem; color: var(--text-light); line-height: 1.7; margin-bottom: 10px; }
+    .dive-card p:last-child { margin-bottom: 0; }
+    .dive-card strong { color: var(--text); }
+    .dive-fact {
+      background: var(--cream);
+      border-left: 3px solid var(--terracotta);
+      padding: 10px 14px; border-radius: 0 6px 6px 0;
+      font-size: 0.89rem; color: var(--text); line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    /* ── FLASHCARD SECTION ── */
+    .flashcard-section { padding: 80px 24px; background: var(--dark-brown); }
+    .section-eyebrow {
+      font-family: var(--hand); font-size: 1rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      display: block; margin-bottom: 6px;
+    }
+    .section-title {
+      font-family: var(--hand); font-size: clamp(1.9rem,4.5vw,2.8rem);
+      font-weight: 700; line-height: 1.15; margin-bottom: 10px;
+    }
+    .section-sub { font-size: 0.97rem; line-height: 1.7; margin-bottom: 44px; max-width: 500px; }
+
+    .flashcard-wrapper { max-width: 500px; margin: 0 auto; }
+    .flashcard-counter {
+      text-align: center; font-family: var(--hand); font-size: 1rem;
+      color: rgba(254,252,247,0.45); margin-bottom: 18px;
+    }
+    .flashcard-scene { width: 100%; height: 270px; perspective: 1200px; cursor: pointer; }
+    .flashcard-card {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+    }
+    .flashcard-card.flipped { transform: rotateY(180deg); }
+    .fc-front, .fc-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 6px;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      padding: 28px;
+    }
+    .fc-front {
+      background: var(--paper);
+      background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(61,43,31,0.08) 28px);
+      box-shadow: var(--shadow-lg), 3px 3px 0 rgba(61,43,31,0.08);
+    }
+    .fc-back {
+      background: var(--sticky-yellow);
+      transform: rotateY(180deg);
+      box-shadow: var(--shadow-lg), 3px 3px 0 rgba(61,43,31,0.08);
+    }
+    .fc-term { font-family: var(--hand); font-size: 2.1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .fc-hint { font-family: var(--hand); font-size: 0.93rem; color: var(--text-light); }
+    .fc-def  { font-size: 0.92rem; color: var(--text); line-height: 1.65; margin-bottom: 10px; }
+    .fc-analogy { font-family: var(--hand); font-size: 0.93rem; color: var(--text-light); font-style: italic; }
+
+    .flashcard-nav { display: flex; gap: 12px; justify-content: center; margin-top: 22px; }
+    .fc-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(254,252,247,0.18);
+      background: rgba(254,252,247,0.07); color: var(--paper);
+      font-size: 1.1rem; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .fc-btn:hover { background: rgba(254,252,247,0.16); border-color: rgba(254,252,247,0.38); }
+    .fc-btn.wide { width: auto; border-radius: 24px; padding: 0 18px; font-family: var(--hand); font-size: 1rem; }
+    .fc-nav-hint { text-align: center; font-size: 0.78rem; color: rgba(254,252,247,0.3); margin-top: 10px; }
+
+    /* ── CHEAT SHEET SECTION ── */
+    .cheatsheet-section { padding: 80px 24px; background: var(--cream); }
+    .cheatsheet-paper {
+      background: var(--paper); border-radius: 8px; padding: 40px;
+      box-shadow: var(--shadow-md); position: relative;
+      background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(61,43,31,0.06) 32px);
+    }
+    .cheatsheet-paper::before {
+      content: '';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      width: 110px; height: 20px;
+      background: var(--tape-sage); border-radius: 2px;
+    }
+    .cheatsheet-title {
+      font-family: var(--hand); font-size: 2rem;
+      color: var(--text); margin-bottom: 28px; text-align: center;
+    }
+    .command-block { background: var(--darker-brown); border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
+    .command-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .command-title { font-family: var(--body); font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.55); }
+    .copy-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.65); padding: 3px 11px; border-radius: 4px;
+      font-size: 0.76rem; cursor: pointer; transition: background 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.18); }
+    .copy-btn.copied { background: rgba(140,175,120,0.35); color: var(--sticky-green); }
+    .command-body {
+      padding: 13px 14px; font-family: 'Courier New', monospace;
+      font-size: 0.83rem; color: var(--sticky-green);
+      white-space: pre-wrap; word-break: break-all; line-height: 1.6;
+    }
+
+    /* ── SKILLS SECTION ── */
+    .skills-section { padding: 72px 24px; background: var(--sage-bg); text-align: center; }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 700px; margin: 0 auto; }
+    .skill-pill {
+      font-family: var(--hand); font-size: 1rem;
+      background: var(--paper); color: var(--text);
+      padding: 6px 18px; border-radius: 20px;
+      box-shadow: var(--shadow-sm); border: 1px solid rgba(61,43,31,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .skill-pill:hover { transform: translateY(-2px) rotate(-1deg); box-shadow: var(--shadow-md); }
+
+    /* ── CLOSING QUOTE ── */
+    .closing-section {
+      padding: 96px 24px; background: var(--terracotta);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .closing-section::before {
+      content: '"';
+      font-family: var(--hand); font-size: 18rem;
+      color: rgba(255,255,255,0.08);
+      position: absolute; top: -50px; left: 30px; line-height: 1;
+    }
+    .closing-quote {
+      font-family: var(--hand);
+      font-size: clamp(1.7rem,4.5vw,2.8rem); font-weight: 700;
+      color: var(--paper); line-height: 1.3;
+      max-width: 680px; margin: 0 auto 20px; position: relative;
+    }
+    .closing-attr { font-family: var(--hand); font-size: 1.05rem; color: rgba(254,252,247,0.65); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--darker-brown); color: rgba(254,252,247,0.35);
+      text-align: center; padding: 26px 24px;
+      font-size: 0.8rem; line-height: 1.6;
+    }
+
+    /* ── MDM CAPABILITY GRID (Day 1) ── */
+    .mdm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .mdm-tile {
+      background: var(--cream); border-radius: 6px;
+      padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    .mdm-tile-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .mdm-tile-text { font-size: 0.84rem; color: var(--text); line-height: 1.45; font-weight: 500; }
+    .stat-callout {
+      background: var(--sticky-yellow);
+      border-radius: 6px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 14px;
+      margin: 14px 0;
+    }
+    .stat-callout-num {
+      font-family: var(--hand); font-size: 2rem; color: var(--text); white-space: nowrap;
+    }
+    .stat-callout-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+
+    /* ── API vs WEBHOOK COMPARISON TABLE (Day 2) ── */
+    .compare-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 14px 0; font-size: 0.88rem;
+    }
+    .compare-table th {
+      padding: 10px 14px; font-family: var(--hand); font-size: 1.1rem;
+      text-align: left; border-bottom: 2px solid rgba(0,0,0,0.12);
+    }
+    .compare-table th.api-col  { background: var(--sticky-blue);   border-radius: 6px 0 0 0; }
+    .compare-table th.hook-col { background: var(--sticky-coral);  border-radius: 0 6px 0 0; }
+    .compare-table th .col-sub { display: block; font-family: var(--body); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.65; margin-top: 2px; }
+    .compare-table td {
+      padding: 9px 14px; vertical-align: top;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      line-height: 1.5; color: var(--text);
+    }
+    .compare-table td.api-col  { background: rgba(91,200,245,0.08); }
+    .compare-table td.hook-col { background: rgba(255,107,107,0.08); }
+    .compare-table tr:last-child td.api-col  { border-radius: 0 0 0 6px; border-bottom: none; }
+    .compare-table tr:last-child td.hook-col { border-radius: 0 0 6px 0; border-bottom: none; }
+    .row-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-light); display: block; margin-bottom: 2px;
+    }
+    .direction-row {
+      display: flex; gap: 10px; margin: 14px 0; align-items: stretch;
+    }
+    .direction-card {
+      flex: 1; border-radius: 6px; padding: 12px 14px; text-align: center;
+    }
+    .direction-card.api  { background: var(--sticky-blue); }
+    .direction-card.hook { background: var(--sticky-coral); }
+    .direction-card .dir-arrow { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+    .direction-card .dir-label { font-family: var(--hand); font-size: 1.1rem; color: var(--text); }
+    .direction-card .dir-sub   { font-size: 0.78rem; color: var(--text); opacity: 0.7; margin-top: 2px; }
+
+    /* ── COMPOUND LOOP STEPS (Day 3) ── */
+    .loop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 14px 0;
+    }
+    .loop-step {
+      border-radius: 6px; padding: 14px 16px;
+      border: 2px solid rgba(0,0,0,0.08);
+      background: var(--cream);
+    }
+    .loop-step-num {
+      font-family: var(--hand); font-size: 1.6rem; color: var(--terracotta);
+      line-height: 1; margin-bottom: 6px;
+    }
+    .loop-step h5 { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .loop-step p  { font-size: 0.82rem; color: var(--text-light); line-height: 1.5; }
+    .shot-compare {
+      display: flex; gap: 10px; margin: 14px 0;
+    }
+    .shot-card {
+      flex: 1; border-radius: 6px; padding: 12px 14px;
+    }
+    .shot-card.oneshot { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.25); }
+    .shot-card.planned { background: rgba(149,224,108,0.15); border: 1px solid rgba(149,224,108,0.35); }
+    .shot-label { font-family: var(--hand); font-size: 1rem; color: var(--text); margin-bottom: 6px; display: block; }
+    .shot-card ul { padding-left: 16px; font-size: 0.82rem; color: var(--text); line-height: 1.7; }
+
+    @media (max-width: 580px) {
+      .day-card { padding: 22px 18px; }
+      .notes-panel, .dive-card { padding: 18px 18px; }
+      .cheatsheet-paper { padding: 28px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ COVER ══ -->
+<div class="cover">
+  <div class="cover-tape-top"></div>
+  <div class="cover-tape-corner tl"></div>
+  <div class="cover-tape-corner tr"></div>
+
+  <p class="cover-label">Jamf Workshop &middot; March 2026</p>
+  <h1 class="cover-title">Apple Device Management:<br>My Notes</h1>
+  <p class="cover-sub">Three days learning how Apple devices get managed, deployed, and automated — and how to build with AI as a collaborator.</p>
+
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <span class="cover-stat-num">3</span>
+      <span class="cover-stat-label">Days</span>
+    </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">20+</span>
+      <span class="cover-stat-label">Concepts</span>
+    </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">1</span>
+      <span class="cover-stat-label">VM enrolled</span>
+    </div>
+    <div class="cover-stat">
+      <span class="cover-stat-num">Black Panther</span>
+      <span class="cover-stat-label">Favourite animal</span>
+    </div>
+  </div>
+
+  <div class="ownership-label">
+    <span class="ownership-line">This notebook belongs to:</span>
+    <span class="ownership-name">Amanda</span>
+  </div>
+</div>
+
+<!-- torn edge into sage -->
+<div class="torn" style="background:var(--cream);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#EEF4F0"/>
+  </svg>
+</div>
+
+<!-- ══ DAY 1 ══ -->
+<section id="day1" class="day-section alt">
+  <div class="container">
+
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky yellow">
+        "I did not know that Jamf worked with building companies — I got to understand how vast their types of customers are."
+        <span class="sticky-attr">— Amanda, Day 1</span>
+      </div>
+    </div>
+
+    <div class="day-card tape-amber anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip left"></div>
+      <div class="tape-strip corner-right"></div>
+      <span class="page-tag">pg. 01</span>
+      <div class="day-header">
+        <div class="day-badge">Day 1</div>
+        <h2 class="day-title">Context, Culture<br>&amp; What is Jamf?</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip">MDM</span>
+        <span class="chip">Jamf Pro</span>
+        <span class="chip">Persona Mapping</span>
+        <span class="chip">Global Tech Traditions</span>
+        <span class="chip">Rubber Duck</span>
+      </div>
+      <p class="day-teaser">The day started with cultural exchange, moved into what Jamf actually does, and ended with a rubber duck that taught me more than I expected. Jamf turned out to be much bigger than I thought.</p>
+
+      <button class="expand-btn" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
+      </button>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel yellow">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">What stood out from the icebreakers?</div>
+              <div class="note-a">I know most of my classmates but I learnt a lot of new things about my facilitators. Nate is a musician. Rob can speak 4 languages — English, Dutch, German... Josh comes from a teaching background. Salty liquorice is not nice.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I shared in Global Tech Traditions</div>
+              <div class="note-a">I spoke about NotebookLM — a Gemini AI powered app that helps you digest large bits of information into easy podcasts and flashcards. The tool I learned about was Dia, an AI browser that summarises information into what you specifically need.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">In my own words, what does Jamf do?</div>
+              <div class="note-a">Jamf is a software company that tries to simplify the use of Apple devices for end users. It tries to make the process as seamless as possible so that end users enjoy their time and do not feel restricted.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">Biggest takeaway from Day 1</div>
+              <div class="note-a">After the rubber duck exercise, I learnt there is no wrong answer. We all had the same task — "Draw a duck" — and every interpretation was different and creative. Together we can create amazing things; every idea just needs to be actualised.</div>
+            </div>
+          </div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>What MDM really does</h4>
+            <p><strong>MDM (Mobile Device Management)</strong> lets one IT admin control thousands of devices from a single screen — no physical visits, no manual configuration on each machine.</p>
+
+            <div class="mdm-grid">
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128241;</div><div class="mdm-tile-text">Install &amp; remove apps silently</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128274;</div><div class="mdm-tile-text">Enforce password &amp; lock policies</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128246;</div><div class="mdm-tile-text">Configure Wi-Fi &amp; VPN automatically</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128465;</div><div class="mdm-tile-text">Remotely wipe a lost or stolen device</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#128202;</div><div class="mdm-tile-text">See inventory of every managed device</div></div>
+              <div class="mdm-tile"><div class="mdm-tile-icon">&#9881;</div><div class="mdm-tile-text">Push settings &amp; profiles at scale</div></div>
+            </div>
+
+            <div class="stat-callout">
+              <span class="stat-callout-num">75,000+</span>
+              <span class="stat-callout-text">organisations use Jamf — including NASA, IBM, and thousands of schools. It's Apple-only and goes deeper than any cross-platform tool.</span>
+            </div>
+
+            <div class="dive-fact">
+              <strong>Why it mattered for your K-12 persona:</strong> An IT coordinator with 500 iPads, a tight budget, and teachers who aren't tech-savvy can't visit every device. MDM is what makes that job possible at all.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into cream -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,22 C25,10 50,34 75,20 C100,8 125,30 150,18 C175,6 200,28 225,14 C250,2 275,26 300,14 C325,4 350,28 375,16 C400,4 425,28 450,16 C475,4 500,26 525,14 C550,4 575,28 600,16 C625,4 650,28 675,16 C700,4 725,26 750,14 C775,4 800,28 825,16 C850,4 875,26 900,14 C925,2 950,26 975,14 C1000,4 1025,28 1050,16 C1075,4 1100,26 1125,14 C1150,4 1175,26 1200,14 L1200,40 L0,40 Z" fill="#F5F0E8"/>
+  </svg>
+</div>
+
+<!-- ══ DAY 2 ══ -->
+<section id="day2" class="day-section">
+  <div class="container">
+
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky coral">
+        "Theoretically I know the difference between webhooks and APIs — but when doing it practically, I could not tell them apart in the moment."
+        <span class="sticky-attr">— Amanda, Day 2</span>
+      </div>
+    </div>
+
+    <div class="day-card tape-sage anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip corner-left"></div>
+      <div class="tape-strip corner-right" style="background:var(--tape-sage);"></div>
+      <span class="page-tag" style="background:var(--sticky-green);">pg. 02</span>
+      <div class="day-header">
+        <div class="day-badge" style="background:var(--olive);">Day 2</div>
+        <h2 class="day-title">VMs, APIs<br>&amp; Webhooks</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip">Virtual Machines</span>
+        <span class="chip">Tart</span>
+        <span class="chip">REST API</span>
+        <span class="chip">Bearer Token</span>
+        <span class="chip">Postman</span>
+        <span class="chip">Webhooks</span>
+        <span class="chip">curl</span>
+      </div>
+      <p class="day-teaser">Hands-on with real infrastructure. Enrolled a virtual Mac into Jamf, made real API calls, got a 401, fixed it, and watched a webhook fire automatically. The most practical day.</p>
+
+      <button class="expand-btn" style="background:var(--tape-sage);" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
+      </button>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel green">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">First impression of Claude Code</div>
+              <div class="note-a">Claude Code is smarter than all the other AI models I have used. It has a different interface but definitely does everything well. When I ran /init, it created a well written summary of the entire repo, going as far as thinking about what I wanted to do.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I did with my Tart VM</div>
+              <div class="note-a">I downloaded a configuration profile on my VM and managed to enroll it in my Jamf Pro instance. A VM is like a computer inside a computer — imagine your computer is a big house. The VM is one of those rooms: its own little house with its own rules.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">API calls in Postman</div>
+              <div class="note-a">I made a POST to create a new category and at first received a 401 — I wasn't authorised because I didn't have a token. Once I got the token it worked. I created a category for computers in my Jamf Pro instance.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I learnt about webhooks</div>
+              <div class="note-a">Webhooks are a way to send feedback when an event has occurred. They are automatic and do not really require human input. The payload looked like a bunch of information — hard to read unless you know the device IDs.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What clicked today</div>
+              <div class="note-a">It finally made sense how virtual machines work and I got to create my own, which I really enjoyed.</div>
+            </div>
+          </div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>API vs Webhook — side by side</h4>
+
+            <div class="direction-row">
+              <div class="direction-card api">
+                <span class="dir-arrow">&#8594;</span>
+                <div class="dir-label">API — you ask</div>
+                <div class="dir-sub">YOU &rarr; SERVER</div>
+              </div>
+              <div class="direction-card hook">
+                <span class="dir-arrow">&#8592;</span>
+                <div class="dir-label">Webhook — it tells you</div>
+                <div class="dir-sub">SERVER &rarr; YOU</div>
+              </div>
+            </div>
+
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th class="api-col">API<span class="col-sub">pull model</span></th>
+                  <th class="hook-col">Webhook<span class="col-sub">push model</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="api-col"><span class="row-label">Who starts it?</span>You do — your code sends the request</td>
+                  <td class="hook-col"><span class="row-label">Who starts it?</span>The server — when an event happens</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">When?</span>Whenever you choose to call it</td>
+                  <td class="hook-col"><span class="row-label">When?</span>Automatically, the moment something changes</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">Analogy</span>Calling a restaurant to order food</td>
+                  <td class="hook-col"><span class="row-label">Analogy</span>A push notification arriving on your phone</td>
+                </tr>
+                <tr>
+                  <td class="api-col"><span class="row-label">Your Jamf example</span>POST request to create a category in Postman</td>
+                  <td class="hook-col"><span class="row-label">Your Jamf example</span>Payload fired when device joined Smart Group</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="dive-fact">
+              <strong>The practical tell:</strong> If you clicked "Send" or typed curl — that was an API call, you started it. If data appeared on webhook.site without you doing anything — that was a webhook, Jamf started it.
+            </div>
+            <p style="font-size:0.88rem;color:var(--text-light);line-height:1.6;margin-top:10px;">The <strong style="color:var(--text);">401 Unauthorized</strong> you hit means the server understood you but needs proof of identity first. Bearer tokens solve this — authenticate once, get a token, attach it to every request like a wristband at an event.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into sage -->
+<div class="torn" style="background:var(--cream);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,18 C30,6 60,30 90,16 C120,4 150,26 180,14 C210,2 240,24 270,12 C300,2 330,26 360,14 C390,2 420,24 450,12 C480,2 510,26 540,14 C570,2 600,24 630,12 C660,2 690,26 720,14 C750,2 780,24 810,12 C840,2 870,26 900,14 C930,2 960,24 990,12 C1020,2 1050,26 1080,14 C1110,2 1140,24 1170,12 L1200,14 L1200,40 L0,40 Z" fill="#EEF4F0"/>
+  </svg>
+</div>
+
+<!-- ══ DAY 3 ══ -->
+<section id="day3" class="day-section alt">
+  <div class="container">
+
+    <div class="anim" style="margin-bottom:24px;">
+      <div class="sticky blue">
+        "Working with AI is a conversation not a command line. Collaborating, refining and asking questions is what gets you to what you want."
+        <span class="sticky-attr">— Amanda, Day 3</span>
+      </div>
+    </div>
+
+    <div class="day-card tape-blue anim d1" style="position:relative;">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <div class="tape-strip left" style="background:var(--tape-blue);"></div>
+      <div class="tape-strip corner-left"></div>
+      <span class="page-tag" style="background:var(--sticky-blue);">pg. 03</span>
+      <div class="day-header">
+        <div class="day-badge" style="background:#5B7FA6;">Day 3</div>
+        <h2 class="day-title">Building with AI —<br>The Compound Loop</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip">Claude Code</span>
+        <span class="chip">Plan Mode</span>
+        <span class="chip">One-Shot vs Planned</span>
+        <span class="chip">Compound Engineering</span>
+        <span class="chip">Prompt Design</span>
+      </div>
+      <p class="day-teaser">Built a full website twice in one day — once without planning, once with. The difference was significant. The biggest lesson wasn't about code: it was about how to work with AI.</p>
+
+      <button class="expand-btn" style="background:var(--tape-blue);" onclick="toggleExpand(this)" aria-expanded="false">
+        <span>Read my notes + deeper dive</span>
+        <span class="chev">&#9660;</span>
+      </button>
+
+      <div class="expand-body">
+        <div class="expand-inner">
+
+          <div class="notes-panel blue">
+            <div class="panel-label">My notes</div>
+            <div class="note-item">
+              <div class="note-q">After the One-Shot</div>
+              <div class="note-a">The one-shot page was done well — it chose its own theme and all the information was included. I expected worse, like a bare HTML page, but it came out really well considering it had no context from me.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">After the Planned Build</div>
+              <div class="note-a">I spent the most time answering questions about what I wanted for the page. The planning process was fun — I felt like a part of the process and included in the major decision making. The planned page felt more personal and more of my style.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">After the Review Step</div>
+              <div class="note-a">The content matched my plan but the colour theme and layout was a bit different from what I anticipated. The agent covered things like what the goal of the page was, what I wanted to use it for — important stuff I was definitely not thinking about.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What surprised me about working with AI this way?</div>
+              <div class="note-a">I was surprised at how relatively easy it is to build a website using AI. I also did not expect the website to be so well thought out, which I really appreciate. I enjoyed and learned a lot at the same time.</div>
+            </div>
+            <hr class="note-divider">
+            <div class="note-item">
+              <div class="note-q">What I would tell a friend</div>
+              <div class="note-a">Working with AI is all about the prompt. If your prompts are well structured and well thought out, your results are more likely to be what you want — instead of letting the agent blindly make decisions. It is not their fault when you get something you did not want due to being vague.</div>
+            </div>
+          </div>
+
+          <div class="dive-card">
+            <div class="dive-badge">Deeper dive</div>
+            <h4>One-shot vs Planned — and the Compound loop</h4>
+
+            <div class="shot-compare">
+              <div class="shot-card oneshot">
+                <span class="shot-label">&#9889; One-shot</span>
+                <ul>
+                  <li>No context given</li>
+                  <li>Agent makes all decisions</li>
+                  <li>Fast — but generic</li>
+                  <li>Hard to iterate on</li>
+                </ul>
+              </div>
+              <div class="shot-card planned">
+                <span class="shot-label">&#10003; Planned</span>
+                <ul>
+                  <li>You define the brief</li>
+                  <li>Agent asks questions first</li>
+                  <li>Slower — but yours</li>
+                  <li>Easy to build on</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="font-size:0.88rem;color:var(--text-light);line-height:1.6;margin-bottom:12px;">The Compound Engineering loop is the framework that makes the planned approach systematic:</p>
+
+            <div class="loop-grid">
+              <div class="loop-step">
+                <div class="loop-step-num">01</div>
+                <h5>Plan</h5>
+                <p>Define before building. Ask questions. The plan IS the work.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">02</div>
+                <h5>Work</h5>
+                <p>Execute within the plan. AI builds; you stay in control.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">03</div>
+                <h5>Review</h5>
+                <p>Your eyes first. Use it. Then ask AI what it missed.</p>
+              </div>
+              <div class="loop-step">
+                <div class="loop-step-num">04</div>
+                <h5>Compound</h5>
+                <p>Distil decisions &amp; lessons. Next session starts smarter.</p>
+              </div>
+            </div>
+
+            <div class="dive-fact">
+              <strong>Why it works:</strong> Senior engineers don't start coding immediately — they ask questions, write specs, draw diagrams. The Compound loop is that same practice, adapted for working with AI.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into dark brown -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#3D2B1F"/>
+  </svg>
+</div>
+
+<!-- ══ FLASHCARDS ══ -->
+<section id="flashcards" class="flashcard-section">
+  <div class="container">
+    <span class="section-eyebrow anim" style="color:var(--sticky-yellow); text-align:center; display:block;">Study</span>
+    <h2 class="section-title anim" style="color:var(--paper); text-align:center;">Index Cards</h2>
+    <p class="section-sub anim" style="color:rgba(254,252,247,0.55); text-align:center; margin:0 auto 44px;">Tap any card to flip and reveal the definition.</p>
+
+    <div class="flashcard-wrapper anim d1">
+      <div class="flashcard-counter">
+        Card <span id="fc-current">1</span> of <span id="fc-total">20</span>
+      </div>
+
+      <div class="flashcard-scene" id="fc-scene" onclick="flipCard()">
+        <div class="flashcard-card" id="fc-card">
+          <div class="fc-front">
+            <div class="fc-term" id="fc-term">MDM</div>
+            <div class="fc-hint">Tap to reveal</div>
+          </div>
+          <div class="fc-back">
+            <div class="fc-def" id="fc-def">Loading...</div>
+            <div class="fc-analogy" id="fc-analogy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-nav">
+        <button class="fc-btn" onclick="prevCard()" aria-label="Previous">&#8592;</button>
+        <button class="fc-btn wide" onclick="flipCard()">Flip</button>
+        <button class="fc-btn" onclick="nextCard()" aria-label="Next">&#8594;</button>
+      </div>
+      <p class="fc-nav-hint">Arrow keys or swipe to navigate &middot; Space to flip</p>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into cream -->
+<div class="torn" style="background:var(--dark-brown);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,22 C25,10 50,34 75,20 C100,8 125,30 150,16 C175,4 200,26 225,14 C250,2 275,26 300,14 C325,4 350,28 375,16 C400,4 425,26 450,14 C475,2 500,26 525,14 C550,4 575,28 600,16 C625,4 650,26 675,14 C700,2 725,26 750,14 C775,4 800,28 825,16 C850,4 875,26 900,14 C925,2 950,26 975,14 C1000,4 1025,28 1050,16 C1075,4 1100,26 1125,14 C1150,2 1175,26 1200,14 L1200,40 L0,40 Z" fill="#F5F0E8"/>
+  </svg>
+</div>
+
+<!-- ══ CHEAT SHEET ══ -->
+<section id="commands" class="cheatsheet-section">
+  <div class="container">
+    <span class="section-eyebrow anim" style="color:var(--terracotta);">Reference</span>
+    <h2 class="section-title anim" style="color:var(--text);">Curl Cheat Sheet</h2>
+    <p class="section-sub anim" style="color:var(--text-light);">The actual commands from Day 2. Click any to copy.</p>
+
+    <div class="cheatsheet-paper anim d1">
+      <div class="cheatsheet-title">Day 2 Commands — Jamf Pro API</div>
+
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">1. Get a bearer token</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token"</div>
+      </div>
+
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">2. Save the token to a variable</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">TOKEN=$(curl -s -u "jamfpro_api:eap.zog.neek26" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://projsadp.jamfcloud.com/api/v1/auth/token" \
+  | jq -r '.token')</div>
+      </div>
+
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">3. List all computers</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://projsadp.jamfcloud.com/api/v1/computers-inventory" \
+  | jq .</div>
+      </div>
+
+      <div class="command-block">
+        <div class="command-header">
+          <span class="command-title">4. Update an Extension Attribute (triggers the webhook!)</span>
+          <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
+        </div>
+        <div class="command-body">curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/xml" \
+  "https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_DEVICE_ID" \
+  -d '&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;Amanda&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SKILLS ══ -->
+<section id="skills" class="skills-section">
+  <div class="container" style="text-align:center;">
+    <span class="section-eyebrow anim" style="color:var(--terracotta);">All three days</span>
+    <h2 class="section-title anim" style="color:var(--text);">Skills Unlocked</h2>
+    <p class="section-sub anim" style="color:var(--text-light); margin:0 auto 36px;">Everything I can now do that I couldn't before this week.</p>
+    <div class="skills-wrap anim d1">
+      <span class="skill-pill">Git branching &amp; PRs</span>
+      <span class="skill-pill">Jamf Pro basics</span>
+      <span class="skill-pill">MDM concepts</span>
+      <span class="skill-pill">Persona mapping</span>
+      <span class="skill-pill">Journey mapping</span>
+      <span class="skill-pill">Tart VMs</span>
+      <span class="skill-pill">macOS VM enrollment</span>
+      <span class="skill-pill">REST APIs</span>
+      <span class="skill-pill">Bearer token auth</span>
+      <span class="skill-pill">Postman</span>
+      <span class="skill-pill">curl commands</span>
+      <span class="skill-pill">JSON &amp; XML</span>
+      <span class="skill-pill">Webhooks</span>
+      <span class="skill-pill">Event-driven integrations</span>
+      <span class="skill-pill">Claude Code</span>
+      <span class="skill-pill">Compound Engineering</span>
+      <span class="skill-pill">Prompt design</span>
+      <span class="skill-pill">AI-native development</span>
+      <span class="skill-pill">HTML &amp; CSS</span>
+    </div>
+  </div>
+</section>
+
+<!-- torn edge into terracotta -->
+<div class="torn" style="background:var(--sage-bg);">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style="height:40px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C20,8 40,32 60,18 C80,6 100,28 120,16 C140,4 160,30 180,18 C200,6 220,26 240,14 C260,4 280,28 300,18 C320,8 340,30 360,16 C380,4 400,26 420,14 C440,4 460,28 480,16 C500,6 520,30 540,18 C560,6 580,28 600,16 C620,6 640,30 660,18 C680,6 700,26 720,14 C740,4 760,28 780,18 C800,8 820,30 840,18 C860,6 880,28 900,16 C920,4 940,26 960,14 C980,4 1000,28 1020,18 C1040,8 1060,30 1080,18 C1100,6 1120,26 1140,16 C1160,4 1180,28 1200,16 L1200,40 L0,40 Z" fill="#C1694F"/>
+  </svg>
+</div>
+
+<!-- ══ CLOSING QUOTE ══ -->
+<section class="closing-section">
+  <div class="container">
+    <p class="closing-quote anim">"Working with AI is a conversation, not a command line. Collaborating, refining and asking questions is what gets you to what you want."</p>
+    <p class="closing-attr anim d1">— Amanda &middot; Day 3 &middot; Jamf Workshop, March 2026</p>
+  </div>
+</section>
+
+<footer>
+  Built with Claude Code using the Compound Engineering loop &mdash; Jamf Workshop &middot; March 2026 &middot; Amanda
+</footer>
+
+<script>
+  /* ── EXPANDABLE NOTES ── */
+  function toggleExpand(btn) {
+    const body = btn.nextElementSibling;
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    body.classList.toggle('open', !expanded);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.10 });
+  document.querySelectorAll('.anim').forEach(el => observer.observe(el));
+
+  /* ── COPY TO CLIPBOARD ── */
+  function copyCmd(btn) {
+    const body = btn.closest('.command-block').querySelector('.command-body');
+    navigator.clipboard.writeText(body.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  /* ── FLASHCARDS ── */
+  const cards = [
+    { term: 'MDM', def: 'Mobile Device Management — a system for managing many devices from one place: pushing settings, installing apps, enforcing security rules.', analogy: 'Like a school principal who can set rules for every classroom at once, instead of walking to each room individually.' },
+    { term: 'Jamf', def: 'An MDM platform specialised for Apple devices — iPhone, iPad, Mac, and Apple TV — used by businesses, schools, hospitals, and more.', analogy: 'The control tower for an entire Apple fleet.' },
+    { term: 'API', def: 'Application Programming Interface — a way for software to talk to other software. You send a request, and get data back.', analogy: 'A restaurant: you (client) tell the waiter (API) what you want, the waiter tells the kitchen (server), and brings back your food (data).' },
+    { term: 'REST', def: 'A style of API that uses simple actions over the web: GET (read), POST (create), PUT (update), DELETE (remove).', analogy: 'Four verbs that describe everything you can do with data.' },
+    { term: 'Bearer Token', def: 'A code that proves you\'ve already authenticated. You get it once, then attach it to every request.', analogy: 'A wristband at an event — show ID at the door once, flash the wristband everywhere else.' },
+    { term: 'JSON', def: 'JavaScript Object Notation — a structured way to format data so both humans and computers can read it. Uses curly braces, colons, and quotes.', analogy: 'Like filling out a form: each field has a label and a value. {"name": "Amanda"} is JSON.' },
+    { term: 'Webhook', def: 'A URL that receives data automatically when something happens. The server tells you — you don\'t have to keep asking.', analogy: 'A doorbell. You don\'t check the door every 5 minutes; it rings when someone arrives.' },
+    { term: 'Polling vs Pushing', def: 'Two ways to get updates. Polling = you keep asking. Pushing = the system tells you when there\'s news.', analogy: '"Are we there yet?" (polling) vs "I\'ll tell you when we get there." (pushing)' },
+    { term: 'Virtual Machine', def: 'A computer running inside another computer. It has its own operating system and behaves like a separate machine.', analogy: 'A snow globe — its own little world inside your world. Reset or delete it without touching your real computer.' },
+    { term: 'Tart', def: 'A command-line tool for running macOS virtual machines on Apple Silicon Macs.', analogy: 'Key commands: tart clone (copy), tart run (start), tart stop (shutdown), tart ip (find its address).' },
+    { term: '401 Unauthorized', def: 'An HTTP error code meaning you made a request without proper authentication — the server won\'t respond until you prove who you are.', analogy: 'Trying to get into a club without showing your ID. The bouncer turns you away.' },
+    { term: 'Agent', def: 'An AI helper that doesn\'t just talk — it can actually do things: read files, write code, run commands.', analogy: 'Like a really smart assistant who can type on your keyboard, not just give you advice.' },
+    { term: 'Context Window', def: 'How much the agent can remember in one conversation. When it fills up, it starts forgetting earlier parts.', analogy: 'A whiteboard — you can keep writing, but eventually you run out of space and have to erase something.' },
+    { term: 'Hallucination', def: 'When an AI says something that sounds correct but isn\'t. It\'s not lying — it\'s guessing confidently without knowing it\'s wrong.', analogy: 'Someone giving you confident directions to a place they\'ve never been.' },
+    { term: 'Prompt', def: 'What you say to an AI to tell it what you want. Vague prompts get vague results; specific prompts get useful results.', analogy: '"Make me food" vs "Grilled cheese on sourdough, please."' },
+    { term: 'Plan Mode', def: 'When the agent stops and shows you what it\'s going to do before it does it. You can approve, adjust, or say no.', analogy: 'Looking at the blueprint before the builder starts construction.' },
+    { term: 'Compounding', def: 'Distilling everything from a session — decisions, tradeoffs, dead ends — into a reference that future sessions build on.', analogy: 'A pilot\'s logbook. Every flight recorded so the next pilot inherits all that experience.' },
+    { term: 'Integration', def: 'Code that makes two software systems talk to each other automatically, without anyone copying data by hand.', analogy: 'Online shopping — the cart talks to payments, payments talk to shipping. Seamless.' },
+    { term: 'Persona', def: 'A fictional character representing a real type of user, used to understand different people\'s needs and pain points.', analogy: 'Workshop personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Technician.' },
+    { term: 'Rubber Duck Debugging', def: 'Explaining your problem out loud — to a rubber duck, a colleague, or anyone — forces you to articulate it clearly, often revealing the answer.', analogy: 'The duck doesn\'t answer. But explaining it to the duck does.' },
+  ];
+
+  let currentIndex = 0;
+  let isFlipped = false;
+
+  function updateCard() {
+    const c = cards[currentIndex];
+    document.getElementById('fc-term').textContent = c.term;
+    document.getElementById('fc-def').textContent = c.def;
+    document.getElementById('fc-analogy').textContent = c.analogy;
+    document.getElementById('fc-current').textContent = currentIndex + 1;
+    document.getElementById('fc-total').textContent = cards.length;
+  }
+
+  function flipCard() {
+    isFlipped = !isFlipped;
+    document.getElementById('fc-card').classList.toggle('flipped', isFlipped);
+  }
+
+  function nextCard() {
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    currentIndex = (currentIndex + 1) % cards.length;
+    setTimeout(updateCard, 180);
+  }
+
+  function prevCard() {
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+    setTimeout(updateCard, 180);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft')  prevCard();
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+  });
+
+  let touchStartX = 0;
+  document.getElementById('fc-scene').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('fc-scene').addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { diff > 0 ? nextCard() : prevCard(); }
+    else { flipCard(); }
+  });
+
+  updateCard();
+</script>
+
+</body>
+</html>

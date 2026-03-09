@@ -1,0 +1,275 @@
+/* ============================================================
+   STYLE.CSS — Base styles, design tokens, typography, layout
+   ============================================================ */
+
+/* === RESET === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* === DESIGN TOKENS === */
+:root {
+  /* Background */
+  --bg-primary:   #ffffff;
+  --bg-secondary: #f5f5f7;
+  --bg-card:      #ffffff;
+  --bg-hover:     #f0f0f5;
+  --bg-code:      #f5f5f7;
+
+  /* Text */
+  --text-primary:   #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary:  #aeaeb2;
+
+  /* Accent */
+  --accent:       #0071e3;
+  --accent-hover: #0077ed;
+  --accent-light: #e8f0fe;
+
+  /* Borders & Shadows */
+  --border:      #d2d2d7;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
+
+  /* Status */
+  --success:    #34c759;
+  --success-bg: #edfaf1;
+  --error:      #ff3b30;
+  --error-bg:   #fff0ef;
+  --warning:    #ff9500;
+  --warning-bg: #fff8e6;
+  --info:       #0071e3;
+  --info-bg:    #e8f0fe;
+
+  /* Typography */
+  --font:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Cascadia Code", Menlo, monospace;
+
+  /* Spacing scale */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border radius */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition: 0.2s ease;
+  --transition-slow: 0.35s ease;
+
+  /* Nav height */
+  --nav-height: 60px;
+}
+
+/* === DARK MODE === */
+[data-theme="dark"] {
+  --bg-primary:   #000000;
+  --bg-secondary: #1c1c1e;
+  --bg-card:      #2c2c2e;
+  --bg-hover:     #3a3a3c;
+  --bg-code:      #1c1c1e;
+
+  --text-primary:   #f5f5f7;
+  --text-secondary: #aeaeb2;
+  --text-tertiary:  #6e6e73;
+
+  --accent:       #0a84ff;
+  --accent-hover: #409cff;
+  --accent-light: #0a2240;
+
+  --border:    #3a3a3c;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+
+  --success-bg: #0d2a1a;
+  --error-bg:   #2a0d0d;
+  --warning-bg: #2a1f00;
+  --info-bg:    #0a2240;
+}
+
+/* === BASE === */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 16px);
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  line-height: 1.65;
+  transition: background var(--transition), color var(--transition);
+  min-height: 100vh;
+}
+
+/* === TYPOGRAPHY === */
+h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.5px; }
+h2 { font-size: clamp(1.4rem, 3vw, 2rem);   font-weight: 700; letter-spacing: -0.3px; }
+h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 600; }
+h4 { font-size: 1rem;                        font-weight: 600; }
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+p:last-child { margin-bottom: 0; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+ul, ol {
+  padding-left: var(--space-lg);
+  color: var(--text-secondary);
+}
+
+li { margin-bottom: var(--space-xs); }
+
+strong { color: var(--text-primary); font-weight: 600; }
+
+/* === CODE === */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  overflow-x: auto;
+  line-height: 1.7;
+  margin: var(--space-md) 0;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 1em;
+}
+
+/* === LAYOUT === */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.page-content {
+  padding-top: calc(var(--nav-height) + var(--space-2xl));
+  padding-bottom: var(--space-3xl);
+}
+
+.page-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.page-header h1 {
+  margin-bottom: var(--space-sm);
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Two-column layout for notes */
+.sidebar-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .sidebar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .page-content {
+    padding-top: calc(var(--nav-height) + var(--space-lg));
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+/* === UTILITIES === */
+.text-secondary  { color: var(--text-secondary) !important; }
+.text-accent     { color: var(--accent) !important; }
+.text-success    { color: var(--success) !important; }
+.text-error      { color: var(--error) !important; }
+.text-mono       { font-family: var(--font-mono); }
+
+.mt-sm  { margin-top: var(--space-sm); }
+.mt-md  { margin-top: var(--space-md); }
+.mt-lg  { margin-top: var(--space-lg); }
+.mt-xl  { margin-top: var(--space-xl); }
+.mb-md  { margin-bottom: var(--space-md); }
+.mb-lg  { margin-bottom: var(--space-lg); }
+
+.hidden { display: none !important; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* === FOOTER === */
+.footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-3xl);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }

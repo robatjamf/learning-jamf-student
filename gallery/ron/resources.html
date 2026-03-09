@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources — Ron Harifiyati</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">Ron Harifiyati</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="cheat-sheet.html">Cheat Sheet</a></li>
+        <li><a href="notes.html">Notes</a></li>
+        <li><a href="resources.html" class="active">Resources</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="page-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>Resources &amp; What's Next</h1>
+        <p>Step-by-step guides for hosting your own services, plus curated links by topic.</p>
+      </div>
+
+      <!-- TAB NAV -->
+      <div class="tab-container">
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="site">Host a Site</button>
+          <button class="tab-btn" data-tab="api">Expose an API</button>
+          <button class="tab-btn" data-tab="tools">Useful Tools</button>
+          <button class="tab-btn" data-tab="links">Reference Links</button>
+        </div>
+
+        <!-- HOST A SITE -->
+        <div class="tab-panel active" data-tab="site">
+          <div class="resource-card">
+            <h3>Host a Site on a Linux VM (LAN-accessible)</h3>
+            <p class="resource-desc">This guide walks through spinning up a Linux VM with Tart, installing nginx, and serving an HTML page that any device on your local network can open in a browser.</p>
+
+            <ol class="step-list">
+              <li>
+                <div class="step-content">
+                  <strong>Pull and create a Linux VM with Tart</strong>
+                  <p>Pull a lightweight Linux image and clone it into a named VM.</p>
+                  <pre><code>tart pull ghcr.io/cirruslabs/ubuntu:latest
+tart clone ghcr.io/cirruslabs/ubuntu:latest my-web-vm</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Start the VM in headless mode</strong>
+                  <p>No graphical window needed — we will SSH in.</p>
+                  <pre><code>tart run my-web-vm --no-graphics &</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Get the VM's IP address</strong>
+                  <p>Wait a few seconds for the VM to boot, then get its LAN IP.</p>
+                  <pre><code>tart ip my-web-vm</code></pre>
+                  <p>Note the IP — you will use it in the next step and to access the site from other devices.</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>SSH into the VM</strong>
+                  <p>Default credentials for Cirrus Labs Ubuntu images are usually <code>admin</code> / <code>admin</code>.</p>
+                  <pre><code>ssh admin@$(tart ip my-web-vm)</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Install nginx</strong>
+                  <p>Update package lists and install the web server.</p>
+                  <pre><code>sudo apt update
+sudo apt install -y nginx</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Start nginx and enable on boot</strong>
+                  <pre><code>sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx   # should show "active (running)"</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Create your HTML page</strong>
+                  <p>The default nginx web root is <code>/var/www/html/</code>.</p>
+                  <pre><code>sudo nano /var/www/html/index.html</code></pre>
+                  <p>Paste your HTML, save with <code>Ctrl+O</code>, exit with <code>Ctrl+X</code>.</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Open it from any device on the same network</strong>
+                  <p>On another Mac, phone, or device on the same Wi-Fi, open a browser and go to:</p>
+                  <pre><code>http://&lt;vm-ip-address&gt;</code></pre>
+                  <p>Your page should load.</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>(Optional) Check the firewall</strong>
+                  <p>If the page does not load, make sure port 80 is allowed.</p>
+                  <pre><code>sudo ufw allow 80/tcp
+sudo ufw allow 22/tcp   # keep SSH open
+sudo ufw enable</code></pre>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="alert alert-info">
+            <p><strong>LAN only:</strong> This setup is accessible on your local network only. To make it publicly accessible, see the "Useful Tools" tab for ngrok, or configure port forwarding on your router.</p>
+          </div>
+        </div>
+
+        <!-- EXPOSE AN API -->
+        <div class="tab-panel" data-tab="api">
+          <div class="resource-card">
+            <h3>Expose an API from a Linux VM</h3>
+            <p class="resource-desc">Run a simple HTTP API on the VM using Python's built-in http.server module, then access it from other devices on the network. For real use, you would replace this with a proper framework like Flask or Express.</p>
+
+            <ol class="step-list">
+              <li>
+                <div class="step-content">
+                  <strong>SSH into your running VM</strong>
+                  <pre><code>ssh admin@$(tart ip my-web-vm)</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Create a simple Python API</strong>
+                  <p>Create a file called <code>api.py</code>:</p>
+                  <pre><code>nano api.py</code></pre>
+                  <p>Paste this content:</p>
+                  <pre><code>from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/api/status':
+            body = json.dumps({"status": "ok", "message": "API is running"})
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(body.encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        print(f"[{self.address_string()}] {format % args}")
+
+server = HTTPServer(('0.0.0.0', 8080), Handler)
+print("API running on port 8080")
+server.serve_forever()</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Run the API</strong>
+                  <pre><code>python3 api.py</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Allow port 8080 through the firewall</strong>
+                  <pre><code># In another SSH session or after backgrounding the server
+sudo ufw allow 8080/tcp</code></pre>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Test it from your Mac</strong>
+                  <pre><code>curl http://$(tart ip my-web-vm):8080/api/status</code></pre>
+                  <p>You should get: <code>{"status": "ok", "message": "API is running"}</code></p>
+                </div>
+              </li>
+              <li>
+                <div class="step-content">
+                  <strong>Access from any device on the network</strong>
+                  <p>From a phone or other device on the same Wi-Fi, open:</p>
+                  <pre><code>http://&lt;vm-ip&gt;:8080/api/status</code></pre>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="resource-card mt-lg">
+            <h3>Going Further — Real Frameworks</h3>
+            <p class="resource-desc">For a proper API, use a framework that handles routing, error handling, and middleware.</p>
+            <div class="grid-2">
+              <div class="card card-sm">
+                <h4>Python — Flask</h4>
+                <pre><code>pip install flask
+# app.py
+from flask import Flask, jsonify
+app = Flask(__name__)
+
+@app.route('/api/hello')
+def hello():
+    return jsonify({"message": "Hello"})
+
+app.run(host='0.0.0.0', port=8080)</code></pre>
+              </div>
+              <div class="card card-sm">
+                <h4>Node.js — Express</h4>
+                <pre><code>npm install express
+// app.js
+const express = require('express')
+const app = express()
+
+app.get('/api/hello', (req, res) => {
+  res.json({ message: 'Hello' })
+})
+
+app.listen(8080, '0.0.0.0')</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOLS -->
+        <div class="tab-panel" data-tab="tools">
+          <div class="grid-2">
+
+            <div class="resource-card">
+              <h3>ngrok</h3>
+              <p class="resource-desc">Creates a public HTTPS tunnel to a locally-running server. Instantly share your VM-hosted site or API with anyone on the internet, no port forwarding required.</p>
+              <pre><code># Install (macOS)
+brew install ngrok
+
+# Sign up at ngrok.com and authenticate
+ngrok config add-authtoken &lt;your-token&gt;
+
+# Expose a local port
+ngrok http 8080
+
+# You get a public URL like:
+# https://abc123.ngrok.io</code></pre>
+            </div>
+
+            <div class="resource-card">
+              <h3>curl</h3>
+              <p class="resource-desc">Command-line HTTP client. Test APIs, send webhooks, authenticate against Jamf Pro, debug requests. See the Cheat Sheet for Jamf Pro-specific examples.</p>
+              <pre><code># Quick test
+curl https://httpbin.org/get
+
+# POST JSON
+curl -X POST https://httpbin.org/post \
+  -H "Content-Type: application/json" \
+  -d '{"key": "value"}'
+
+# See response headers
+curl -I https://example.com</code></pre>
+            </div>
+
+            <div class="resource-card">
+              <h3>Tart</h3>
+              <p class="resource-desc">Apple Silicon VM manager. Native performance, macOS and Linux VMs. See the Cheat Sheet for the full command reference.</p>
+              <pre><code># Quick start
+tart pull ghcr.io/cirruslabs/ubuntu:latest
+tart clone ghcr.io/cirruslabs/ubuntu:latest my-vm
+tart run my-vm --no-graphics &
+ssh admin@$(tart ip my-vm)</code></pre>
+            </div>
+
+            <div class="resource-card">
+              <h3>webhook.site</h3>
+              <p class="resource-desc">Instantly get a public URL that logs every incoming HTTP request. Perfect for testing Jamf Pro webhooks during development — no server required.</p>
+              <pre><code># 1. Go to https://webhook.site
+# 2. Copy your unique URL
+# 3. Paste it as the destination URL in Jamf Pro
+#    (Admin → Webhooks → New Webhook)
+# 4. Trigger a device event
+# 5. See the full payload appear in the browser</code></pre>
+            </div>
+
+            <div class="resource-card">
+              <h3>python3 -m json.tool</h3>
+              <p class="resource-desc">Built-in JSON pretty-printer. Pipe curl output through it to make JSON readable in the terminal.</p>
+              <pre><code>curl -s https://httpbin.org/get \
+  | python3 -m json.tool
+
+# Or use jq if installed (more powerful)
+curl -s https://httpbin.org/get | jq '.'
+curl -s https://httpbin.org/get | jq '.headers'</code></pre>
+            </div>
+
+            <div class="resource-card">
+              <h3>SSH</h3>
+              <p class="resource-desc">Secure remote shell. Connect to Linux VMs and remote servers to run commands as if you were sitting at the machine.</p>
+              <pre><code># Basic connection
+ssh username@ip-address
+
+# Copy a file to the remote machine
+scp local-file.html admin@192.168.1.10:/var/www/html/
+
+# Copy a file from remote to local
+scp admin@192.168.1.10:/etc/nginx/nginx.conf ./
+
+# Run a single command remotely
+ssh admin@192.168.1.10 "sudo systemctl restart nginx"</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="tab-panel" data-tab="links">
+          <div class="grid-2">
+
+            <div class="card">
+              <div class="card-header"><h3>Jamf</h3></div>
+              <ul class="link-list">
+                <li><a href="https://developer.jamf.com/jamf-pro/reference/jamf-pro-api" target="_blank" rel="noopener">Jamf Pro API Reference</a><span class="link-desc">Official REST API docs</span></li>
+                <li><a href="https://learn.jamf.com" target="_blank" rel="noopener">Jamf Learning Hub</a><span class="link-desc">Courses, certifications, documentation</span></li>
+                <li><a href="https://community.jamf.com" target="_blank" rel="noopener">Jamf Nation Community</a><span class="link-desc">Forum, scripts, discussions</span></li>
+                <li><a href="https://www.jamf.com/resources/" target="_blank" rel="noopener">Jamf Resources</a><span class="link-desc">Guides, white papers, webinars</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Apple &amp; MDM</h3></div>
+              <ul class="link-list">
+                <li><a href="https://support.apple.com/en-gb/guide/deployment/welcome/web" target="_blank" rel="noopener">Apple Platform Deployment Guide</a><span class="link-desc">Apple's official MDM and deployment documentation</span></li>
+                <li><a href="https://developer.apple.com/documentation/devicemanagement" target="_blank" rel="noopener">Apple MDM Protocol Reference</a><span class="link-desc">Technical MDM protocol documentation</span></li>
+                <li><a href="https://support.apple.com/en-gb/111900" target="_blank" rel="noopener">Apple ADE (Device Enrollment)</a><span class="link-desc">Zero-touch device enrollment overview</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>APIs &amp; HTTP</h3></div>
+              <ul class="link-list">
+                <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP" target="_blank" rel="noopener">MDN HTTP Documentation</a><span class="link-desc">Comprehensive HTTP reference</span></li>
+                <li><a href="https://httpbin.org" target="_blank" rel="noopener">httpbin.org</a><span class="link-desc">Free HTTP testing service — test your curl commands</span></li>
+                <li><a href="https://webhook.site" target="_blank" rel="noopener">webhook.site</a><span class="link-desc">Inspect and test webhook payloads</span></li>
+                <li><a href="https://curl.se/docs/manpage.html" target="_blank" rel="noopener">curl man page</a><span class="link-desc">Complete curl documentation</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Linux &amp; Infrastructure</h3></div>
+              <ul class="link-list">
+                <li><a href="https://github.com/cirruslabs/tart" target="_blank" rel="noopener">Tart (GitHub)</a><span class="link-desc">Source, docs, and image registry</span></li>
+                <li><a href="https://nginx.org/en/docs/" target="_blank" rel="noopener">nginx Documentation</a><span class="link-desc">Web server configuration reference</span></li>
+                <li><a href="https://ubuntu.com/server/docs" target="_blank" rel="noopener">Ubuntu Server Docs</a><span class="link-desc">Official Ubuntu server guide</span></li>
+                <li><a href="https://ngrok.com/docs" target="_blank" rel="noopener">ngrok Documentation</a><span class="link-desc">Tunneling guide and configuration</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Git &amp; GitHub</h3></div>
+              <ul class="link-list">
+                <li><a href="https://git-scm.com/doc" target="_blank" rel="noopener">Git Documentation</a><span class="link-desc">Official reference and Pro Git book</span></li>
+                <li><a href="https://docs.github.com" target="_blank" rel="noopener">GitHub Docs</a><span class="link-desc">Pull requests, Actions, and more</span></li>
+                <li><a href="https://ohshitgit.com" target="_blank" rel="noopener">Oh Shit, Git!?!</a><span class="link-desc">Plain-English fixes for common Git mistakes</span></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>AI &amp; Claude</h3></div>
+              <ul class="link-list">
+                <li><a href="https://docs.anthropic.com" target="_blank" rel="noopener">Anthropic Docs</a><span class="link-desc">Claude API, models, and capabilities</span></li>
+                <li><a href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">Claude Code (GitHub)</a><span class="link-desc">Source, docs, and issue tracker</span></li>
+                <li><a href="https://www.anthropic.com/research" target="_blank" rel="noopener">Anthropic Research</a><span class="link-desc">Papers on LLMs, safety, and alignment</span></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Ron Harifiyati &mdash; Jamf Pro Workshop &mdash; 2026
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

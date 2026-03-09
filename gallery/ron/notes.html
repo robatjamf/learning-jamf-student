@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes — Ron Harifiyati</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">Ron Harifiyati</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="cheat-sheet.html">Cheat Sheet</a></li>
+        <li><a href="notes.html" class="active">Notes</a></li>
+        <li><a href="resources.html">Resources</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="page-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>Notes</h1>
+        <p>18 topics — plain explanation, key concepts, and a deeper dive on each.</p>
+      </div>
+
+      <div class="sidebar-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="notes-sidebar">
+          <h4>Topics</h4>
+          <ul class="sidebar-nav">
+            <li><a href="#jamf">Jamf &amp; MDM</a></li>
+            <li><a href="#apis">APIs &amp; REST</a></li>
+            <li><a href="#webhooks">Webhooks</a></li>
+            <li><a href="#authn">Auth &amp; Authorisation</a></li>
+            <li><a href="#json-xml">JSON &amp; XML</a></li>
+            <li><a href="#http">HTTP Fundamentals</a></li>
+            <li><a href="#vms">VMs &amp; Infrastructure</a></li>
+            <li><a href="#linux">Linux &amp; Shell Basics</a></li>
+            <li><a href="#networking">Networking Basics</a></li>
+            <li><a href="#macos">macOS Management</a></li>
+            <li><a href="#git">Git &amp; Version Control</a></li>
+            <li><a href="#automation">Automation &amp; Scripting</a></li>
+            <li><a href="#iam">Identity &amp; Access (IAM)</a></li>
+            <li><a href="#devops">DevOps Fundamentals</a></li>
+            <li><a href="#claudecode">Claude Code</a></li>
+            <li><a href="#ai">AI &amp; LLMs</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#prompting">Prompt Engineering</a></li>
+          </ul>
+        </aside>
+
+        <!-- NOTES CONTENT -->
+        <div>
+
+          <!-- 1. JAMF & MDM -->
+          <section class="note-section" id="jamf">
+            <h2>Jamf &amp; MDM</h2>
+            <p class="note-plain">Jamf is a platform built specifically for managing Apple devices — Macs, iPhones, iPads, and Apple TVs — at scale. It sits in a category called Mobile Device Management (MDM), which lets IT teams remotely configure, secure, and manage devices without physically touching them.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>MDM protocol</strong> — An Apple-defined standard that lets management servers communicate with devices. Jamf Pro is built on top of this.</li>
+                <li><strong>Jamf Pro</strong> — The enterprise product. Full device management, policy enforcement, software deployment, reporting.</li>
+                <li><strong>Jamf School</strong> — Simplified version for K-12 education environments.</li>
+                <li><strong>Jamf Protect</strong> — Endpoint security product layered on top of Jamf Pro.</li>
+                <li><strong>Enrollment</strong> — The process of registering a device with Jamf Pro so it can be managed. Can be automated via ADE (Apple Device Enrollment) or done manually.</li>
+                <li><strong>Policies</strong> — Actions applied to devices on a schedule or trigger (e.g. install software, run a script).</li>
+                <li><strong>Configuration Profiles</strong> — XML documents that define device settings (Wi-Fi, VPN, restrictions). Deployed via MDM.</li>
+                <li><strong>Smart Groups</strong> — Dynamic device groups built on criteria (OS version, department, model). Policies target groups, not individual devices.</li>
+                <li><strong>Integration first</strong> — Jamf does not replace your existing IT stack. It integrates with Identity providers (Okta, Azure AD), SIEM, and ITSM tools like ServiceNow.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>The MDM protocol works by establishing a persistent check-in relationship between the device and the MDM server. Devices check in on a schedule (or are pushed to check in via APNs — Apple Push Notification Service). When they check in, the server can deliver configuration profiles, commands (lock, wipe, install app), or queries (get device inventory).</p>
+                <p>This means Jamf Pro never directly talks to a device in real time — it queues commands, and the device picks them up on next check-in. APNs is used to nudge the device to check in faster.</p>
+                <p>Supervision is an additional state that unlocks deeper management capabilities — things like preventing the removal of MDM, enforcing single-app mode, or silently installing apps. Devices become supervised during enrollment (ADE) or via Apple Configurator.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 2. APIs & REST -->
+          <section class="note-section" id="apis">
+            <h2>APIs &amp; REST</h2>
+            <p class="note-plain">An API (Application Programming Interface) is a defined way for two software systems to communicate. REST is the most common style for web APIs — it uses standard HTTP methods and URLs to create, read, update, and delete resources.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Endpoint</strong> — A specific URL that represents a resource. Example: <code>/api/v1/computers</code></li>
+                <li><strong>HTTP Methods</strong> — GET (read), POST (create), PUT/PATCH (update), DELETE (remove).</li>
+                <li><strong>Request</strong> — What you send: method + URL + headers + optional body.</li>
+                <li><strong>Response</strong> — What you get back: status code + headers + body (usually JSON or XML).</li>
+                <li><strong>Status Codes</strong> — 200 OK, 201 Created, 400 Bad Request, 401 Unauthorised, 403 Forbidden, 404 Not Found, 500 Server Error.</li>
+                <li><strong>REST principles</strong> — Stateless (server doesn't remember previous requests), resource-based URLs, standard HTTP methods, consistent format.</li>
+                <li><strong>API key / Bearer token</strong> — How you prove who you are when making requests. Sent in the <code>Authorization</code> header.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>REST (Representational State Transfer) is an architectural style, not a protocol. It defines constraints: statelessness, a uniform interface, client-server separation, and cacheability. An API that follows these constraints is called RESTful.</p>
+                <p>The "stateless" part is important: every request must contain all the information needed to understand it. The server does not store session state between requests. This is why Bearer tokens are sent with every request — the server cannot "remember" you authenticated 5 minutes ago.</p>
+                <p>Jamf Pro has two API generations: the Classic API (older, XML-based, uses <code>/JSSResource/</code> paths) and the modern Jamf Pro API (JSON-based, uses <code>/api/v1/</code> paths). Both coexist; new functionality is added to the modern API only.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 3. WEBHOOKS -->
+          <section class="note-section" id="webhooks">
+            <h2>Webhooks</h2>
+            <p class="note-plain">A webhook is an automated HTTP POST request that a system sends to a URL you specify when a particular event happens. Instead of you asking "did anything change?" repeatedly (polling), the system tells you the moment it does (push).</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Event-driven</strong> — Webhooks only fire when something happens. No event = no request.</li>
+                <li><strong>Payload</strong> — The data sent in the webhook's POST request body. Usually JSON or XML. Contains information about the event (what happened, to which resource, and when).</li>
+                <li><strong>Endpoint (receiver)</strong> — A URL you expose that listens for incoming POST requests from the webhook sender.</li>
+                <li><strong>Push vs Pull</strong> — Webhooks are push. Polling (repeated GET requests on a schedule) is pull. Push is more efficient for real-time events.</li>
+                <li><strong>Reliability</strong> — Webhooks can fail if your endpoint is down. Good implementations include retry logic and signature verification.</li>
+                <li><strong>Signature verification</strong> — The sender includes a hash of the payload using a shared secret. You verify this hash to confirm the request came from the expected source.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Jamf Pro webhooks fire on device events: enrollment, check-in, policy completion, inventory update, and more. You configure the event type and destination URL in Jamf Pro settings. When the event fires, Jamf POSTs the payload immediately.</p>
+                <p>The payload in the workshop arrived as XML and contained the device ID, event type, and timestamp. This is typical of the Jamf Classic webhook format. The modern API supports JSON payloads for newer event types.</p>
+                <p>Testing webhooks during development: tools like webhook.site or ngrok let you receive webhooks on a public URL while developing locally. Once your handler is working, you deploy it to a real server.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 4. AUTH -->
+          <section class="note-section" id="authn">
+            <h2>Authentication &amp; Authorisation</h2>
+            <p class="note-plain">Authentication is proving who you are. Authorisation is determining what you are allowed to do. Both are required for secure API access — you must be identified before the system can decide what you can access.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Authentication (AuthN)</strong> — Proving identity. "I am Ron." Methods: password, token, certificate, biometric.</li>
+                <li><strong>Authorisation (AuthZ)</strong> — Determining permissions. "Ron is allowed to read devices but not delete them."</li>
+                <li><strong>Bearer token</strong> — A string passed in the <code>Authorization: Bearer &lt;token&gt;</code> header. The server trusts whoever holds the token.</li>
+                <li><strong>API key</strong> — A long random string tied to an account. Simpler than OAuth but less granular.</li>
+                <li><strong>OAuth 2.0</strong> — A delegation framework. Lets you grant a third-party app access to your account without giving it your password. Used by Jamf Pro for modern API access.</li>
+                <li><strong>JWT (JSON Web Token)</strong> — A self-contained token that encodes claims (user ID, roles, expiry) and is cryptographically signed. Servers can verify JWTs without a database lookup.</li>
+                <li><strong>Token expiry</strong> — Tokens have a TTL (time to live). After expiry, you must re-authenticate to get a new token.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Jamf Pro's modern API uses OAuth 2.0 with the client credentials flow: you provide a client ID and client secret, the server returns a Bearer token with a defined expiry. Your code stores and reuses this token until it expires, then fetches a new one.</p>
+                <p>The classic API used Basic auth (base64-encoded username:password in the Authorization header). This is less secure because credentials travel with every request — a single intercepted request exposes your password. Bearer tokens are scoped and expire, limiting the blast radius if one is stolen.</p>
+                <p>The principle of least privilege applies here: grant API credentials only the permissions they actually need. Read-only credentials for a reporting tool; write permissions only for automation that creates resources.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 5. JSON & XML -->
+          <section class="note-section" id="json-xml">
+            <h2>JSON &amp; XML</h2>
+            <p class="note-plain">JSON and XML are two formats for structuring and transmitting data between systems. Both represent the same types of data — strings, numbers, lists, nested objects — but with very different syntax. JSON is lighter and more readable; XML is more verbose but supports richer metadata.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>JSON</strong> — JavaScript Object Notation. Key-value pairs in curly braces. Arrays in square brackets. Lightweight, widely supported.</li>
+                <li><strong>XML</strong> — Extensible Markup Language. Tag-based like HTML. Every value is wrapped in opening and closing tags. More verbose.</li>
+                <li><strong>When to use JSON</strong> — Modern REST APIs, configuration files, data exchange between web services.</li>
+                <li><strong>When to use XML</strong> — Legacy systems, macOS configuration profiles, Jamf Classic API, SOAP web services.</li>
+                <li><strong>Parsing</strong> — Converting the raw text format into objects your code can work with. Every language has built-in JSON/XML parsers.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Same data, two formats:</p>
+                <pre><code>// JSON
+{
+  "device": {
+    "id": 42,
+    "name": "Ron's MacBook Pro",
+    "enrolled": true
+  }
+}
+
+&lt;!-- XML --&gt;
+&lt;device&gt;
+  &lt;id&gt;42&lt;/id&gt;
+  &lt;name&gt;Ron's MacBook Pro&lt;/name&gt;
+  &lt;enrolled&gt;true&lt;/enrolled&gt;
+&lt;/device&gt;</code></pre>
+                <p>XML has advantages: it supports attributes, namespaces, schemas (XSD), and is the backbone of macOS configuration profiles (which are property list / plist files — a subset of XML). JSON has advantages: shorter, easier to read, native to JavaScript, faster to parse in most contexts.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 6. HTTP -->
+          <section class="note-section" id="http">
+            <h2>HTTP Fundamentals</h2>
+            <p class="note-plain">HTTP (HyperText Transfer Protocol) is the foundation of data communication on the web. Every time you call an API, load a webpage, or a webhook fires, it uses HTTP. HTTPS is the encrypted version — the same protocol over a TLS connection.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Request / Response cycle</strong> — Client sends a request; server sends a response. Every HTTP interaction follows this pattern.</li>
+                <li><strong>Methods</strong> — GET, POST, PUT, PATCH, DELETE. Each has a defined semantics.</li>
+                <li><strong>Headers</strong> — Metadata about the request or response. <code>Content-Type</code>, <code>Authorization</code>, <code>Accept</code>, <code>Cache-Control</code>.</li>
+                <li><strong>Status codes</strong> — 1xx informational, 2xx success, 3xx redirect, 4xx client error, 5xx server error.</li>
+                <li><strong>Body</strong> — The payload. Requests with a body (POST, PUT) include data. Responses include the returned data.</li>
+                <li><strong>HTTPS / TLS</strong> — Encrypts the connection so headers and body cannot be read in transit. Required for any production API.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Common status codes to know: 200 OK (success), 201 Created (POST succeeded, resource created), 204 No Content (success, nothing to return — common on DELETE), 400 Bad Request (your request is malformed), 401 Unauthorised (no credentials or invalid token), 403 Forbidden (authenticated but not permitted), 404 Not Found (resource does not exist), 429 Too Many Requests (rate limited), 500 Internal Server Error (server-side bug).</p>
+                <p>HTTP/2 and HTTP/3 are newer versions that improve performance with multiplexing (multiple requests over one connection) and QUIC (faster connection setup). The API interaction pattern remains the same — the transport is just more efficient.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 7. VMs -->
+          <section class="note-section" id="vms">
+            <h2>VMs &amp; Infrastructure</h2>
+            <p class="note-plain">A virtual machine (VM) is a software-based computer that runs inside a physical host machine. It has its own OS, CPU allocation, RAM, and disk — but shares the physical hardware of the host. VMs are used for isolation, testing, replication, and running multiple environments on one machine.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Hypervisor</strong> — The software layer that creates and manages VMs. Abstracts hardware and divides it among guest OS instances. Types: Type 1 (bare-metal, e.g. ESXi) and Type 2 (hosted, e.g. Parallels, VirtualBox).</li>
+                <li><strong>Host / Guest</strong> — Host is the physical machine; guests are the VMs running on it.</li>
+                <li><strong>Snapshot</strong> — A saved state of a VM at a point in time. You can revert to a snapshot if something breaks.</li>
+                <li><strong>Image</strong> — A packaged VM template you can clone. Tart uses OCI-compatible images.</li>
+                <li><strong>Isolation</strong> — What happens inside a VM (file changes, installed software, network traffic) does not affect the host or other VMs (unless explicitly bridged).</li>
+                <li><strong>Tart</strong> — A macOS CLI for Apple Silicon VMs using Apple's Virtualization framework. Fast, native, no licence fees.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Apple's Virtualization framework (available since macOS 12) allows Apple Silicon Macs to run macOS and Linux VMs natively — with near-native performance and minimal overhead. This is what Tart uses under the hood. Prior to Apple Silicon, macOS VMs on Mac required emulation, which was significantly slower.</p>
+                <p>VMs are fundamental to IT testing: you can spin up a clean macOS VM, enroll it into Jamf Pro, test a policy, observe results, and delete it — without affecting any real hardware. This is how you safely test configurations before deploying them to production devices.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 8. LINUX & SHELL -->
+          <section class="note-section" id="linux">
+            <h2>Linux &amp; Shell Basics</h2>
+            <p class="note-plain">Linux is an open-source operating system used widely for servers, VMs, and infrastructure. The shell (command line) is the primary interface for interacting with Linux systems. Most server infrastructure — including web servers, APIs, and databases — runs on Linux.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Shell</strong> — A program that accepts text commands and executes them. Bash and Zsh are common shells.</li>
+                <li><strong>File system</strong> — Everything in Linux is a file. The root is <code>/</code>. Common directories: <code>/home</code> (user files), <code>/etc</code> (config files), <code>/var</code> (logs, runtime data), <code>/usr</code> (installed software).</li>
+                <li><strong>Permissions</strong> — Files have owner, group, and world permissions. <code>rwx</code> = read/write/execute. <code>chmod</code> changes permissions; <code>chown</code> changes ownership.</li>
+                <li><strong>sudo</strong> — Run a command as superuser (root). Required for system-level changes.</li>
+                <li><strong>Package manager</strong> — <code>apt</code> (Debian/Ubuntu) or <code>yum</code>/<code>dnf</code> (RHEL/Fedora) for installing software.</li>
+                <li><strong>Process management</strong> — <code>ps</code>, <code>top</code>, <code>kill</code>, <code>systemctl</code> for managing running services.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <pre><code># Navigation
+pwd             # current directory
+ls -la          # list files with details + hidden
+cd /etc         # change directory
+cd ..           # go up one level
+
+# Files
+cat file.txt    # print file content
+nano file.txt   # edit a file (simple editor)
+cp a.txt b.txt  # copy a file
+mv a.txt /tmp/  # move/rename a file
+rm file.txt     # delete a file
+
+# Permissions
+chmod 755 script.sh   # rwxr-xr-x
+chmod +x script.sh    # make executable
+sudo chown ron:ron file.txt
+
+# Packages (Ubuntu/Debian)
+sudo apt update
+sudo apt install nginx
+
+# Services
+sudo systemctl start nginx
+sudo systemctl enable nginx   # start on boot
+sudo systemctl status nginx</code></pre>
+              </div>
+            </details>
+          </section>
+
+          <!-- 9. NETWORKING -->
+          <section class="note-section" id="networking">
+            <h2>Networking Basics</h2>
+            <p class="note-plain">Networking is how computers communicate — locally and over the internet. Understanding IP addresses, ports, and the difference between LAN and WAN is essential for hosting services, debugging connectivity issues, and understanding how Jamf Pro communicates with devices.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>IP Address</strong> — A unique numerical address for a device on a network. IPv4 (e.g. 192.168.1.10) or IPv6.</li>
+                <li><strong>LAN</strong> — Local Area Network. Devices on the same local network (e.g. your home Wi-Fi). Private IP ranges: 192.168.x.x, 10.x.x.x.</li>
+                <li><strong>WAN</strong> — Wide Area Network. The internet. Your router has a public IP; devices on your LAN share it via NAT.</li>
+                <li><strong>Port</strong> — A numbered channel on a device. HTTP uses port 80; HTTPS uses 443; SSH uses 22. One IP can serve many services via different ports.</li>
+                <li><strong>DNS</strong> — Domain Name System. Translates human-readable names (jamf.com) into IP addresses. Like a phone book for the internet.</li>
+                <li><strong>Firewall</strong> — Controls which inbound/outbound connections are allowed by port and protocol.</li>
+                <li><strong>NAT</strong> — Network Address Translation. Your router maps private IPs to one public IP for outbound traffic.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>To host a site on a VM that other LAN devices can access: find the VM's LAN IP with <code>tart ip &lt;name&gt;</code> or <code>hostname -I</code> inside the VM. Run a web server on port 80. Other devices on the same network can reach it at <code>http://&lt;vm-ip&gt;</code>.</p>
+                <p>To make a LAN service accessible from the internet, you need port forwarding on your router (map a public port to the VM's private IP) or a tunnel tool like ngrok, which creates a public HTTPS URL that proxies to your local server.</p>
+                <p>Jamf Pro communicates with managed devices over port 443 (HTTPS). APNs (Apple Push Notification Service) uses port 443 outbound and 2195/2196 for the legacy binary protocol. Firewalls must allow these for MDM to function.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 10. macOS MANAGEMENT -->
+          <section class="note-section" id="macos">
+            <h2>macOS Management</h2>
+            <p class="note-plain">Managing macOS at scale means deploying software, enforcing settings, running scripts, and maintaining compliance — all without touching each device individually. Jamf Pro orchestrates this through a combination of configuration profiles, policies, packages, and the MDM protocol.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Configuration Profiles</strong> — XML files that define device settings (Wi-Fi, VPN, password policy, restrictions). Deployed via MDM and applied at the system level.</li>
+                <li><strong>Policies</strong> — Jamf Pro-specific constructs that define actions: install a package, run a script, update inventory. Trigger: recurring check-in, login, startup, or manual.</li>
+                <li><strong>Packages (.pkg)</strong> — The macOS format for installable software. Jamf Pro hosts and deploys packages to devices via policy.</li>
+                <li><strong>Scripts</strong> — Shell scripts run on managed devices during policy execution. Used for tasks profiles cannot handle (modifying config files, custom setup logic).</li>
+                <li><strong>ADE (Automated Device Enrollment)</strong> — Apple's zero-touch deployment program. Devices are pre-assigned to an MDM server — the moment they are powered on and connected to the internet, they enroll automatically.</li>
+                <li><strong>Inventory</strong> — Jamf Pro collects hardware and software details from each device. Updated on check-in. Used for Smart Group membership criteria.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>The macOS management hierarchy: Device → MDM enrollment → Configuration Profiles (settings) + Policies (actions). Profiles are stateful — removing the profile reverses the setting. Policies are one-time actions or scheduled tasks.</p>
+                <p>User-Approved MDM vs. Supervised MDM: user-approved means the user manually approved MDM during setup (more limited control). Supervised (via ADE or Apple Configurator) gives IT deeper control — silent app installs, preventing MDM removal, enabling features unavailable otherwise.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 11. GIT -->
+          <section class="note-section" id="git">
+            <h2>Git &amp; Version Control</h2>
+            <p class="note-plain">Git is a distributed version control system. It tracks every change ever made to files in a repository, lets multiple people collaborate without overwriting each other's work, and makes it possible to go back to any previous state. It is the standard tool for managing code in almost every software project.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Repository</strong> — A directory tracked by Git. Contains files and the full history of changes.</li>
+                <li><strong>Commit</strong> — A saved snapshot of staged changes. Has a unique hash, message, author, and timestamp.</li>
+                <li><strong>Branch</strong> — An independent line of development. The default is <code>main</code>. Create branches freely — they are cheap.</li>
+                <li><strong>Merge</strong> — Combining one branch into another. Fast-forward (no divergence) or three-way merge (diverged histories).</li>
+                <li><strong>Remote</strong> — A copy of the repo hosted elsewhere (GitHub, GitLab). <code>origin</code> is the conventional name for the primary remote.</li>
+                <li><strong>Pull Request (PR)</strong> — A request to merge one branch into another, with code review. The standard collaboration pattern on GitHub.</li>
+                <li><strong>Conflict</strong> — When two branches changed the same line differently. Git cannot auto-merge — you resolve it manually.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Git's branching model enables the feature branch workflow: <code>main</code> is always stable and deployable. All work happens on feature branches. When a feature is complete and reviewed, it merges into <code>main</code>. This keeps production code clean.</p>
+                <p>Under the hood, a commit is a pointer to a tree (snapshot of file contents) plus metadata and a pointer to the parent commit. Branches are just lightweight pointers to a commit — that is why creating a branch is instantaneous regardless of repo size.</p>
+                <p>See the Cheat Sheet for a full command reference.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 12. AUTOMATION -->
+          <section class="note-section" id="automation">
+            <h2>Automation &amp; Scripting</h2>
+            <p class="note-plain">Automation means replacing repetitive manual tasks with code that runs on its own. In an IT context, this means scripts that configure systems, APIs that trigger workflows, and scheduled jobs that keep environments consistent. If you do something more than twice, it should be automated.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Bash script</strong> — A text file containing shell commands. Run it once, or schedule it. The lingua franca of system automation on macOS/Linux.</li>
+                <li><strong>Idempotent</strong> — Running the same script multiple times produces the same result. Good automation is idempotent.</li>
+                <li><strong>Cron</strong> — A Unix scheduler. Define jobs with a cron expression (minute, hour, day, month, weekday) to run commands on a schedule.</li>
+                <li><strong>API automation</strong> — Using HTTP requests in scripts to interact with services programmatically. curl in bash; requests in Python; fetch in JavaScript.</li>
+                <li><strong>Environment variables</strong> — Store secrets and config (API keys, URLs) outside your code. Never hardcode credentials in a script.</li>
+                <li><strong>Exit codes</strong> — Scripts return 0 on success, non-zero on failure. Automation pipelines check exit codes to decide whether to continue.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <pre><code>#!/bin/bash
+# Simple Jamf token + API call in a script
+
+JAMF_URL="https://your-instance.jamfcloud.com"
+TOKEN=$(curl -s -X POST "$JAMF_URL/api/v1/auth/token" \
+  -u "$JAMF_USER:$JAMF_PASS" \
+  -H "Accept: application/json" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+
+# Use the token
+curl -s -X GET "$JAMF_URL/api/v1/computers-preview" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json"</code></pre>
+                <p>Credentials come from environment variables (<code>$JAMF_USER</code>, <code>$JAMF_PASS</code>) — never written in the script itself. The script gets the token first, then uses it for the real request. This is the standard pattern for scripted API access.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 13. IAM -->
+          <section class="note-section" id="iam">
+            <h2>Identity &amp; Access Management (IAM)</h2>
+            <p class="note-plain">IAM is the set of processes and technologies that ensure the right people have access to the right resources — and nothing more. It is the layer that connects HR systems, authentication providers, and tools like Jamf Pro. Getting IAM right eliminates a massive category of manual IT work.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Identity Provider (IdP)</strong> — The authoritative source of user identity. Examples: Okta, Azure Active Directory, Google Workspace.</li>
+                <li><strong>SSO (Single Sign-On)</strong> — One login gives access to all connected apps. The IdP authenticates the user; apps trust the IdP.</li>
+                <li><strong>SCIM</strong> — Protocol for automatically syncing user accounts between systems. When HR adds a new employee, SCIM provisions their accounts automatically.</li>
+                <li><strong>LDAP</strong> — Older directory protocol. Still used by many enterprise systems. Azure AD and Okta can act as LDAP providers for legacy tools.</li>
+                <li><strong>RBAC (Role-Based Access Control)</strong> — Permissions assigned to roles, not individuals. Users are assigned roles. Simpler to manage at scale.</li>
+                <li><strong>Least privilege</strong> — Grant only the permissions a user or system actually needs. Nothing more.</li>
+                <li><strong>Zero Trust</strong> — "Never trust, always verify." No implicit trust based on network location. Every access request is authenticated and authorised regardless of where it comes from.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>The Enterprise IT Admin persona from Day 1 illustrated the cost of missing IAM integration: she was manually creating accounts because HR, Identity, and Jamf Pro were not connected. The fix is a proper IAM flow: HR system → IdP (via SCIM) → all connected tools (Jamf Pro, Slack, Google Workspace, etc.) are provisioned automatically.</p>
+                <p>Jamf Pro integrates with LDAP and SAML-based SSO. User accounts and group memberships from the IdP can be used to drive Jamf Pro group membership and policy scoping — the IT admin never touches it after initial setup.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 14. DEVOPS -->
+          <section class="note-section" id="devops">
+            <h2>DevOps Fundamentals</h2>
+            <p class="note-plain">DevOps is a set of practices that combines software development (Dev) and IT operations (Ops) to shorten development cycles and deliver changes reliably. The core idea: automate everything that can be automated, and make deployment a non-event rather than a high-risk ceremony.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>CI/CD</strong> — Continuous Integration / Continuous Deployment. Every code change is automatically tested (CI) and deployed to production (CD) with no manual steps.</li>
+                <li><strong>Pipeline</strong> — The automated sequence of steps a code change goes through: build → test → lint → deploy.</li>
+                <li><strong>Infrastructure as Code (IaC)</strong> — Defining server configuration and infrastructure in code (Terraform, Ansible) rather than clicking through UIs. Reproducible, version-controlled.</li>
+                <li><strong>Container</strong> — A lightweight, isolated environment for running an application. Docker packages an app and its dependencies into a portable image.</li>
+                <li><strong>Immutable infrastructure</strong> — Instead of updating a server, replace it with a new one built from a fresh image. Eliminates configuration drift.</li>
+                <li><strong>Monitoring &amp; observability</strong> — Logs, metrics, and traces that tell you what your system is doing in production.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>The connection to Jamf: Jamf Pro itself can be part of a DevOps-style workflow. Configuration profiles and policies can be version-controlled in Git. Changes go through a PR review process. A CI/CD pipeline can deploy updates to Jamf Pro via its API — the same pattern used for software deployments, applied to device management.</p>
+                <p>Tools in this space: GitHub Actions for CI/CD pipelines, Terraform for infrastructure, Ansible for configuration management, Docker for containers, and tools like jamf-upload or the Jamf Pro API for automating Jamf configuration deployment.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 15. CLAUDE CODE -->
+          <section class="note-section" id="claudecode">
+            <h2>Claude Code</h2>
+            <p class="note-plain">Claude Code is Anthropic's CLI for Claude — an AI assistant that operates directly in your terminal, reads your project files, and helps you build software through natural language conversation. It is not a chatbot that generates code for you to paste — it reads, writes, and edits files in your project directly.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>Terminal-first</strong> — Claude Code runs in your shell, not a browser. It has direct access to your filesystem and can run commands with your permission.</li>
+                <li><strong>CLAUDE.md</strong> — Project context file. Claude reads this at the start of every session. Defines the project, conventions, and current state. Keep it lean.</li>
+                <li><strong>COMPOUND.md</strong> — Session history file. Populated via <code>/compound</code> at the end of a session. Rich context: decisions, tradeoffs, dead ends.</li>
+                <li><strong>Compound Engineering loop</strong> — Plan → Work → Review → Compound. A structured way to build iteratively with AI.</li>
+                <li><strong>@ references</strong> — Type <code>@filename</code> in a prompt to reference a specific file. Claude reads it and uses it in context.</li>
+                <li><strong>Plan mode</strong> — Enter with <code>/plan</code>. Claude describes what it will do before making any changes. Review and approve before it acts.</li>
+                <li><strong>Memory</strong> — Persistent notes directory that survives between sessions. Global (<code>~/.claude/MEMORY.md</code>) and project-level.</li>
+              </ul>
+            </div>
+            <div class="key-concepts" style="margin-top:1rem;border-left:3px solid var(--accent);background:var(--surface-alt,var(--surface));padding:1rem 1.25rem;border-radius:0 8px 8px 0;">
+              <h4 style="margin-bottom:0.5rem;">Ron's take</h4>
+              <p style="margin:0;">The planning phase — the interview, the self-reflection, the iterative plan review — was the longest part of Day 3 by far. That time felt excessive in the moment but it directly caused everything to match the plan in the end. The one-shot page, built without any context, produced a basic 3-card summary. The planned site is a full multi-page reference tool. Same AI, completely different result. Context is the variable. Working this way also shifts where your effort goes: instead of worrying about individual lines of code, you're thinking about architecture — how pieces connect and what the system should actually do.</p>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>Claude Code's power comes from context: the more relevant context you give it (via CLAUDE.md, @ references, and conversation history), the more accurate and useful its output. Vague prompts produce vague results. Specific prompts with file references and constraints produce precise results.</p>
+                <p>The Compound Engineering loop is designed to counteract the tendency to rush. Skipping planning leads to code that technically works but does not fit the real requirement. The review step forces you to evaluate what was built against what was intended — and compound captures the learning so future sessions do not repeat the same mistakes.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 16. AI & LLMs -->
+          <section class="note-section" id="ai">
+            <h2>AI &amp; LLMs</h2>
+            <p class="note-plain">Large Language Models (LLMs) are AI systems trained on vast amounts of text to predict and generate human-like language. They power tools like Claude, ChatGPT, and Gemini. Understanding how they work helps you use them more effectively and understand their limitations.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>LLM</strong> — Large Language Model. A neural network with billions of parameters trained on text to predict the next token in a sequence.</li>
+                <li><strong>Token</strong> — The unit of text an LLM processes. Roughly 3-4 characters or 0.75 words. "Hello world" = 2 tokens.</li>
+                <li><strong>Context window</strong> — The maximum number of tokens the model can process at once (input + output). Exceeding it causes earlier content to be dropped.</li>
+                <li><strong>Temperature</strong> — Controls randomness. 0 = deterministic (always picks the most likely token). 1+ = more creative and varied output.</li>
+                <li><strong>Hallucination</strong> — When the model generates plausible-sounding but incorrect information. Happens because it generates tokens probabilistically, not by looking up facts.</li>
+                <li><strong>System prompt</strong> — Instructions given to the model before the conversation starts. Defines its role, constraints, and context.</li>
+                <li><strong>Fine-tuning</strong> — Additional training on a specific dataset to specialise the model's behaviour. Different from prompting — it changes the model weights.</li>
+                <li><strong>RAG (Retrieval-Augmented Generation)</strong> — Augmenting an LLM with real-time document retrieval. The model gets relevant docs injected into context before generating — reduces hallucinations for factual queries.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>LLMs do not "know" things the way a database does. They learn statistical patterns from text. When you ask a question, the model generates a response that is statistically likely given the prompt and its training — not a lookup. This is both the source of their impressive generalisation and their tendency to hallucinate.</p>
+                <p>Practical implications: always verify factual claims, especially for niche topics, recent events (after the model's training cutoff), or specific version numbers. Use the model for reasoning, drafting, and transformation tasks — not as a source of truth for facts you can look up.</p>
+                <p>Claude's model family (as of 2026): Claude 4.x series. Haiku = fast and lightweight; Sonnet = balanced; Opus = most capable. Claude Code (the CLI) runs on Sonnet 4.6 by default.</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 17. SECURITY -->
+          <section class="note-section" id="security">
+            <h2>Security</h2>
+            <p class="note-plain">Security is the practice of protecting systems, data, and people from unauthorised access, damage, or disruption. In an Apple device management context, this spans endpoint security, identity security, network security, and the software supply chain.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>CIA Triad</strong> — Confidentiality (data is only seen by those authorised), Integrity (data is not altered without authorisation), Availability (systems are accessible when needed).</li>
+                <li><strong>Endpoint security</strong> — Securing individual devices (the "endpoints"). Includes antivirus, EDR, configuration hardening, and patch management. Jamf Protect is Jamf's endpoint security layer.</li>
+                <li><strong>Principle of least privilege</strong> — Grant only the access a user or process actually needs. Nothing more.</li>
+                <li><strong>Zero Trust</strong> — Assume breach. Do not trust any user or device implicitly based on network location. Verify every access request.</li>
+                <li><strong>Patch management</strong> — Keeping software and OS versions up to date to close known vulnerabilities. A core Jamf Pro use case.</li>
+                <li><strong>Threat model</strong> — A structured analysis of what assets you are protecting, who might attack them, and how. Informs which security controls to prioritise.</li>
+                <li><strong>OWASP Top 10</strong> — The most critical web application security risks. Includes injection, broken authentication, XSS, and more. Relevant for anyone building APIs or web services.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>macOS has strong built-in security features: Gatekeeper (restricts app execution to signed/notarised software), SIP (System Integrity Protection, prevents modification of system files even by root), FileVault (full-disk encryption), and Secure Boot. Jamf Pro can enforce and report on these features via configuration profiles and compliance scripts.</p>
+                <p>For API security: never commit credentials to Git, always use HTTPS, rotate tokens regularly, implement rate limiting on your endpoints, and validate all input. The most common API vulnerabilities are poor authentication, excessive data exposure (returning more data than the client needs), and broken object-level authorisation (user A can access user B's data by changing an ID in the URL).</p>
+              </div>
+            </details>
+          </section>
+
+          <!-- 18. PROMPT ENGINEERING -->
+          <section class="note-section" id="prompting">
+            <h2>Prompt Engineering</h2>
+            <p class="note-plain">Prompt engineering is the practice of designing inputs to an LLM to get better outputs. It is not magic — it is about giving the model the right context, constraints, and examples so it can generate what you actually need. Better prompts = better results, less back-and-forth.</p>
+            <div class="key-concepts">
+              <h4>Key Concepts</h4>
+              <ul>
+                <li><strong>System prompt</strong> — Instructions given before the conversation. Defines the model's role, tone, and constraints. In Claude Code, CLAUDE.md serves this function.</li>
+                <li><strong>Few-shot prompting</strong> — Providing examples of input/output pairs in the prompt. The model learns the pattern from examples and applies it to your request.</li>
+                <li><strong>Chain of thought</strong> — Asking the model to "think step by step" before giving an answer. Improves accuracy on reasoning tasks.</li>
+                <li><strong>Context</strong> — The more relevant context you give (files, constraints, examples, goals), the better the output. Vague prompts produce vague results.</li>
+                <li><strong>Constraints</strong> — Tell the model what NOT to do, what format to use, what length to target. Constraints reduce unnecessary variation.</li>
+                <li><strong>Iteration</strong> — Prompting is iterative. A first attempt rarely gets you exactly what you need. Refine based on output.</li>
+                <li><strong>Hallucination mitigation</strong> — Ground the model with reference documents, use retrieval, and verify outputs. Ask the model to cite its sources or flag uncertainty.</li>
+              </ul>
+            </div>
+            <details>
+              <summary>Deeper dive &rsaquo;</summary>
+              <div class="deep-dive">
+                <p>A good prompt structure for complex tasks:</p>
+                <pre><code>Role: You are a senior macOS systems engineer.
+Task: Review this shell script and identify any security issues.
+Context: This script runs as root during Jamf Pro policy execution.
+Constraints: Focus only on security issues, not style. Be specific.
+Output format: Bulleted list, one issue per bullet.
+
+[paste script here]</code></pre>
+                <p>Role + Task + Context + Constraints + Output format = consistently better results than a plain question. The model has everything it needs to generate a focused, useful response rather than a generic one.</p>
+                <p>In Claude Code specifically: the more you invest in CLAUDE.md and COMPOUND.md, the better each session goes. Claude reads the project context before responding — a well-maintained context file is the most powerful "prompt" you have.</p>
+              </div>
+            </details>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Ron Harifiyati &mdash; Jamf Pro Workshop &mdash; 2026
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Show one note section at a time based on sidebar click
+    const sections = document.querySelectorAll('.note-section');
+    const links = document.querySelectorAll('.sidebar-nav a');
+
+    function showSection(id) {
+      sections.forEach(s => s.classList.toggle('hidden', s.id !== id));
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+
+    // Show first section by default
+    if (sections.length) showSection(sections[0].id);
+
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id = link.getAttribute('href').slice(1);
+        showSection(id);
+      });
+    });
+  </script>
+</body>
+</html>
