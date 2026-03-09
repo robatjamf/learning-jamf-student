@@ -9,7 +9,7 @@
 :root{--red:#CE1126;--gold:#FFD200;--green:#007A5E;--bg:#050505;--sunset:#FF6B35;--cyan:#00FFFF;--mag:#FF00FF;--lime:#39FF14;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--gold);font-family:'Share Tech Mono','Courier New',monospace;overflow-x:hidden;}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;z-index:9999;}
+/* scanlines handled by CRTFilter canvas overlay */
 
 @keyframes blink-border{
   0%  {border-color:var(--red); box-shadow:0 0 12px var(--red);}
@@ -127,11 +127,16 @@ footer{text-align:center;padding:2rem;border-top:3px solid var(--gold);font-fami
   transition:width 0.3s linear;
   box-shadow:0 0 8px var(--lime);
 }
+
+/* ---- CRT FILTER OVERLAY ---- */
+.crt-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;mix-blend-mode:multiply;}
 </style>
 </head>
 <body>
 
 <audio id="modem-sfx" src="dial-up-modem-02.mp3" preload="auto"></audio>
+
+<canvas id="crt-canvas" class="crt-overlay"></canvas>
 
 <!-- DIAL-UP MODEM OVERLAY -->
 <div id="modem-overlay">
@@ -578,6 +583,53 @@ footer{text-align:center;padding:2rem;border-top:3px solid var(--gold);font-fami
   }); /* end overlay click handler */
 
 })();
+</script>
+
+<script>
+/* CRTFilterWebGL - MIT License - github.com/Ichiaka/CRTFilter */
+class CRTFilterWebGL{constructor(canvas,config={}){if(!canvas){console.error("Canvas not found.");return;}this.sourceCanvas=canvas;this.glcanvas=document.createElement('canvas');this.glcanvas.width=canvas.width;this.glcanvas.height=canvas.height;this.glcanvas.className=canvas.className;this.gl=this.glcanvas.getContext('webgl2')||this.glcanvas.getContext('webgl');if(!this.gl){console.error("WebGL is not supported.");return;}this.config=Object.assign({barrelDistortion:0.001,curvature:0.002,chromaticAberration:0.0005,staticNoise:0.001,horizontalTearing:0.00012,glowBloom:0.001,verticalJitter:0.001,retraceLines:true,scanlineIntensity:0.6,dotMask:false,motionBlur:0,brightness:0.9,contrast:1.0,desaturation:0.2,flicker:0.01,signalLoss:0.05},config);this.initShaders();this.initBuffers();this.initTexture();this.animationFrameId=null;this.forwardEvents();}initBuffers(){this.vertexBuffer=this.gl.createBuffer();this.gl.bindBuffer(this.gl.ARRAY_BUFFER,this.vertexBuffer);const vertices=new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]);this.gl.bufferData(this.gl.ARRAY_BUFFER,vertices,this.gl.STATIC_DRAW);const positionLocation=this.gl.getAttribLocation(this.program,"a_position");this.gl.enableVertexAttribArray(positionLocation);this.gl.vertexAttribPointer(positionLocation,2,this.gl.FLOAT,false,0,0);}initTexture(){this.texture=this.gl.createTexture();this.gl.bindTexture(this.gl.TEXTURE_2D,this.texture);this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,this.gl.LINEAR);this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,this.gl.LINEAR);this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_S,this.gl.CLAMP_TO_EDGE);this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_T,this.gl.CLAMP_TO_EDGE);}createShader(type,source){const shader=this.gl.createShader(type);this.gl.shaderSource(shader,source);this.gl.compileShader(shader);if(!this.gl.getShaderParameter(shader,this.gl.COMPILE_STATUS)){console.error("Shader error:",this.gl.getShaderInfoLog(shader));this.gl.deleteShader(shader);return null;}return shader;}createProgram(vs,fs){const program=this.gl.createProgram();this.gl.attachShader(program,vs);this.gl.attachShader(program,fs);this.gl.linkProgram(program);if(!this.gl.getProgramParameter(program,this.gl.LINK_STATUS)){console.error("Program error:",this.gl.getProgramInfoLog(program));return null;}return program;}initShaders(){const fs=`precision mediump float;varying vec2 v_texCoord;uniform sampler2D u_texture;uniform float u_time,u_barrel,u_aberration,u_noise,u_tearing,u_glow,u_jitter,u_brightness,u_contrast,u_desaturation,u_flicker,u_scanlineIntensity,u_curvature,u_signalLoss;uniform bool u_retrace,u_dotMask;vec2 barrel(vec2 uv,float a){vec2 c=uv-0.5;return uv+c*dot(c,c)*a;}void main(){vec2 uv=barrel(v_texCoord,u_barrel+u_curvature);vec3 col;col.r=texture2D(u_texture,uv+vec2(u_aberration,0)).r;col.g=texture2D(u_texture,uv).g;col.b=texture2D(u_texture,uv-vec2(u_aberration,0)).b;col+=(fract(sin(dot(uv,vec2(12.9898,78.233)))*43758.5453)-0.5)*u_noise;uv.x+=sin(uv.y*10.0+u_time*2.0)*u_tearing;col*=texture2D(u_texture,uv).rgb;col+=u_glow*smoothstep(0.5,1.0,col);uv.y+=sin(u_time*5.0)*u_jitter;col*=1.0-(u_signalLoss*abs(sin(uv.y*50.0+u_time*10.0)));if(u_retrace)col*=1.9+u_scanlineIntensity*sin(uv.y*800.0+u_time*10.0);if(u_dotMask)col*=vec3(1.0,0.9+0.1*mod(uv.x*100.0,2.0),0.9+0.1*mod(uv.y*100.0,2.0));col=mix(vec3(dot(col,vec3(0.299,0.587,0.114))),col,1.0-u_desaturation);col=(col-0.5)*u_contrast+0.5;col*=u_brightness;col*=1.0+u_flicker*sin(u_time*60.0);gl_FragColor=vec4(col,1.0);}`;const vs=`attribute vec2 a_position;varying vec2 v_texCoord;void main(){v_texCoord=vec2(a_position.x,1.0-a_position.y);gl_Position=vec4(a_position*2.0-1.0,0,1);}`;const vShader=this.createShader(this.gl.VERTEX_SHADER,vs);const fShader=this.createShader(this.gl.FRAGMENT_SHADER,fs);this.program=this.createProgram(vShader,fShader);this.gl.useProgram(this.program);}renderCRT(){if(!this.sourceCanvas)return;const ctx=this.sourceCanvas.getContext('2d',{willReadFrequently:true});const imageData=ctx.getImageData(0,0,this.sourceCanvas.width,this.sourceCanvas.height);this.gl.bindTexture(this.gl.TEXTURE_2D,this.texture);this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.RGBA,this.gl.RGBA,this.gl.UNSIGNED_BYTE,imageData);this.gl.useProgram(this.program);const u=n=>this.gl.getUniformLocation(this.program,n);this.gl.uniform1f(u("u_time"),performance.now()/1000);this.gl.uniform1f(u("u_barrel"),this.config.barrelDistortion);this.gl.uniform1f(u("u_aberration"),this.config.chromaticAberration);this.gl.uniform1f(u("u_noise"),this.config.staticNoise);this.gl.uniform1f(u("u_tearing"),this.config.horizontalTearing);this.gl.uniform1f(u("u_glow"),this.config.glowBloom);this.gl.uniform1f(u("u_jitter"),this.config.verticalJitter);this.gl.uniform1i(u("u_retrace"),this.config.retraceLines);this.gl.uniform1i(u("u_dotMask"),this.config.dotMask);this.gl.uniform1f(u("u_brightness"),this.config.brightness);this.gl.uniform1f(u("u_contrast"),this.config.contrast);this.gl.uniform1f(u("u_desaturation"),this.config.desaturation);this.gl.uniform1f(u("u_flicker"),this.config.flicker);this.gl.uniform1f(u("u_scanlineIntensity"),this.config.scanlineIntensity);this.gl.uniform1f(u("u_curvature"),this.config.curvature);this.gl.uniform1f(u("u_signalLoss"),this.config.signalLoss);this.gl.drawArrays(this.gl.TRIANGLES,0,6);this.animationFrameId=requestAnimationFrame(()=>this.renderCRT());}start(){if(!this.animationFrameId){this.sourceCanvas.parentNode.insertBefore(this.glcanvas,this.sourceCanvas);this.sourceCanvas.remove();this.renderCRT();}}stop(){if(this.animationFrameId){cancelAnimationFrame(this.animationFrameId);this.animationFrameId=null;this.glcanvas.parentNode.replaceChild(this.sourceCanvas,this.glcanvas);this.sourceCanvas.style.display='';}}forwardEvents(){['click','mousemove','mousedown','mouseup','keydown','keyup'].forEach(t=>this.glcanvas.addEventListener(t,e=>this.sourceCanvas.dispatchEvent(new e.constructor(e.type,e))));}}</script>
+
+<script>
+function initCRT() {
+  var canvas = document.getElementById('crt-canvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  var ctx = canvas.getContext('2d');
+  var imgData = ctx.createImageData(canvas.width, canvas.height);
+  for (var y = 0; y < canvas.height; y++) {
+    var v = (y % 2 === 0) ? 255 : 185;
+    for (var x = 0; x < canvas.width; x++) {
+      var i = (y * canvas.width + x) * 4;
+      imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = v;
+      imgData.data[i+3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  var crt = new CRTFilterWebGL(canvas, {
+    scanlineIntensity:   0.45,
+    staticNoise:         0.004,
+    chromaticAberration: 0.0025,
+    barrelDistortion:    0.012,
+    curvature:           0.015,
+    brightness:          1.0,
+    contrast:            1.05,
+    desaturation:        0.05,
+    flicker:             0.018,
+    signalLoss:          0.025,
+    retraceLines:        true,
+    verticalJitter:      0.0008,
+    glowBloom:           0.003,
+    dotMask:             false,
+    horizontalTearing:   0.00008
+  });
+  crt.start();
+
+  window.addEventListener('resize', function() { crt.stop(); initCRT(); }, { once: true });
+}
+
+initCRT();
 </script>
 </body>
 </html>
