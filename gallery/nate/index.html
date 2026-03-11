@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nate's Workshop Review</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #f78166;
+      --accent4: #d2a8ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --tag-bg: #1f2d3d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: all 0.15s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.08);
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* ── Section titles ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-header .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    /* ── Personas ── */
+    .personas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+
+    .persona-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .persona-card .emoji { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .persona-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .persona-card .role { font-size: 0.75rem; color: var(--accent); margin-bottom: 0.5rem; }
+    .persona-card .pain { font-size: 0.78rem; color: var(--muted); }
+
+    .persona-card .detail {
+      display: none;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .persona-card.open .detail { display: block; }
+
+    /* ── Concepts grid ── */
+    .concepts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .concept {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .concept .tag {
+      background: var(--tag-bg);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      height: fit-content;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .concept .body h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .concept .body p  { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Commands ── */
+    .commands {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .cmd-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.7rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    .cmd-row code {
+      color: var(--accent2);
+      font-size: 0.82rem;
+      flex: 1;
+    }
+
+    .cmd-row .desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: -apple-system, system-ui, sans-serif;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Principles ── */
+    .principles {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .principle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .principle summary {
+      list-style: none;
+      padding: 0.9rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      user-select: none;
+    }
+
+    .principle summary::-webkit-details-marker { display: none; }
+
+    .principle summary .num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent4);
+      background: rgba(210, 168, 255, 0.12);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .principle summary .title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .principle summary .chevron {
+      color: var(--muted);
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+    }
+
+    .principle[open] summary .chevron { transform: rotate(90deg); }
+
+    .principle .body {
+      padding: 0 1.25rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+    }
+
+    .principle .body .analogy {
+      margin-top: 0.5rem;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    /* ── Quiz ── */
+    .quiz {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .q-card .question {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.85rem;
+    }
+
+    .q-card .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .q-card button {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.82rem;
+      padding: 0.55rem 0.9rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .q-card button:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.07);
+    }
+
+    .q-card button.correct {
+      border-color: var(--accent2);
+      background: rgba(63, 185, 80, 0.1);
+      color: var(--accent2);
+    }
+
+    .q-card button.wrong {
+      border-color: var(--accent3);
+      background: rgba(247, 129, 102, 0.1);
+      color: var(--accent3);
+    }
+
+    .q-card .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: none;
+    }
+
+    .q-card.answered .feedback { display: block; }
+
+    /* ── Score bar ── */
+    #score-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    #score-bar span { color: var(--muted); }
+    #score-bar strong { color: var(--accent); font-size: 1.1rem; }
+
+    #reset-btn {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+    }
+
+    #reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="label">Jamf Pro Workshop · Days 1 – 3</div>
+  <h1>Nate's Review Page</h1>
+  <p>Personas · Concepts · Commands · Principles · Quiz</p>
+</header>
+
+<nav>
+  <a href="#personas">Personas</a>
+  <a href="#concepts">Concepts</a>
+  <a href="#commands">Commands</a>
+  <a href="#principles">Principles</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+
+<main>
+
+  <!-- ── Personas ── -->
+  <section id="personas">
+    <div class="section-header">
+      <div class="dot" style="background: #58a6ff;"></div>
+      <h2>Day 1 · Personas</h2>
+    </div>
+    <p style="font-size:0.8rem; color:var(--muted); margin-bottom:1rem;">Click a card to expand pain points.</p>
+    <div class="personas">
+      <div class="persona-card" onclick="this.classList.toggle('open')">
+        <div class="emoji">🏢</div>
+        <h3>Enterprise IT Admin</h3>
+        <div class="role">10,000+ devices</div>
+        <div class="pain">Needs automation at scale</div>
+        <div class="detail">Managing thousands of devices manually isn't possible. Every workflow must scale — bulk enrollment, policy enforcement, zero-touch deployment. Downtime costs real money.</div>
+      </div>
+      <div class="persona-card" onclick="this.classList.toggle('open')">
+        <div class="emoji">🏫</div>
+        <h3>K-12 IT Coordinator</h3>
+        <div class="role">Shared iPads · Multiple schools</div>
+        <div class="pain">Shared device juggling</div>
+        <div class="detail">Devices swap students every period. Profiles must reset cleanly. Budget is tight. Decisions need parent/admin buy-in. Complexity with no extra staff.</div>
+      </div>
+      <div class="persona-card" onclick="this.classList.toggle('open')">
+        <div class="emoji">🔐</div>
+        <h3>Security Analyst</h3>
+        <div class="role">1,000 alerts/day</div>
+        <div class="pain">Signal vs. noise</div>
+        <div class="detail">Alert fatigue is the enemy. Needs reliable device compliance data, fast triage, and automated remediation — not manual ticket queues.</div>
+      </div>
+      <div class="persona-card" onclick="this.classList.toggle('open')">
+        <div class="emoji">🎧</div>
+        <h3>Help Desk Tech</h3>
+        <div class="role">Remote troubleshooting</div>
+        <div class="pain">Can't touch the machine</div>
+        <div class="detail">Resolves issues without physical access. Depends on real-time inventory data and remote commands. Needs Jamf to be the hands they don't have.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Key Concepts ── -->
+  <section id="concepts">
+    <div class="section-header">
+      <div class="dot" style="background: #3fb950;"></div>
+      <h2>Day 2 · Key Concepts</h2>
+    </div>
+    <div class="concepts">
+      <div class="concept">
+        <div class="tag">API</div>
+        <div class="body">
+          <h4>REST API</h4>
+          <p>GET / POST / PUT / DELETE. JSON in, JSON out. Bearer token for auth — get it once, use it everywhere.</p>
+        </div>
+      </div>
+      <div class="concept">
+        <div class="tag">Auth</div>
+        <div class="body">
+          <h4>Bearer Token</h4>
+          <p>POST to <code style="font-size:0.75rem;color:#3fb950;">/api/v1/auth/token</code>, get a token, attach it to every request. Invalidate when done.</p>
+        </div>
+      </div>
+      <div class="concept">
+        <div class="tag">Event</div>
+        <div class="body">
+          <h4>Webhook</h4>
+          <p>A URL that listens. Instead of polling, Jamf calls YOU when something happens — enrollment, policy fail, check-in.</p>
+        </div>
+      </div>
+      <div class="concept">
+        <div class="tag">VM</div>
+        <div class="body">
+          <h4>Virtual Machine</h4>
+          <p>A computer inside your computer. Safe sandbox. Tart runs macOS VMs on Apple Silicon — clone, run, test, reset.</p>
+        </div>
+      </div>
+      <div class="concept">
+        <div class="tag">Build</div>
+        <div class="body">
+          <h4>Packer</h4>
+          <p>Write a template once, build the same VM image every time. Reproducible environments, no drift.</p>
+        </div>
+      </div>
+      <div class="concept">
+        <div class="tag">Format</div>
+        <div class="body">
+          <h4>JSON vs XML</h4>
+          <p>Jamf Pro API uses JSON. Classic API uses XML. Extension Attributes live in the Classic API.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Commands ── -->
+  <section id="commands">
+    <div class="section-header">
+      <div class="dot" style="background: #f78166;"></div>
+      <h2>Day 2 · Commands Cheat Sheet</h2>
+    </div>
+    <div class="commands">
+      <div class="cmd-row">
+        <code>tart clone &lt;source&gt; &lt;name&gt;</code>
+        <span class="desc">Copy a VM image</span>
+      </div>
+      <div class="cmd-row">
+        <code>tart run &lt;name&gt;</code>
+        <span class="desc">Start a VM</span>
+      </div>
+      <div class="cmd-row">
+        <code>tart stop &lt;name&gt;</code>
+        <span class="desc">Shut down a VM</span>
+      </div>
+      <div class="cmd-row">
+        <code>tart ip &lt;name&gt;</code>
+        <span class="desc">Find VM's IP address</span>
+      </div>
+      <div class="cmd-row">
+        <code>curl -X POST .../api/v1/auth/token</code>
+        <span class="desc">Get a Bearer token</span>
+      </div>
+      <div class="cmd-row">
+        <code>curl -H "Authorization: Bearer $TOKEN" ...</code>
+        <span class="desc">Authenticated API call</span>
+      </div>
+      <div class="cmd-row">
+        <code>git checkout -b students/&lt;name&gt;</code>
+        <span class="desc">Create your student branch</span>
+      </div>
+      <div class="cmd-row">
+        <code>git add . && git commit -m "feat: ..."</code>
+        <span class="desc">Stage and commit changes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Principles ── -->
+  <section id="principles">
+    <div class="section-header">
+      <div class="dot" style="background: #d2a8ff;"></div>
+      <h2>Day 3 · 7 Transferable Principles</h2>
+    </div>
+    <div class="principles">
+      <details class="principle">
+        <summary><span class="num">01</span><span class="title">Context Is Everything</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          The quality of your output is determined by the quality of your context. Point the agent to relevant files, explain the why, share constraints upfront.
+          <div class="analogy">Ask a stranger to grab your jacket — they need to know where you live, what it looks like, and where you left it.</div>
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">02</span><span class="title">Planning &gt; Building</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          80% planning, 20% building. The plan IS the work. Execution is just confirmation. Ask the agent to explain its approach before it starts — poke holes in it.
+          <div class="analogy">Look at the blueprint before breaking ground.</div>
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">03</span><span class="title">Share Your Mental Model</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          The agent starts from zero every time. "Here's how I'm thinking about this…" is the fastest path to good output. Transfer your picture of done.
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">04</span><span class="title">Recognize When to Quit</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          Sunk cost is a trap. If the solution is getting more complicated, the agent keeps changing approaches, or something feels off — stop. Starting fresh with better context is faster.
+          <div class="analogy">You took a wrong turn. Turn around now instead of driving further.</div>
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">05</span><span class="title">It's a Conversation, Not a Command</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          You're collaborating, not delegating. Let the agent ask you questions. Ask it what could go wrong. Pair with it like a smart colleague who just joined the project.
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">06</span><span class="title">Review Against Your Plan</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          Open the output. Use it. Click the buttons. Your eyes and judgment are the primary review tool. Compare what's there to what you intended — then ask the agent to find gaps.
+          <div class="analogy">Taste the dish yourself before asking someone else for their opinion.</div>
+        </div>
+      </details>
+      <details class="principle">
+        <summary><span class="num">07</span><span class="title">Compound Your Sessions</span><span class="chevron">▶</span></summary>
+        <div class="body">
+          Distill decisions, tradeoffs, dead ends, and reasoning into COMPOUND.md at the end of every session. The next session starts with all of that context instead of zero.
+          <div class="analogy">A pilot's logbook — not just "good flight" but the route, weather decisions, turbulence, what you'd do differently.</div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ── Quiz ── -->
+  <section id="quiz">
+    <div class="section-header">
+      <div class="dot" style="background: #ffa657;"></div>
+      <h2>Quiz Yourself</h2>
+    </div>
+    <div id="score-bar">
+      <span>Score:</span> <strong id="score">0 / 0</strong>
+      <button id="reset-btn" onclick="resetQuiz()">Reset</button>
+    </div>
+    <div class="quiz" id="quiz-container"></div>
+  </section>
+
+</main>
+
+<footer>
+  Jamf Pro Training Workshop · Day 3 · Nate Bucher · One-shot build
+</footer>
+
+<script>
+  const questions = [
+    {
+      q: "What does a Bearer Token let you do?",
+      options: ["Log in every time you make a request", "Authenticate once and use the token for all subsequent requests", "Encrypt your JSON payload", "Define a webhook endpoint"],
+      correct: 1,
+      feedback: "You POST to /api/v1/auth/token, get a token back, and use it in the Authorization header for every subsequent request. Invalidate it when done."
+    },
+    {
+      q: "Which API format does the Jamf Classic API use?",
+      options: ["JSON", "YAML", "XML", "CSV"],
+      correct: 2,
+      feedback: "The Classic API uses XML. The newer Jamf Pro API uses JSON. Extension Attributes live in the Classic API."
+    },
+    {
+      q: "What is a webhook?",
+      options: ["A way to poll for updates every 5 minutes", "A URL that receives data when something happens", "A VM management tool", "A JSON formatter"],
+      correct: 1,
+      feedback: "A webhook is a URL that listens — instead of you constantly asking for updates, the server calls your URL when an event occurs. Doorbell, not door-checker."
+    },
+    {
+      q: "Which Tart command finds a running VM's IP address?",
+      options: ["tart list", "tart ip <name>", "tart run <name>", "tart locate <name>"],
+      correct: 1,
+      feedback: "tart ip <name> returns the VM's current IP address, which you'd use to SSH in or point Jamf at it."
+    },
+    {
+      q: "Principle #2 says the ratio of planning to building should be roughly:",
+      options: ["50 / 50", "20% planning, 80% building", "80% planning, 20% building", "100% building — iterate fast"],
+      correct: 2,
+      feedback: "80% planning, 20% building. The plan IS the work. If you're spending most of your time watching the agent write code, you skipped the important part."
+    },
+    {
+      q: "What does Packer do?",
+      options: ["Sends API requests", "Compresses VM snapshots", "Builds VM images from a written template", "Manages Jamf policies"],
+      correct: 2,
+      feedback: "Packer takes a template and produces a VM image — same template, same image, every time. Like a cookie cutter."
+    },
+    {
+      q: "The Security Analyst persona's biggest challenge is:",
+      options: ["Running out of storage", "Alert fatigue from 1,000+ alerts/day", "Slow enrollment of new Macs", "Students sharing iPads"],
+      correct: 1,
+      feedback: "The Security Analyst deals with massive alert volume. They need signal vs. noise — fast triage, reliable compliance data, and automated remediation."
+    },
+    {
+      q: "COMPOUND.md is for:",
+      options: ["Project setup and current state (kept lean)", "Rich session history — decisions, tradeoffs, dead ends, reasoning", "Git commit messages", "API credentials"],
+      correct: 1,
+      feedback: "COMPOUND.md captures the full session: what you decided, why, what you rejected, and where you left off. CLAUDE.md stays lean (project setup). These two files work together."
+    }
+  ];
+
+  let answered = new Array(questions.length).fill(null);
+
+  function buildQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    questions.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = `q${i}`;
+
+      const qText = document.createElement('div');
+      qText.className = 'question';
+      qText.textContent = `${i + 1}. ${q.q}`;
+      card.appendChild(qText);
+
+      const opts = document.createElement('div');
+      opts.className = 'options';
+
+      q.options.forEach((opt, j) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.dataset.idx = j;
+        btn.onclick = () => answer(i, j);
+
+        if (answered[i] !== null) {
+          btn.disabled = true;
+          if (j === q.correct) btn.classList.add('correct');
+          else if (j === answered[i]) btn.classList.add('wrong');
+        }
+
+        opts.appendChild(btn);
+      });
+
+      card.appendChild(opts);
+
+      const fb = document.createElement('div');
+      fb.className = 'feedback';
+      fb.textContent = q.feedback;
+      card.appendChild(fb);
+
+      if (answered[i] !== null) card.classList.add('answered');
+
+      container.appendChild(card);
+    });
+    updateScore();
+  }
+
+  function answer(qIdx, optIdx) {
+    if (answered[qIdx] !== null) return;
+    answered[qIdx] = optIdx;
+    const q = questions[qIdx];
+    const card = document.getElementById(`q${qIdx}`);
+    const btns = card.querySelectorAll('button');
+
+    btns.forEach((btn, j) => {
+      btn.disabled = true;
+      if (j === q.correct) btn.classList.add('correct');
+      else if (j === optIdx) btn.classList.add('wrong');
+    });
+
+    card.classList.add('answered');
+    updateScore();
+  }
+
+  function updateScore() {
+    const attempted = answered.filter(a => a !== null).length;
+    const correct = answered.filter((a, i) => a === questions[i].correct).length;
+    document.getElementById('score').textContent = `${correct} / ${attempted}`;
+  }
+
+  function resetQuiz() {
+    answered = new Array(questions.length).fill(null);
+    buildQuiz();
+  }
+
+  buildQuiz();
+</script>
+</body>
+</html>

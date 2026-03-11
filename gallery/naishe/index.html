@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naishe's Workshop Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #fdf6e8;
+      --bg-mid:      #f5ecd4;
+      --bg-card:     #ffffff;
+      --green:       #62b856;
+      --green-dk:    #4a9a3f;
+      --green-lt:    #85cc7a;
+      --green-pale:  rgba(98,184,86,0.1);
+      --text:        #2a3828;
+      --text-mid:    #3d5239;
+      --muted:       rgba(42,56,40,0.42);
+      --beige:       #b8894a;
+      --beige-lt:    #d4a96e;
+      --beige-pale:  rgba(184,137,74,0.1);
+      --border:      rgba(98,184,86,0.18);
+      --border-beige:rgba(184,137,74,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 400;
+      line-height: 1.65;
+      display: flex;
+      flex-direction: column;
+    }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── TOP BAR ── */
+    #topbar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 28px;
+      background: rgba(253,246,232,0.94);
+      border-bottom: 1px solid rgba(98,184,86,0.15);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    .topbar-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ray { animation: glide 7s ease-in-out infinite; transform-origin: center; }
+    @keyframes glide {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      40%      { transform: translateY(-5px) rotate(1.5deg); }
+      70%      { transform: translateY(-2px) rotate(-0.5deg); }
+    }
+    .brand-name {
+      font-family: 'Inter', sans-serif; font-size: 0.82rem;
+      font-weight: 600; color: var(--green-dk); letter-spacing: 0.02em;
+    }
+    #page-title {
+      font-family: 'Inter', sans-serif; font-size: 0.78rem;
+      font-weight: 500; color: var(--muted); letter-spacing: 0.04em;
+    }
+    #page-counter {
+      font-family: 'Inter', sans-serif; font-size: 0.78rem;
+      color: var(--muted); font-weight: 400;
+    }
+
+    /* ── PAGE CONTAINER ── */
+    #pages {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── INDIVIDUAL PAGES ── */
+    .page {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      padding: 0 32px;
+      overflow: hidden;
+    }
+    .page.active { display: flex; }
+
+    /* Page inner scroll area */
+    .page-inner {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 0 16px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(98,184,86,0.2) transparent;
+    }
+    .page-inner::-webkit-scrollbar { width: 4px; }
+    .page-inner::-webkit-scrollbar-track { background: transparent; }
+    .page-inner::-webkit-scrollbar-thumb { background: rgba(98,184,86,0.2); border-radius: 4px; }
+
+    /* Max width centred */
+    .page-content { max-width: 860px; margin: 0 auto; width: 100%; }
+
+    /* ── BOTTOM NAV ── */
+    #bottomnav {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 14px 28px;
+      border-top: 1px solid rgba(98,184,86,0.12);
+      background: rgba(253,246,232,0.94);
+    }
+    .nav-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid rgba(98,184,86,0.25);
+      background: var(--green-pale);
+      color: var(--green-dk);
+      font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s;
+    }
+    .nav-btn:hover { background: rgba(98,184,86,0.2); border-color: var(--green); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+    .dots { display: flex; gap: 7px; align-items: center; }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(98,184,86,0.2);
+      cursor: pointer; transition: all 0.2s; border: none; padding: 0;
+    }
+    .dot.active { background: var(--green); width: 22px; border-radius: 4px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'Inter', sans-serif; font-size: 0.68rem;
+      font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--green);
+      display: block; margin-bottom: 6px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(98,184,86,0.14);
+      border-radius: 16px;
+      box-shadow: 0 1px 6px rgba(42,56,40,0.05), 0 3px 12px rgba(42,56,40,0.04);
+    }
+    .card-accent {
+      background: linear-gradient(135deg, #f0fbed, #f8fdf6);
+      border: 1px solid rgba(98,184,86,0.28);
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(98,184,86,0.07);
+    }
+    .card-beige {
+      background: linear-gradient(135deg, #fdf5e4, #faf0d8);
+      border: 1px solid var(--border-beige);
+      border-radius: 16px;
+    }
+
+    /* ── TAGS ── */
+    .tag {
+      display: inline-block;
+      background: var(--green-pale); border: 1px solid rgba(98,184,86,0.22);
+      color: var(--green-dk); border-radius: 20px;
+      padding: 3px 12px; font-size: 0.7rem; font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .tag-beige {
+      display: inline-block;
+      background: var(--beige-pale); border: 1px solid rgba(184,137,74,0.22);
+      color: var(--beige); border-radius: 20px;
+      padding: 3px 12px; font-size: 0.7rem; font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── CODE BLOCKS ── */
+    .codeblock {
+      background: #1e301c; border: 1px solid rgba(98,184,86,0.18);
+      border-radius: 10px; padding: 14px 16px;
+      font-family: 'Courier New', monospace; font-size: 0.76rem;
+      color: #a8d9a0; overflow-x: auto; line-height: 1.8;
+    }
+    .cmt { color: rgba(168,217,160,0.4); }
+    .kw  { color: #e8c97a; }
+    .str { color: #b8e0b0; }
+
+    /* ── BLOCKQUOTE ── */
+    blockquote {
+      border-left: 2px solid var(--beige-lt); padding-left: 14px;
+      font-style: italic; color: var(--beige);
+      font-family: 'Playfair Display', serif; font-size: 0.92rem;
+    }
+
+    /* ── FLIP CARDS ── */
+    .flip-card { perspective: 900px; cursor: pointer; }
+    .flip-inner {
+      position: relative; width: 100%; height: 140px;
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; padding: 14px; text-align: center;
+    }
+    .flip-front { background: var(--bg-card); border: 1px solid rgba(98,184,86,0.16); box-shadow: 0 1px 5px rgba(42,56,40,0.05); }
+    .flip-back  { background: linear-gradient(135deg,#f0fbed,#f8fdf6); border: 1px solid rgba(98,184,86,0.28); transform: rotateY(180deg); }
+
+    /* ── QUIZ ── */
+    .q-opt {
+      background: var(--bg-card); border: 1px solid rgba(98,184,86,0.14);
+      border-radius: 10px; padding: 9px 15px; cursor: pointer;
+      transition: all 0.18s; text-align: left; width: 100%;
+      color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    }
+    .q-opt:hover:not(:disabled) { border-color: var(--green); background: var(--green-pale); }
+    .q-opt.correct { border-color: var(--green); background: #eef8ec; color: var(--green-dk); }
+    .q-opt.wrong   { border-color: #c0594a; background: #fdf0ee; color: #c0594a; }
+
+    /* ── FLOW STEPS ── */
+    .flow-step {
+      background: var(--green-pale); border: 1px solid rgba(98,184,86,0.2);
+      border-radius: 8px; padding: 8px 13px;
+      font-size: 0.78rem; font-family: 'Inter', sans-serif; color: var(--text-mid);
+    }
+
+    /* ── LOOP STEP ── */
+    .loop-step {
+      border-radius: 12px; padding: 14px; text-align: center;
+      background: var(--green-pale); border: 1px solid rgba(98,184,86,0.18);
+    }
+
+    /* ── BEAT BARS ── */
+    .beat { display: inline-block; width: 3px; border-radius: 2px; background: var(--green); animation: pulse 1.3s ease-in-out infinite; }
+    .beat:nth-child(1){ height:10px; animation-delay:0s; }
+    .beat:nth-child(2){ height:17px; animation-delay:.18s; }
+    .beat:nth-child(3){ height:8px;  animation-delay:.36s; }
+    .beat:nth-child(4){ height:15px; animation-delay:.54s; }
+    .beat:nth-child(5){ height:6px;  animation-delay:.72s; }
+    .beat:nth-child(6){ height:13px; animation-delay:.9s; }
+    @keyframes pulse {
+      0%,100%{ opacity:.3; transform:scaleY(.55); }
+      50%    { opacity:1;  transform:scaleY(1); }
+    }
+
+    /* ── PAGE TRANSITION ── */
+    .page { opacity: 0; transition: opacity 0.25s ease; }
+    .page.active { opacity: 1; }
+
+    /* ── BIG NUM ── */
+    .big-num {
+      font-family: 'Playfair Display', serif; font-size: 5.5rem;
+      font-weight: 900; line-height: 1;
+      color: rgba(98,184,86,0.07);
+      position: absolute; top: -8px; right: 14px;
+      pointer-events: none; user-select: none;
+    }
+
+    /* ── PERSONA GRID ── */
+    .persona-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    @media(max-width:600px){ .persona-row{ grid-template-columns:1fr; } }
+
+    /* ── THANK YOU AVATAR ── */
+    .avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="topbar-brand">
+    <svg class="ray" width="32" height="20" viewBox="0 0 90 55" fill="none">
+      <ellipse cx="34" cy="28" rx="32" ry="15" fill="#62b856" opacity="0.75"/>
+      <ellipse cx="34" cy="28" rx="21" ry="9"  fill="#4a9a3f" opacity="0.6"/>
+      <path d="M66 28 Q80 22 88 34 Q78 30 72 36 Q80 40 88 52 Q76 43 68 39 Q66 34 66 28Z" fill="#62b856" opacity="0.7"/>
+      <circle cx="22" cy="23" r="2.5" fill="#fdf6e8"/>
+      <circle cx="22" cy="33" r="2.5" fill="#fdf6e8"/>
+    </svg>
+    <span class="brand-name">Naishe · Jamf Workshop</span>
+  </div>
+  <span id="page-title"></span>
+  <span id="page-counter"></span>
+</div>
+
+<!-- PAGES -->
+<div id="pages">
+
+  <!-- PAGE 1: HERO -->
+  <div class="page active" data-title="Welcome">
+    <div class="page-inner">
+      <div class="page-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 130px);text-align:center;padding:20px 0">
+        <svg class="ray" width="160" height="120" viewBox="0 0 180 120" fill="none" style="margin-bottom:24px">
+          <ellipse cx="72" cy="60" rx="62" ry="32" fill="#62b856" opacity="0.65"/>
+          <ellipse cx="72" cy="60" rx="44" ry="21" fill="#4a9a3f" opacity="0.55"/>
+          <ellipse cx="58" cy="60" rx="32" ry="16" fill="#3a8030" opacity="0.4"/>
+          <path d="M22 46 Q4 26 10 10 Q26 34 36 45Z" fill="#62b856" opacity="0.5"/>
+          <path d="M22 74 Q4 94 10 110 Q26 86 36 75Z" fill="#62b856" opacity="0.5"/>
+          <path d="M134 60 Q156 52 168 64 Q154 60 146 68 Q155 73 168 88 Q150 76 140 70 Q134 66 134 60Z" fill="#62b856" opacity="0.6"/>
+          <ellipse cx="68" cy="55" rx="18" ry="8" fill="none" stroke="#85cc7a" stroke-width="0.8" opacity="0.3"/>
+          <ellipse cx="68" cy="65" rx="18" ry="8" fill="none" stroke="#85cc7a" stroke-width="0.8" opacity="0.3"/>
+          <circle cx="44" cy="50" r="4" fill="#2a3828"/>
+          <circle cx="44" cy="70" r="4" fill="#2a3828"/>
+          <circle cx="45" cy="49" r="1.5" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="45" cy="69" r="1.5" fill="rgba(255,255,255,0.4)"/>
+        </svg>
+        <span class="section-label" style="margin-bottom:12px">Victoria Falls, Zimbabwe</span>
+        <h1 style="font-size:clamp(2.8rem,7vw,5rem);line-height:1.05;color:var(--text);font-weight:900;margin-bottom:12px">Naishe Rowland</h1>
+        <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;color:var(--green);margin-bottom:16px">Navigator. Learner. Builder.</p>
+        <p style="font-size:0.88rem;color:var(--muted);max-width:400px;line-height:1.7;margin-bottom:24px">3 days. Apple device management, APIs, virtual machines, and AI-native development.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px">
+          <span class="tag">Jamf Pro</span>
+          <span class="tag">REST API</span>
+          <span class="tag">Webhooks</span>
+          <span class="tag">Virtual Machines</span>
+          <span class="tag">Claude Code</span>
+          <span class="tag">Git</span>
+          <span class="tag-beige">Afrobeats</span>
+        </div>
+        <div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap">
+          <div style="text-align:center">
+            <p style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green);line-height:1">3</p>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">Days</p>
+          </div>
+          <div style="width:1px;background:rgba(98,184,86,0.18);align-self:stretch"></div>
+          <div style="text-align:center">
+            <p style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green);line-height:1">4</p>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">Personas Mapped</p>
+          </div>
+          <div style="width:1px;background:rgba(98,184,86,0.18);align-self:stretch"></div>
+          <div style="text-align:center">
+            <p style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green);line-height:1">2</p>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">API Formats</p>
+          </div>
+          <div style="width:1px;background:rgba(98,184,86,0.18);align-self:stretch"></div>
+          <div style="text-align:center">
+            <p style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green);line-height:1">7</p>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">AI Principles</p>
+          </div>
+          <div style="width:1px;background:rgba(98,184,86,0.18);align-self:stretch"></div>
+          <div style="text-align:center">
+            <p style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green);line-height:1">15</p>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">Flashcards</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: OVERVIEW -->
+  <div class="page" data-title="Overview">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">The Journey</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:24px">3 Days at a Glance</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+          <div class="card" style="padding:24px;position:relative;overflow:hidden">
+            <span class="big-num">1</span>
+            <span class="section-label">Day One</span>
+            <h3 style="font-size:1.05rem;color:var(--text);margin:6px 0 8px">Context & Empathy</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">Personas, journey maps, Jamf's full product suite, Git workflow</p>
+          </div>
+          <div class="card" style="padding:24px;position:relative;overflow:hidden">
+            <span class="big-num">2</span>
+            <span class="section-label">Day Two</span>
+            <h3 style="font-size:1.05rem;color:var(--text);margin:6px 0 8px">Technical Foundations</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">VMs, Jamf Pro API, webhooks, event-driven integrations</p>
+          </div>
+          <div class="card" style="padding:24px;position:relative;overflow:hidden">
+            <span class="big-num">3</span>
+            <span class="section-label">Day Three</span>
+            <h3 style="font-size:1.05rem;color:var(--text);margin:6px 0 8px">AI-Native Development</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">Compound Engineering loop with Claude Code</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+          <div style="padding:14px 16px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.18);border-radius:12px">
+            <span class="section-label" style="margin-bottom:6px">Day 1 Highlights</span>
+            <ul style="font-size:0.78rem;color:var(--text-mid);line-height:1.9;list-style:none">
+              <li>◆ 4 Jamf user personas mapped</li>
+              <li>◆ Journey map: Security Analyst</li>
+              <li>◆ Jamf is more than just MDM</li>
+              <li>◆ First branch, commit & PR</li>
+              <li>◆ Discovered roadmap.sh</li>
+            </ul>
+          </div>
+          <div style="padding:14px 16px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.18);border-radius:12px">
+            <span class="section-label" style="margin-bottom:6px">Day 2 Highlights</span>
+            <ul style="font-size:0.78rem;color:var(--text-mid);line-height:1.9;list-style:none">
+              <li>◆ Built a macOS VM from IPSW</li>
+              <li>◆ Auth → GET → PUT → Invalidate</li>
+              <li>◆ Created categories via POST</li>
+              <li>◆ Triggered Smart Group webhook</li>
+              <li>◆ Saw live JSON at webhook.site</li>
+            </ul>
+          </div>
+          <div style="padding:14px 16px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.18);border-radius:12px">
+            <span class="section-label" style="margin-bottom:6px">Day 3 Highlights</span>
+            <ul style="font-size:0.78rem;color:var(--text-mid);line-height:1.9;list-style:none">
+              <li>◆ One-shot vs planned build</li>
+              <li>◆ Compound Engineering loop</li>
+              <li>◆ CLAUDE.md + COMPOUND.md</li>
+              <li>◆ 7 transferable AI principles</li>
+              <li>◆ Built this review page</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-beige" style="padding:16px 20px">
+          <p style="font-size:0.82rem;color:var(--text-mid);line-height:1.75">Use the arrows or keyboard ← → to move between pages. Flashcards flip on click. Quiz tracks your score. Everything you need to revisit the workshop is right here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: DAY 1 -->
+  <div class="page" data-title="Day 1 — Context & Empathy">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">Day One</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:4px">Context & Empathy</h2>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:20px">Understand who you're building for before building anything.</p>
+
+        <div class="card-accent" style="padding:22px 24px;margin-bottom:14px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+            <div>
+              <span class="tag" style="margin-bottom:8px">My Persona</span>
+              <h3 style="font-size:1.3rem;color:var(--text)">Security Analyst</h3>
+            </div>
+            <span style="font-size:2rem">🔐</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <p style="font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Pain Points I Identified</p>
+              <ul style="font-size:0.82rem;color:var(--text-mid);line-height:1.85">
+                <li style="display:flex;gap:7px"><span style="color:var(--green-lt);margin-top:4px">◆</span> Too many notifications — spam & phishing</li>
+                <li style="display:flex;gap:7px"><span style="color:var(--green-lt);margin-top:4px">◆</span> Many outdated devices in the fleet</li>
+                <li style="display:flex;gap:7px"><span style="color:var(--green-lt);margin-top:4px">◆</span> Alert fatigue: signal lost in noise</li>
+              </ul>
+            </div>
+            <div>
+              <p style="font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">My Proposed Solution</p>
+              <p style="font-size:0.82rem;color:var(--text-mid);line-height:1.75">Automated software to filter reports, spam, and phishing after a security vetting process — reducing noise before it reaches the analyst.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="persona-row">
+          <div class="card" style="padding:14px 16px">
+            <p style="font-weight:600;font-size:0.85rem;margin-bottom:3px;color:var(--text)">Enterprise IT Admin</p>
+            <p style="font-size:0.78rem;color:var(--muted)">10,000+ devices. Scale & automation first.</p>
+          </div>
+          <div class="card" style="padding:14px 16px">
+            <p style="font-weight:600;font-size:0.85rem;margin-bottom:3px;color:var(--text)">K-12 IT Coordinator</p>
+            <p style="font-size:0.78rem;color:var(--muted)">Shared iPads, multiple schools. Simplicity.</p>
+          </div>
+          <div class="card" style="padding:14px 16px;border-color:rgba(98,184,86,0.32)">
+            <p style="font-weight:600;font-size:0.85rem;margin-bottom:3px;color:var(--green)">Security Analyst — mine</p>
+            <p style="font-size:0.78rem;color:var(--muted)">1,000 alerts/day. Signal, not noise.</p>
+          </div>
+          <div class="card" style="padding:14px 16px">
+            <p style="font-weight:600;font-size:0.85rem;margin-bottom:3px;color:var(--text)">Help Desk Technician</p>
+            <p style="font-size:0.78rem;color:var(--muted)">Remote troubleshooting. Fast resolution.</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:6px">The Revelation</span>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:10px">I thought Jamf was just "the Mac MDM company." It's a full Apple-focused platform blending device management, security, and identity.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              <span class="tag-beige" style="font-size:0.65rem">Jamf Pro</span>
+              <span class="tag-beige" style="font-size:0.65rem">Jamf Now</span>
+              <span class="tag-beige" style="font-size:0.65rem">Jamf Protect</span>
+              <span class="tag-beige" style="font-size:0.65rem">Jamf Connect</span>
+              <span class="tag-beige" style="font-size:0.65rem">Jamf School</span>
+            </div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:6px">Journey Map</span>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:10px">A visual walkthrough of a user's steps, tools, and pain points. Maps the gap between how things <em>are</em> and how they <em>could</em> be.</p>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text-mid)"><span style="width:20px;height:20px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0">1</span> Trigger event</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text-mid)"><span style="width:20px;height:20px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0">2</span> Tools used</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text-mid)"><span style="width:20px;height:20px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0">3</span> Pain point</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text-mid)"><span style="width:20px;height:20px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0">4</span> Opportunity</div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:6px">Git Exercise</span>
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px">Branch → file → commit → push → PR into main.</p>
+            <div class="codeblock" style="font-size:0.72rem;margin-bottom:8px">
+              <span class="kw">branch:</span> naishe<br/>
+              <span class="kw">file:</span>   Students/naishe.txt<br/>
+              <span class="kw">animal:</span> Stingray 🌊
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              <span class="tag" style="font-size:0.63rem">git checkout -b</span>
+              <span class="tag" style="font-size:0.63rem">git add</span>
+              <span class="tag" style="font-size:0.63rem">git commit</span>
+              <span class="tag" style="font-size:0.63rem">git push</span>
+              <span class="tag" style="font-size:0.63rem">gh pr create</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: DAY 2 -->
+  <div class="page" data-title="Day 2 — Technical Foundations">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">Day Two</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:4px">Technical Foundations</h2>
+        <div style="margin-bottom:20px">
+          <blockquote>"The persona exercise from Day 1 kept making everything on Day 2 make more sense."</blockquote>
+          <p style="font-size:0.73rem;color:var(--muted);margin-top:6px">What clicked most: Personas</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:4px">Block 2</span>
+            <h3 style="font-size:1rem;color:var(--text);margin-bottom:6px">Virtual Machines</h3>
+            <blockquote style="font-size:0.82rem;margin-bottom:8px">"A mini-house inside a house."</blockquote>
+            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">Runs its own OS using your hardware. Reset, snapshot, or delete — no host impact.</p>
+            <div class="codeblock" style="font-size:0.7rem">CPU: 4 cores · RAM: 8 GB<br/>Disk: 50 GB · macOS IPSW</div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:4px">Block 3</span>
+            <h3 style="font-size:1rem;color:var(--text);margin-bottom:6px">Jamf Pro API</h3>
+            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">Client → waiter (API) → kitchen (server) → data back. Two formats coexist:</p>
+            <div class="codeblock" style="font-size:0.7rem">
+              <span class="cmt"># Modern — JSON</span><br/>
+              <span class="kw">POST</span> /api/v1/auth/token<br/>
+              <span class="kw">GET</span>  /api/v1/computers-inventory<br/><br/>
+              <span class="cmt"># Classic — XML</span><br/>
+              <span class="kw">PUT</span>  /JSSResource/computers/id/:id
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card" style="padding:20px 24px">
+            <span class="section-label" style="margin-bottom:4px">Block 4 — Webhooks</span>
+            <h3 style="font-size:1rem;color:var(--text);margin-bottom:8px">Push vs Pull</h3>
+            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:12px">
+              <strong style="color:var(--text)">Polling</strong> = "Are we there yet?" every few seconds.<br/>
+              <strong style="color:var(--text)">Pushing</strong> = "I'll ring your doorbell when someone arrives."
+            </p>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:7px"><span class="flow-step">Update EA via API</span></div>
+              <div style="padding-left:12px;font-size:0.75rem;color:var(--green)">↓</div>
+              <div style="display:flex;align-items:center;gap:7px"><span class="flow-step">Computer joins Smart Group</span></div>
+              <div style="padding-left:12px;font-size:0.75rem;color:var(--green)">↓</div>
+              <div style="display:flex;align-items:center;gap:7px"><span class="flow-step">Jamf fires the webhook</span></div>
+              <div style="padding-left:12px;font-size:0.75rem;color:var(--green)">↓</div>
+              <div style="display:flex;align-items:center;gap:7px"><span class="flow-step">JSON payload at webhook.site</span></div>
+            </div>
+            <p style="font-size:0.73rem;color:rgba(98,184,86,0.55)">Event-driven integration in action.</p>
+          </div>
+          <div class="card" style="padding:20px 24px">
+            <span class="section-label" style="margin-bottom:4px">API Token Lifecycle</span>
+            <h3 style="font-size:1rem;color:var(--text);margin-bottom:10px">Authenticate → Work → Invalidate</h3>
+            <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">Always follow this pattern — treat tokens like temporary badges, not permanent keys.</p>
+            <div class="codeblock" style="font-size:0.68rem">
+<span class="cmt"># Step 1 — Get token</span>
+<span class="kw">POST</span> /api/v1/auth/token
+
+<span class="cmt"># Step 2 — Do your work</span>
+<span class="kw">GET</span>  /api/v1/computers-inventory
+<span class="kw">PUT</span>  /JSSResource/computers/id/:id
+
+<span class="cmt"># Step 3 — Invalidate when done</span>
+<span class="kw">POST</span> /api/v1/auth/invalidate-token</div>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:8px">Like logging out after a session. If someone finds your token in terminal history, it's already dead.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: DAY 3 -->
+  <div class="page" data-title="Day 3 — AI-Native Development">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">Day Three</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:4px">AI-Native Development</h2>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:20px">Claude Code + the Compound Engineering loop.</p>
+
+        <div class="card" style="padding:20px 24px;margin-bottom:14px">
+          <span class="section-label" style="margin-bottom:12px">The Framework</span>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+            <div class="loop-step">
+              <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--green);margin-bottom:5px">Plan</p>
+              <p style="font-size:0.73rem;color:var(--muted)">Define requirements. Gather context. Surface unknowns.</p>
+            </div>
+            <div class="loop-step">
+              <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--green);margin-bottom:5px">Work</p>
+              <p style="font-size:0.73rem;color:var(--muted)">Execute with AI. Stay within the plan.</p>
+            </div>
+            <div class="loop-step">
+              <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--green);margin-bottom:5px">Review</p>
+              <p style="font-size:0.73rem;color:var(--muted)">You evaluate first. Ask the agent for gaps.</p>
+            </div>
+            <div class="loop-step">
+              <p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--green);margin-bottom:5px">Compound</p>
+              <p style="font-size:0.73rem;color:var(--muted)">Distil into COMPOUND.md. Next session inherits it.</p>
+            </div>
+          </div>
+          <div style="background:var(--beige-pale);border:1px solid var(--border-beige);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px">
+            <div style="display:flex;align-items:flex-end;gap:3px;flex-shrink:0">
+              <span class="beat"></span><span class="beat"></span><span class="beat"></span>
+              <span class="beat"></span><span class="beat"></span><span class="beat"></span>
+            </div>
+            <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:0.88rem;color:var(--beige);line-height:1.6">Afrobeats runs on rhythm and call-and-response. So does compound engineering — each loop you call, the next one responds with more.</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:8px">CLAUDE.md vs COMPOUND.md</span>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="padding:10px 12px;background:var(--green-pale);border:1px solid rgba(98,184,86,0.2);border-radius:8px">
+                <p style="font-size:0.75rem;font-weight:600;color:var(--green-dk);margin-bottom:3px">CLAUDE.md</p>
+                <p style="font-size:0.72rem;color:var(--muted);line-height:1.6">Lean project setup — structure, current state. Claude reads this first every session. Keep it short.</p>
+              </div>
+              <div style="padding:10px 12px;background:var(--beige-pale);border:1px solid rgba(184,137,74,0.2);border-radius:8px">
+                <p style="font-size:0.75rem;font-weight:600;color:var(--beige);margin-bottom:3px">COMPOUND.md</p>
+                <p style="font-size:0.72rem;color:var(--muted);line-height:1.6">Rich session history — decisions, tradeoffs, dead ends, discoveries. Context accumulates here.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:8px">Warning Signs — When to Quit</span>
+            <ul style="font-size:0.75rem;color:var(--text-mid);line-height:1.9;list-style:none">
+              <li style="display:flex;gap:7px;padding:4px 0;border-bottom:1px solid rgba(42,56,40,0.06)"><span style="color:#c0594a;flex-shrink:0">✕</span> Solution keeps growing, harder to follow</li>
+              <li style="display:flex;gap:7px;padding:4px 0;border-bottom:1px solid rgba(42,56,40,0.06)"><span style="color:#c0594a;flex-shrink:0">✕</span> Agent repeats itself or forgets details</li>
+              <li style="display:flex;gap:7px;padding:4px 0;border-bottom:1px solid rgba(42,56,40,0.06)"><span style="color:#c0594a;flex-shrink:0">✕</span> "Actually, let's try..." keeps appearing</li>
+              <li style="display:flex;gap:7px;padding:4px 0;border-bottom:1px solid rgba(42,56,40,0.06)"><span style="color:#c0594a;flex-shrink:0">✕</span> You can't explain what Claude is doing</li>
+              <li style="display:flex;gap:7px;padding:4px 0"><span style="color:#c0594a;flex-shrink:0">✕</span> Your gut says something is off</li>
+            </ul>
+            <p style="font-size:0.7rem;color:var(--muted);margin-top:8px;font-style:italic">Restarting with better context is faster than pushing through a bad path.</p>
+          </div>
+        </div>
+        <div class="card-beige" style="padding:20px 24px">
+          <span class="section-label" style="margin-bottom:10px">7 Transferable Principles</span>
+          <ul style="font-size:0.82rem;color:var(--text-mid);list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0">
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1)"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">1</span>Context is everything</li>
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1);padding-left:16px"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">2</span>Planning &gt; building</li>
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1)"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">3</span>Share your mental model</li>
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1);padding-left:16px"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">4</span>Review against your plan</li>
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1)"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">5</span>Recognise when to quit</li>
+            <li style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(184,137,74,0.1);padding-left:16px"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">6</span>It's a conversation</li>
+            <li style="display:flex;gap:10px;padding:7px 0;grid-column:1/-1"><span style="color:var(--green);font-weight:700;font-family:'Playfair Display',serif;width:16px;flex-shrink:0">7</span>Compound your sessions — distil so the next one inherits everything</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: FLASHCARDS -->
+  <div class="page" data-title="Flashcards">
+    <div class="page-inner">
+      <div class="page-content">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px">
+          <div>
+            <span class="section-label">Study</span>
+            <h2 style="font-size:1.9rem;color:var(--text)">Flashcards</h2>
+          </div>
+          <p id="flip-counter" style="font-size:0.78rem;color:var(--muted);font-family:'Inter',sans-serif;padding-bottom:4px">0 / 15 revealed</p>
+        </div>
+        <div style="height:4px;background:rgba(98,184,86,0.1);border-radius:4px;margin-bottom:18px;overflow:hidden">
+          <div id="flip-bar" style="height:100%;background:var(--green);border-radius:4px;width:0%;transition:width 0.3s"></div>
+        </div>
+        <div id="card-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px"></div>
+        <div style="display:flex;gap:10px">
+          <button onclick="shuffleCards()" style="padding:7px 16px;border-radius:8px;font-size:0.78rem;font-weight:500;background:var(--green-pale);border:1px solid rgba(98,184,86,0.22);color:var(--green-dk);cursor:pointer;font-family:'Inter',sans-serif">Shuffle</button>
+          <button onclick="resetCards()"   style="padding:7px 16px;border-radius:8px;font-size:0.78rem;font-weight:500;background:rgba(42,56,40,0.05);border:1px solid rgba(42,56,40,0.12);color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif">Reset All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 7: QUIZ -->
+  <div class="page" data-title="Quiz">
+    <div class="page-inner">
+      <div class="page-content">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px">
+          <div>
+            <span class="section-label">Test yourself</span>
+            <h2 style="font-size:1.9rem;color:var(--text)">Quiz</h2>
+          </div>
+          <p id="quiz-prog-label" style="font-size:0.78rem;color:var(--muted);font-family:'Inter',sans-serif;padding-bottom:4px"></p>
+        </div>
+        <div style="height:4px;background:rgba(98,184,86,0.1);border-radius:4px;margin-bottom:18px;overflow:hidden">
+          <div id="quiz-prog-bar" style="height:100%;background:var(--green);border-radius:4px;width:0%;transition:width 0.3s"></div>
+        </div>
+        <div class="card" style="padding:24px 28px;max-width:620px">
+          <div id="quiz-wrap"></div>
+          <div id="quiz-done" class="hidden" style="text-align:center;margin-top:12px">
+            <p style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--green);margin-bottom:6px" id="q-score"></p>
+            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px" id="q-msg"></p>
+            <button onclick="restartQuiz()" style="padding:9px 22px;border-radius:9px;font-size:0.82rem;font-weight:500;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);color:var(--green-dk);cursor:pointer;font-family:'Inter',sans-serif">Try Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 8: CHEAT SHEET -->
+  <div class="page" data-title="Cheat Sheet">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">Reference</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:4px">Cheat Sheet</h2>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:20px">Copy and go.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:8px">Git</span>
+            <div class="codeblock" style="font-size:0.7rem">
+<span class="cmt"># New branch</span>
+<span class="kw">git</span> checkout -b <span class="str">your-name</span>
+
+<span class="cmt"># Stage & commit</span>
+<span class="kw">git</span> add <span class="str">file.txt</span>
+<span class="kw">git</span> commit -m <span class="str">"message"</span>
+
+<span class="cmt"># Push & PR</span>
+<span class="kw">git</span> push -u origin <span class="str">branch</span>
+<span class="kw">gh</span> pr create --base main</div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:8px">Claude Code</span>
+            <div class="codeblock" style="font-size:0.7rem">
+<span class="cmt"># Start Claude</span>
+<span class="kw">claude</span>
+
+<span class="cmt"># Quick question</span>
+<span class="kw">claude</span> <span class="str">"question here"</span>
+
+<span class="cmt"># Slash commands</span>
+<span class="kw">/init</span>      <span class="cmt">→ creates CLAUDE.md</span>
+<span class="kw">/plan</span>      <span class="cmt">→ plan mode</span>
+<span class="kw">/compound</span>  <span class="cmt">→ COMPOUND.md</span>
+
+Shift+Tab  <span class="cmt">→ cycle modes</span>
+Ctrl+C     <span class="cmt">→ stop</span></div>
+          </div>
+          <div class="card" style="padding:18px 20px">
+            <span class="section-label" style="margin-bottom:8px">Terminal Basics</span>
+            <div class="codeblock" style="font-size:0.7rem">
+<span class="cmt"># Navigate directories</span>
+<span class="kw">cd</span> ~/Documents/GitHub/learning-jamf-student
+<span class="kw">ls</span>          <span class="cmt"># list files</span>
+<span class="kw">pwd</span>         <span class="cmt"># where am I?</span>
+
+<span class="cmt"># Create / view files</span>
+<span class="kw">mkdir</span> folder-name
+<span class="kw">cat</span> filename.txt
+
+<span class="cmt"># JSON pretty-print with jq</span>
+curl ... | <span class="kw">jq</span> .
+curl ... | <span class="kw">jq</span> <span class="str">'.results[0].name'</span></div>
+          </div>
+          <div class="card" style="padding:18px 20px;grid-column:1/-1">
+            <span class="section-label" style="margin-bottom:8px">Jamf Pro API</span>
+            <div class="codeblock" style="font-size:0.7rem">
+<span class="cmt"># 1. Get token</span>
+<span class="kw">TOKEN</span>=$(curl -s -u <span class="str">"user:pass"</span> -X POST <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/token"</span> | jq -r <span class="str">'.token'</span>)
+
+<span class="cmt"># 2. List computers</span>
+curl -s -H <span class="str">"Authorization: Bearer $TOKEN"</span> <span class="str">"https://projsadp.jamfcloud.com/api/v1/computers-inventory"</span> | jq .
+
+<span class="cmt"># 3. Update Extension Attribute (Classic API — XML)</span>
+curl -X PUT -H <span class="str">"Authorization: Bearer $TOKEN"</span> -H <span class="str">"Content-Type: application/xml"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_ID"</span> \
+  -d <span class="str">'&lt;computer&gt;&lt;extension_attributes&gt;&lt;extension_attribute&gt;&lt;id&gt;1&lt;/id&gt;&lt;value&gt;YourName&lt;/value&gt;&lt;/extension_attribute&gt;&lt;/extension_attributes&gt;&lt;/computer&gt;'</span>
+
+<span class="cmt"># 4. Invalidate token</span>
+curl -X POST -H <span class="str">"Authorization: Bearer $TOKEN"</span> <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 9: THANK YOU -->
+  <div class="page" data-title="Thank You">
+    <div class="page-inner">
+      <div class="page-content">
+        <span class="section-label">With gratitude</span>
+        <h2 style="font-size:1.9rem;color:var(--text);margin-bottom:4px">Thank You</h2>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:20px">This workshop wouldn't have been what it was without these people.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+          <div class="card-beige" style="padding:20px 22px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+              <div class="avatar" style="background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);color:var(--green)">K</div>
+              <div>
+                <p style="font-weight:600;font-size:0.92rem;color:var(--text)">Kelly</p>
+                <span class="section-label" style="font-size:0.6rem;margin-bottom:0">Facilitator</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7">For setting the tone on Day 1 and making the room feel like a safe place to ask questions and explore freely.</p>
+          </div>
+          <div class="card-beige" style="padding:20px 22px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+              <div class="avatar" style="background:var(--beige-pale);border:1px solid rgba(184,137,74,0.25);color:var(--beige)">R</div>
+              <div>
+                <p style="font-weight:600;font-size:0.92rem;color:var(--text)">Rob</p>
+                <span class="section-label" style="font-size:0.6rem;margin-bottom:0">Facilitator</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7">For making the technical side approachable — turning APIs and infrastructure into something that actually clicked.</p>
+          </div>
+          <div class="card-beige" style="padding:20px 22px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+              <div class="avatar" style="background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);color:var(--green)">J</div>
+              <div>
+                <p style="font-weight:600;font-size:0.92rem;color:var(--text)">Josh</p>
+                <span class="section-label" style="font-size:0.6rem;margin-bottom:0">Facilitator</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7">For the energy and encouragement throughout — always ready to help and never making anyone feel behind.</p>
+          </div>
+          <div class="card-beige" style="padding:20px 22px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+              <div class="avatar" style="background:var(--beige-pale);border:1px solid rgba(184,137,74,0.25);color:var(--beige)">N</div>
+              <div>
+                <p style="font-weight:600;font-size:0.92rem;color:var(--text)">Nate</p>
+                <span class="section-label" style="font-size:0.6rem;margin-bottom:0">Facilitator</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.7">For Day 3 and Claude Code — making AI feel like a real tool, not just a trick. The compound engineering mindset will stick.</p>
+          </div>
+        </div>
+        <div class="card" style="padding:20px 24px;text-align:center">
+          <blockquote style="font-size:1rem;max-width:420px;margin:0 auto;border-left:none;padding-left:0;color:var(--beige)">"Good teachers don't just share knowledge — they change how you think."</blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #pages -->
+
+<!-- BOTTOM NAV -->
+<div id="bottomnav">
+  <button class="nav-btn" id="btn-prev" onclick="goTo(cur-1)" disabled>&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="goTo(cur+1)">&#8594;</button>
+</div>
+
+<script>
+// ── PAGE NAV ──────────────────────────────────────────────────
+const pages = document.querySelectorAll('.page');
+const dotsEl = document.getElementById('dots');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const pageTitle = document.getElementById('page-title');
+const pageCounter = document.getElementById('page-counter');
+let cur = 0;
+
+function buildDots() {
+  dotsEl.innerHTML = '';
+  pages.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i===cur ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+}
+
+function goTo(n) {
+  if (n < 0 || n >= pages.length) return;
+  pages[cur].classList.remove('active');
+  cur = n;
+  pages[cur].classList.add('active');
+  buildDots();
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === pages.length - 1;
+  pageTitle.textContent = pages[cur].dataset.title || '';
+  pageCounter.textContent = `${cur + 1} / ${pages.length}`;
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(cur + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(cur - 1);
+});
+
+buildDots();
+goTo(0);
+
+// ── FLASHCARDS ────────────────────────────────────────────────
+const terms = [
+  { t: "MDM",                d: "Mobile Device Management — managing many devices from one place: pushing settings, installing apps, enforcing security rules." },
+  { t: "API",                d: "A way for software to talk to software. Client → waiter (API) → kitchen (server) → data back." },
+  { t: "REST",               d: "A style of API: GET (read), POST (create), PUT (update), DELETE (remove) over the web." },
+  { t: "JSON",               d: 'Structured data using curly braces. Like a labelled form: {"name": "Naishe", "role": "student"}' },
+  { t: "Bearer Token",       d: "Proof you've logged in. Like a wristband — show ID once at the door, flash it everywhere else." },
+  { t: "Webhook",            d: "A URL that receives data when something happens. Like a doorbell — it rings when someone arrives." },
+  { t: "Virtual Machine",    d: "A computer inside a computer. A mini-house inside a house — its own OS, safe to reset or delete." },
+  { t: "Persona",            d: "A fictional user representing a real type. Day 1: Enterprise IT Admin, K-12 Coordinator, Security Analyst, Help Desk Tech." },
+  { t: "Journey Map",        d: "A visual walkthrough of a user's workflow — steps, tools, pain points, and opportunities to improve." },
+  { t: "Polling vs Pushing", d: "Polling = 'Are we there yet?' Pushing = the system tells you. Webhooks are pushing." },
+  { t: "Context (AI)",       d: "Everything the agent knows about what you're trying to do. More context = better output." },
+  { t: "Compound Engineering",d:"Plan → Work → Review → Compound. Each session distils learnings so the next one starts smarter." },
+  { t: "Hallucination",      d: "When the agent says something that sounds right but isn't. It's guessing confidently and doesn't know it's wrong." },
+  { t: "Context Window",     d: "How much the agent can hold at once. Like a whiteboard — fill it up and older stuff gets erased." },
+  { t: "Integration",        d: "Code that makes two systems talk automatically — like a cart talking to payment, payment talking to shipping." },
+];
+
+let cards = [...terms];
+let flipped = cards.map(() => false);
+
+function renderCards() {
+  document.getElementById('card-grid').innerHTML = cards.map((c, i) => `
+    <div class="flip-card ${flipped[i] ? 'flipped' : ''}" onclick="flip(${i})">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div>
+            <p style="font-size:0.65rem;color:rgba(42,56,40,0.22);margin-bottom:6px;font-family:'Inter',sans-serif">tap to reveal</p>
+            <p style="font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--green)">${c.t}</p>
+          </div>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.73rem;color:var(--text-mid);line-height:1.55;font-family:'Inter',sans-serif">${c.d}</p>
+        </div>
+      </div>
+    </div>`).join('');
+  const revealed = flipped.filter(Boolean).length;
+  const total = cards.length;
+  const counter = document.getElementById('flip-counter');
+  const bar = document.getElementById('flip-bar');
+  if (counter) counter.textContent = `${revealed} / ${total} revealed`;
+  if (bar) bar.style.width = `${(revealed/total)*100}%`;
+}
+function flip(i)       { flipped[i] = !flipped[i]; renderCards(); }
+function shuffleCards(){ cards = [...cards].sort(() => Math.random()-0.5); flipped = cards.map(()=>false); renderCards(); }
+function resetCards()  { flipped = cards.map(()=>false); renderCards(); }
+renderCards();
+
+// ── QUIZ ──────────────────────────────────────────────────────
+const qs = [
+  { q: "What did Naishe discover about Jamf on Day 1?",
+    opts: ["It's only for iPads","It's a full Apple platform — more than just MDM","It's the same as Microsoft Intune","It only manages security"], a:1 },
+  { q: "Which persona did Naishe map on Day 1?",
+    opts: ["Help Desk Technician","K-12 IT Coordinator","Security Analyst","Enterprise IT Admin"], a:2 },
+  { q: "In the API analogy, what is the API?",
+    opts: ["The kitchen","The food","The waiter","The menu"], a:2 },
+  { q: "How did Naishe describe a Virtual Machine?",
+    opts: ["A cloud server","A mini-house inside a house","A Docker container","A backup drive"], a:1 },
+  { q: "Which HTTP verb do you use to UPDATE a resource?",
+    opts: ["GET","POST","DELETE","PUT"], a:3 },
+  { q: "What is a webhook best described as?",
+    opts: ["A polling loop","A doorbell that rings when something happens","A database trigger","A login page"], a:1 },
+  { q: "What comes after Review in the Compound Engineering loop?",
+    opts: ["Plan","Work","Compound","Deploy"], a:2 },
+  { q: "What is a Bearer Token like?",
+    opts: ["A password typed every time","A wristband after showing ID once","A QR code","A username"], a:1 },
+  { q: "Which Jamf API format uses XML?",
+    opts: ["Modern API (/api/v1/)","Classic API (/JSSResource/)","Both","Neither"], a:1 },
+  { q: "What does 'compounding' a session mean?",
+    opts: ["Deleting old code","Distilling decisions & discoveries so the next session inherits them","Running tests","Pushing to GitHub"], a:1 },
+  { q: "What is CLAUDE.md used for?",
+    opts: ["Storing all session history","Lean project setup Claude reads at the start of every session","A list of todos","Tracking bugs"], a:1 },
+  { q: "What tool did Naishe discover on Day 1 as a learning resource?",
+    opts: ["Stack Overflow","GitHub Desktop","roadmap.sh","DaVinci Resolve"], a:2 },
+];
+
+let qcur = 0, score = 0;
+
+function renderQuiz() {
+  const wrap = document.getElementById('quiz-wrap');
+  const end  = document.getElementById('quiz-done');
+  const progLabel = document.getElementById('quiz-prog-label');
+  const progBar   = document.getElementById('quiz-prog-bar');
+  if (progLabel) progLabel.textContent = qcur < qs.length ? `${qcur + 1} / ${qs.length}` : `${qs.length} / ${qs.length}`;
+  if (progBar)   progBar.style.width = `${Math.min((qcur / qs.length) * 100, 100)}%`;
+  end.classList.add('hidden');
+  if (qcur >= qs.length) {
+    wrap.innerHTML = '';
+    end.classList.remove('hidden');
+    const pct = Math.round(score/qs.length*100);
+    document.getElementById('q-score').textContent = `${score} / ${qs.length} — ${pct}%`;
+    document.getElementById('q-msg').textContent =
+      pct>=90 ? 'Stingray-level navigation — flawless.' :
+      pct>=70 ? "Solid! A few more laps and you'll be gliding." :
+                'Keep practising — flashcards first, then try again.';
+    return;
+  }
+  const q = qs[qcur];
+  wrap.innerHTML = `
+    <p style="font-size:0.7rem;color:var(--muted);font-family:'Inter',sans-serif;margin-bottom:4px">Question ${qcur+1} of ${qs.length}</p>
+    <p style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);margin-bottom:16px">${q.q}</p>
+    <div style="display:flex;flex-direction:column;gap:7px" id="opts">
+      ${q.opts.map((o,i)=>`<button class="q-opt" onclick="pick(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="fb" class="hidden" style="margin-top:10px;font-size:0.82rem;font-family:'Inter',sans-serif"></div>
+    <button id="nxt" class="hidden" style="margin-top:14px;padding:8px 20px;border-radius:8px;font-size:0.78rem;font-weight:500;background:var(--green-pale);border:1px solid rgba(98,184,86,0.25);color:var(--green-dk);cursor:pointer;font-family:'Inter',sans-serif" onclick="nextQ()">
+      ${qcur+1===qs.length ? 'See Results' : 'Next →'}
+    </button>`;
+}
+
+function pick(i) {
+  const q = qs[qcur];
+  document.querySelectorAll('.q-opt').forEach((b,idx) => {
+    b.disabled = true;
+    if (idx===q.a) b.classList.add('correct');
+    else if (idx===i) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb');
+  fb.classList.remove('hidden');
+  if (i===q.a){ score++; fb.textContent='Correct!'; fb.style.color='var(--green)'; }
+  else { fb.textContent=`Not quite — "${q.opts[q.a]}"`; fb.style.color='#c0594a'; }
+  document.getElementById('nxt').classList.remove('hidden');
+}
+function nextQ()     { qcur++; renderQuiz(); }
+function restartQuiz(){ qcur=0; score=0; renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>
