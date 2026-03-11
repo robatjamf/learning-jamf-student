@@ -6,11 +6,23 @@
   <title>MCRI Workshop March 4-6 2026</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: "Permanent Marker", "Segoe Print", "Comic Sans MS", cursive, sans-serif;
       background: #151515;
       color: #e5e5e5;
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background with fade */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(21, 21, 21, 0.8), rgba(21, 21, 21, 0.8)), 
+                  url('img/fallsbg.jpg') no-repeat center center;
+      background-size: cover;
+      z-index: -1;
     }
 
     /* Lock screen */
@@ -29,6 +41,7 @@
       font-weight: 600;
       color: #999;
       margin-bottom: 1.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     #lock input {
       font-size: 1.1rem;
@@ -63,6 +76,7 @@
       border-radius: 10px;
       cursor: pointer;
       transition: transform 0.1s;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     #lock button:hover { background: #444; transform: scale(1.04); }
     #lock button:active { transform: scale(0.97); }
@@ -77,77 +91,92 @@
     /* Gallery */
     #gallery {
       display: none;
-      padding: 3rem 2rem;
-      max-width: 900px;
+      padding: 4rem 2rem;
+      max-width: 1200px;
       margin: 0 auto;
     }
     .header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 4rem;
     }
     .header h1 {
-      font-size: 1.8rem;
+      font-size: 3rem;
       font-weight: 700;
-      color: #e5e5e5;
+      color: #fff;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      letter-spacing: -0.02em;
     }
 
-    /* Student sites section */
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      text-align: center;
-      color: #666;
-      margin-bottom: 1rem;
-    }
+    /* Polaroid Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 3rem;
+      padding: 2rem;
     }
-    .card {
-      display: block;
-      border-radius: 14px;
-      padding: 1.5rem 1rem;
-      text-align: center;
+
+    .polaroid {
+      background: #fff;
+      padding: 15px 15px 40px 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       text-decoration: none;
-      color: #fff;
-      font-weight: 600;
-      transition: transform 0.15s;
+      color: #333;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
-    .card:hover { transform: translateY(-3px) rotate(-1deg); }
-    .card:active { transform: scale(0.97); }
-    .card .initial {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.2);
-      margin: 0 auto 0.6rem;
+
+    .polaroid:nth-child(odd) { transform: rotate(-3deg); }
+    .polaroid:nth-child(even) { transform: rotate(3deg); }
+    .polaroid:nth-child(3n) { transform: rotate(5deg); }
+    .polaroid:nth-child(3n+1) { transform: rotate(-5deg); }
+
+    .polaroid:hover {
+      transform: scale(1.1) rotate(0deg) !important;
+      z-index: 10;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: #eee;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
-      font-weight: 700;
+      margin-bottom: 15px;
+      overflow: hidden;
+      border: 1px solid #ddd;
     }
-    .card .name { font-size: 1.05rem; }
-    .card .label {
-      font-size: 0.75rem;
-      opacity: 0.7;
-      margin-top: 0.2rem;
-      font-weight: 500;
+
+    .photo-placeholder span {
+      font-size: 4rem;
+      opacity: 0.2;
+    }
+
+    .name {
+      font-size: 1.4rem;
+      text-align: center;
+      color: #333;
+      margin-top: 10px;
     }
 
     .footer {
       text-align: center;
-      margin-top: 3rem;
-      color: #444;
-      font-size: 0.8rem;
-      font-weight: 500;
+      margin-top: 5rem;
+      color: #999;
+      font-size: 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
+
+    @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
   </style>
 </head>
 <body>
+  <div class="bg-overlay"></div>
+
   <div id="lock">
     <h2>Enter password</h2>
     <input type="password" id="pin" placeholder="Password" autofocus>
@@ -157,10 +186,9 @@
 
   <div id="gallery">
     <div class="header">
-      <h1>MCRI Workshop March 4-6 2026</h1>
+      <h1>MCRI Showcase 2026</h1>
     </div>
 
-    <div class="section-label">Sites</div>
     <div class="grid"></div>
 
     <div class="footer">Matter Career Readiness Institute</div>
@@ -168,32 +196,30 @@
 
   <script>
     var students = [
-      { name: 'Amanda', href: 'amanda/index.html', bg: '#f43f5e' },
-      { name: 'Crown', href: 'crown/index.html', bg: '#f97316' },
-      { name: 'Lucile', href: 'lucile/index.html', bg: '#10b981' },
-      { name: 'Naishe', href: 'naishe/index.html', bg: '#f97316' },
-      { name: 'Nate', href: 'nate/index.html', bg: '#10b981' },
-      { name: 'Octavia', href: 'octavia/index.html', bg: '#8b5cf6' },
-      { name: 'Pride', href: 'pride/index.html', bg: '#eab308' },
-      { name: 'Prosperity', href: 'prosperity/index.html', bg: '#06b6d4' },
-      { name: 'Ron', href: 'ron/index.html', bg: '#3b82f6' },
-      { name: 'Sarah', href: 'sarah/index.html', bg: '#ec4899' },
-      { name: 'Sean', href: 'sean/index.html', bg: '#14b8a6' },
-      { name: 'Shine', href: 'shine/index.html', bg: '#a855f7' },
-      { name: 'Tana', href: 'tana/index.html', bg: '#ef4444' },
-      { name: 'Wadzie', href: 'wadzie/index.html', bg: '#22c55e' }
+      { name: 'Amanda', href: 'amanda/index.html' },
+      { name: 'Crown', href: 'crown/index.html' },
+      { name: 'Lucile', href: 'lucile/index.html' },
+      { name: 'Naishe', href: 'naishe/index.html' },
+      { name: 'Nate', href: 'nate/index.html' },
+      { name: 'Octavia', href: 'octavia/index.html' },
+      { name: 'Pride', href: 'pride/index.html' },
+      { name: 'Prosperity', href: 'prosperity/index.html' },
+      { name: 'Ron', href: 'ron/index.html' },
+      { name: 'Sarah', href: 'sarah/index.html' },
+      { name: 'Sean', href: 'sean/index.html' },
+      { name: 'Shine', href: 'shine/index.html' },
+      { name: 'Tana', href: 'tana/index.html' },
+      { name: 'Wadzie', href: 'wadzie/index.html' }
     ];
 
     var grid = document.querySelector('.grid');
     students.forEach(function(s) {
       var card = document.createElement('a');
-      card.className = 'card';
+      card.className = 'polaroid';
       card.href = s.href;
-      card.style.background = s.bg;
       card.innerHTML =
-        '<div class="initial">' + s.name[0] + '</div>' +
-        '<div class="name">' + s.name + '</div>' +
-        '<div class="label">View site</div>';
+        '<div class="photo-placeholder"><span>' + s.name[0] + '</span></div>' +
+        '<div class="name">' + s.name + '</div>';
       grid.appendChild(card);
     });
 
