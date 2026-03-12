@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>butjilo@jamf-workshop ~ review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2333;
+      --border: #30363d;
+      --purple: #c084fc;
+      --purple-dim: rgba(192,132,252,0.15);
+      --cyan: #22d3ee;
+      --cyan-dim: rgba(34,211,238,0.1);
+      --orange: #fb923c;
+      --green: #4ade80;
+      --green-dim: rgba(74,222,128,0.12);
+      --red: #f87171;
+      --red-dim: rgba(248,113,113,0.12);
+      --amber: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #8b949e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Monospace only where it belongs */
+    .code-block, .fill-input, .copy-btn, pre, code {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+
+    /* ── Nav ── */
+    #topnav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-link {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--purple); background: var(--purple-dim); }
+
+    /* ── Section card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    /* ── Section label ── */
+    .day-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-bottom: 0.5rem;
+    }
+    .badge-d1 { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple); }
+    .badge-d2 { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--cyan); }
+    .badge-d3 { background: rgba(251,146,60,0.12); color: var(--orange); border: 1px solid var(--orange); }
+
+    /* ── Section heading ── */
+    .sec-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-left: 3px solid var(--purple);
+      padding-left: 10px;
+      color: var(--text);
+    }
+
+    /* ── Terminal cursor ── */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor { animation: blink 1s infinite; color: var(--purple); }
+
+    /* ── Flashcard ── */
+    .fc-wrap { perspective: 900px; }
+    .fc-inner {
+      position: relative;
+      width: 100%;
+      min-height: 160px;
+      transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+      transform-style: preserve-3d;
+    }
+    .fc-inner.flipped { transform: rotateY(180deg); }
+    .fc-front, .fc-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+    .fc-front {
+      background: var(--surface2);
+      border: 1px solid var(--purple);
+    }
+    .fc-back {
+      background: var(--purple-dim);
+      border: 1px solid var(--purple);
+      transform: rotateY(180deg);
+    }
+
+    /* ── Quiz buttons ── */
+    .q-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .q-opt:hover:not(:disabled) { border-color: var(--purple); background: var(--purple-dim); }
+    .q-opt.correct { border-color: var(--green)!important; background: var(--green-dim)!important; color: var(--green)!important; }
+    .q-opt.wrong   { border-color: var(--red)!important;   background: var(--red-dim)!important;   color: var(--red)!important; }
+
+    /* ── Fill-in-the-blank ── */
+    .fill-input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom: 2px solid var(--cyan);
+      color: var(--cyan);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 2px 6px;
+      width: 120px;
+      border-radius: 3px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .fill-input:focus { border-color: var(--purple); }
+    .fill-input.correct { border-color: var(--green)!important; color: var(--green)!important; }
+    .fill-input.wrong   { border-color: var(--red)!important;   color: var(--red)!important; }
+
+    /* ── Code block ── */
+    .code-block {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      line-height: 1.7;
+      position: relative;
+    }
+    .code-block .comment { color: #6e7681; }
+    .code-block .kw { color: var(--purple); }
+    .code-block .str { color: var(--green); }
+    .code-block .flag { color: var(--cyan); }
+    .code-block .val { color: var(--amber); }
+
+    /* ── Accordion ── */
+    .acc-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .acc-content.open { max-height: 1200px; }
+    .acc-btn { cursor: pointer; user-select: none; }
+    .acc-arrow { transition: transform 0.3s; display: inline-block; }
+    .acc-arrow.open { transform: rotate(90deg); }
+
+    /* ── Progress bar ── */
+    .prog-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* ── Explanation box ── */
+    .explain-box {
+      background: rgba(251,146,60,0.08);
+      border: 1px solid rgba(251,146,60,0.35);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--amber);
+      margin-top: 8px;
+    }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      font-size: 0.7rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 2px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .copy-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    /* ── T/F button ── */
+    .tf-btn {
+      padding: 8px 22px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .tf-btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); }
+    .tf-btn.correct { border-color: var(--green)!important; background: var(--green-dim)!important; color: var(--green)!important; }
+    .tf-btn.wrong   { border-color: var(--red)!important;   background: var(--red-dim)!important;   color: var(--red)!important; }
+
+    /* ── Score badge ── */
+    .score-badge {
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    /* ── Compound loop ── */
+    .loop-step {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      background: var(--surface2);
+      transition: border-color 0.2s;
+    }
+    .loop-step:hover { border-color: var(--purple); }
+
+    /* ── Tooltip ── */
+    .tooltip-wrap { position: relative; display: inline-block; }
+    .tooltip-wrap .tooltip {
+      visibility: hidden;
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface2);
+      border: 1px solid var(--purple);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      color: var(--text);
+      z-index: 10;
+    }
+    .tooltip-wrap:hover .tooltip { visibility: visible; }
+
+    section { scroll-margin-top: 52px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     TOP NAV
+══════════════════════════════════════════════════ -->
+<nav id="topnav">
+  <div style="max-width:1100px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;gap:0.25rem;overflow-x:auto;height:48px;">
+    <span style="color:var(--purple);font-size:0.7rem;font-weight:700;margin-right:0.5rem;white-space:nowrap;">butjilo@jamf</span>
+    <span style="color:var(--border);margin-right:0.5rem;">|</span>
+    <a class="nav-link" href="#personas">Personas</a>
+    <a class="nav-link" href="#jamf">Jamf 101</a>
+    <a class="nav-link" href="#git">Git</a>
+    <a class="nav-link" href="#api">API</a>
+    <a class="nav-link" href="#webhooks">Webhooks</a>
+    <a class="nav-link" href="#vms">VMs</a>
+    <a class="nav-link" href="#compound">Compound Loop</a>
+    <a class="nav-link" href="#glossary">Glossary</a>
+    <a class="nav-link" href="#cheatsheet">Cheat Sheet</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<div style="max-width:1100px;margin:0 auto;padding:3rem 1rem 1.5rem;">
+  <div class="card" style="border-color:var(--purple);background:linear-gradient(135deg,#161b22 60%,rgba(192,132,252,0.06));">
+    <div style="color:var(--muted);font-size:0.75rem;margin-bottom:0.5rem;">Last session: Day 3 — AI-Native Development</div>
+    <div style="font-size:1.8rem;font-weight:700;color:var(--text);">
+      <span style="color:var(--purple);">butjilo</span><span style="color:var(--muted);">@jamf-workshop</span><span style="color:var(--muted);">:~$</span> <span style="color:var(--cyan);">./review</span><span class="cursor">▋</span>
+    </div>
+    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.75rem;max-width:600px;line-height:1.6;">
+      3-day workshop · Persona Mapping · APIs · Webhooks · VMs · Compound Engineering
+    </p>
+    <div style="display:flex;gap:1rem;margin-top:1.25rem;flex-wrap:wrap;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.5rem 1rem;font-size:0.75rem;">
+        <span style="color:var(--purple);">Day 1</span> <span style="color:var(--muted);">— Context &amp; Empathy</span>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.5rem 1rem;font-size:0.75rem;">
+        <span style="color:var(--cyan);">Day 2</span> <span style="color:var(--muted);">— Technical Foundations</span>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.5rem 1rem;font-size:0.75rem;">
+        <span style="color:var(--orange);">Day 3</span> <span style="color:var(--muted);">— AI-Native Development</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1100px;margin:0 auto;padding:0 1rem;display:flex;flex-direction:column;gap:2.5rem;padding-bottom:4rem;">
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 1 — PERSONAS (Flashcards + Quiz)
+══════════════════════════════════════════════════ -->
+<section id="personas">
+  <div class="card">
+    <div class="day-badge badge-d1">DAY 1</div>
+    <h2 class="sec-title">Persona Mapping</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">
+      4 user types. Each one has a different relationship with Jamf. Tap a card to flip it.
+    </p>
+
+    <!-- Flashcards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:2rem;">
+
+      <!-- Card 1 -->
+      <div>
+        <div class="fc-wrap" style="min-height:160px;" onclick="flipCard(this)">
+          <div class="fc-inner">
+            <div class="fc-front">
+              <div style="font-size:0.65rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.4rem;">PERSONA 01</div>
+              <div style="font-size:1rem;font-weight:700;">Enterprise IT Admin</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">10,000+ devices · 50 global offices</div>
+              <div style="font-size:0.7rem;color:var(--purple);margin-top:0.75rem;">tap to reveal pain points →</div>
+            </div>
+            <div class="fc-back">
+              <div style="font-size:0.7rem;color:var(--purple);margin-bottom:0.5rem;">PAIN POINTS</div>
+              <p style="font-size:0.8rem;line-height:1.55;">A zero-day vulnerability drops at 9am. You need to push a security patch to <strong>10,000 Macs across 50 offices</strong> — right now. Scale, consistency, and compliance are everything. One misconfiguration = 10,000 broken devices.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div>
+        <div class="fc-wrap" style="min-height:160px;" onclick="flipCard(this)">
+          <div class="fc-inner">
+            <div class="fc-front">
+              <div style="font-size:0.65rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.4rem;">PERSONA 02</div>
+              <div style="font-size:1rem;font-weight:700;">K-12 IT Coordinator</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Shared iPads · Multiple schools</div>
+              <div style="font-size:0.7rem;color:var(--purple);margin-top:0.75rem;">tap to reveal pain points →</div>
+            </div>
+            <div class="fc-back">
+              <div style="font-size:0.7rem;color:var(--purple);margin-bottom:0.5rem;">PAIN POINTS</div>
+              <p style="font-size:0.8rem;line-height:1.55;">150 iPads shared between 3 schools. Every morning, kids grab whatever iPad is available. Your job: make sure every device is <strong>safe, filtered, and wiped clean</strong> for the next student — before class starts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div>
+        <div class="fc-wrap" style="min-height:160px;" onclick="flipCard(this)">
+          <div class="fc-inner">
+            <div class="fc-front">
+              <div style="font-size:0.65rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.4rem;">PERSONA 03</div>
+              <div style="font-size:1rem;font-weight:700;">Security Analyst</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">~1,000 alerts/day · ~1,000 devices</div>
+              <div style="font-size:0.7rem;color:var(--purple);margin-top:0.75rem;">tap to reveal pain points →</div>
+            </div>
+            <div class="fc-back">
+              <div style="font-size:0.7rem;color:var(--purple);margin-bottom:0.5rem;">PAIN POINTS</div>
+              <p style="font-size:0.8rem;line-height:1.55;">1,000+ security alerts hit your dashboard today. Most are noise. A few could be a real breach. You have <strong>8 hours to find the threats</strong> before they escalate. Alert fatigue is your biggest enemy.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div>
+        <div class="fc-wrap" style="min-height:160px;" onclick="flipCard(this)">
+          <div class="fc-inner">
+            <div class="fc-front">
+              <div style="font-size:0.65rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.4rem;">PERSONA 04</div>
+              <div style="font-size:1rem;font-weight:700;">Help Desk Technician</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Remote support · No physical access</div>
+              <div style="font-size:0.7rem;color:var(--purple);margin-top:0.75rem;">tap to reveal pain points →</div>
+            </div>
+            <div class="fc-back">
+              <div style="font-size:0.7rem;color:var(--purple);margin-bottom:0.5rem;">PAIN POINTS</div>
+              <p style="font-size:0.8rem;line-height:1.55;">A teacher at a remote campus can't open her gradebook app — class starts in 10 minutes. You <strong>cannot physically touch the device</strong>. You need to diagnose and fix it through Jamf, remotely, right now.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Persona Quiz -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--purple);">// quiz: personas</div>
+        <span id="persona-score" class="score-badge">0 / 0</span>
+      </div>
+      <div id="persona-quiz"></div>
+      <button onclick="resetQuiz('persona')" style="margin-top:1rem;font-size:0.75rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;">↺ reset quiz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 2 — JAMF OVERVIEW (Accordion reference)
+══════════════════════════════════════════════════ -->
+<section id="jamf">
+  <div class="card">
+    <div class="day-badge badge-d1">DAY 1</div>
+    <h2 class="sec-title">Jamf 101</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.25rem;">What it is, how it fits, why it matters. Click to expand.</p>
+
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">What is Jamf?</span>
+          <span class="acc-arrow" style="color:var(--purple);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;font-size:0.83rem;line-height:1.7;color:var(--muted);">
+            Jamf is an <strong style="color:var(--text);">MDM (Mobile Device Management)</strong> platform built specifically for Apple devices — Macs, iPhones, iPads, and Apple TVs.<br><br>
+            Think of it like a <strong style="color:var(--cyan);">remote control for every Apple device in an organization</strong>. IT admins can enroll devices, push software, enforce settings, and wipe devices — all without touching them physically.<br><br>
+            <strong style="color:var(--purple);">Key point:</strong> Jamf doesn't work on Windows or Android. It's Apple-first, which is why it's used heavily in schools, hospitals, creative agencies, and enterprises that have gone all-in on Apple.
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">What can Jamf actually do?</span>
+          <span class="acc-arrow" style="color:var(--purple);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;margin-top:0.5rem;">
+              <div style="background:var(--surface2);border-radius:6px;padding:0.75rem;font-size:0.8rem;">
+                <div style="color:var(--purple);font-weight:700;margin-bottom:0.25rem;">Enroll</div>
+                <div style="color:var(--muted);">Automatically enroll new devices with zero-touch. Device comes out of the box, turns on, and configures itself.</div>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.75rem;font-size:0.8rem;">
+                <div style="color:var(--cyan);font-weight:700;margin-bottom:0.25rem;">Deploy</div>
+                <div style="color:var(--muted);">Push apps, profiles, and settings to any device or group of devices instantly — no user interaction required.</div>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.75rem;font-size:0.8rem;">
+                <div style="color:var(--green);font-weight:700;margin-bottom:0.25rem;">Secure</div>
+                <div style="color:var(--muted);">Enforce password policies, encrypt drives, remotely lock or wipe a lost/stolen device.</div>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.75rem;font-size:0.8rem;">
+                <div style="color:var(--amber);font-weight:700;margin-bottom:0.25rem;">Report</div>
+                <div style="color:var(--muted);">See every device's status, software inventory, and compliance state in one dashboard.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">Smart Groups — the secret weapon</span>
+          <span class="acc-arrow" style="color:var(--purple);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;font-size:0.83rem;line-height:1.7;color:var(--muted);">
+            Smart Groups are <strong style="color:var(--text);">dynamic device lists</strong> that update automatically based on rules you set.<br><br>
+            <strong style="color:var(--cyan);">Real life example:</strong> You create a rule — "any Mac running macOS older than 15.0". Every device that matches automatically joins the group. When a device updates, it drops out of the group. No manual list-keeping.<br><br>
+            In the workshop, you updated an Extension Attribute via the API → the device matched the "Workshop Participants" Smart Group rule → it was automatically added to the group → this triggered a webhook. That's the power of Smart Groups driving automation.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 3 — GIT (Fill-in + Cheat Sheet)
+══════════════════════════════════════════════════ -->
+<section id="git">
+  <div class="card">
+    <div class="day-badge badge-d1">DAY 1</div>
+    <h2 class="sec-title">Git Basics</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">
+      Fill in the missing commands from the workshop exercise. Press Enter or click Check to verify.
+    </p>
+
+    <!-- Fill-in section -->
+    <div id="git-fills" style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;"></div>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;">
+      <button onclick="checkGitFills()" class="tf-btn" style="border-color:var(--purple);color:var(--purple);">Check answers</button>
+      <button onclick="resetGitFills()" class="tf-btn">Reset</button>
+    </div>
+    <div id="git-fill-result" style="display:none;" class="explain-box"></div>
+
+    <!-- Cheat sheet accordion -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+      <div class="acc-btn" onclick="toggleAcc(this)" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--cyan);">// show git cheat sheet</span>
+        <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+      </div>
+      <div class="acc-content">
+        <div class="code-block" style="margin-top:0.5rem;">
+<span class="comment"># Workshop Git workflow — step by step</span>
+
+<span class="comment"># 1. See what's changed</span>
+<span class="kw">git</span> <span class="flag">status</span>
+
+<span class="comment"># 2. Create your branch (replace with your name)</span>
+<span class="kw">git</span> <span class="flag">checkout</span> <span class="flag">-b</span> students/butjilo
+
+<span class="comment"># 3. Stage your changes</span>
+<span class="kw">git</span> <span class="flag">add</span> .
+
+<span class="comment"># 4. Commit with a message</span>
+<span class="kw">git</span> <span class="flag">commit</span> <span class="flag">-m</span> <span class="str">"my first commit"</span>
+
+<span class="comment"># 5. Push to remote (GitHub)</span>
+<span class="kw">git</span> <span class="flag">push</span> origin students/butjilo
+
+<span class="comment"># 6. Then open a Pull Request on GitHub → main</span>
+
+<span class="comment"># Other useful commands</span>
+<span class="kw">git</span> <span class="flag">log</span> <span class="flag">--oneline</span>          <span class="comment"># see recent commits</span>
+<span class="kw">git</span> <span class="flag">branch</span>                  <span class="comment"># list all branches</span>
+<span class="kw">git</span> <span class="flag">pull</span> origin main        <span class="comment"># get latest from main</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 4 — API BOOTCAMP
+══════════════════════════════════════════════════ -->
+<section id="api">
+  <div class="card">
+    <div class="day-badge badge-d2">DAY 2</div>
+    <h2 class="sec-title">API Bootcamp</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">
+      Understand the concept with a real analogy. Then see the actual commands. Then get tested.
+    </p>
+
+    <!-- The restaurant analogy -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.7rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.75rem;">THE RESTAURANT ANALOGY</div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-size:0.85rem;">
+        <div style="background:var(--bg);border:1px solid var(--purple);border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="color:var(--purple);font-weight:700;">You</div>
+          <div style="color:var(--muted);font-size:0.72rem;">the client / app</div>
+        </div>
+        <div style="color:var(--muted);font-size:0.75rem;">→ order →</div>
+        <div style="background:var(--bg);border:1px solid var(--cyan);border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="color:var(--cyan);font-weight:700;">Waiter</div>
+          <div style="color:var(--muted);font-size:0.72rem;">the API</div>
+        </div>
+        <div style="color:var(--muted);font-size:0.75rem;">→ request →</div>
+        <div style="background:var(--bg);border:1px solid var(--green);border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="color:var(--green);font-weight:700;">Kitchen</div>
+          <div style="color:var(--muted);font-size:0.72rem;">the server / Jamf</div>
+        </div>
+        <div style="color:var(--muted);font-size:0.75rem;">→ food →</div>
+        <div style="background:var(--bg);border:1px solid var(--amber);border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="color:var(--amber);font-weight:700;">Your plate</div>
+          <div style="color:var(--muted);font-size:0.72rem;">the data / JSON</div>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:0.75rem;line-height:1.6;">
+        You don't walk into the kitchen yourself. The waiter (API) takes your order, talks to the kitchen (server), and brings back exactly what you asked for. APIs are the agreed-upon language between apps.
+      </p>
+    </div>
+
+    <!-- REST verbs with real-life examples -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;margin-bottom:1.5rem;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.85rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+          <span style="background:rgba(74,222,128,0.15);color:var(--green);font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--green);">GET</span>
+          <span style="font-size:0.82rem;font-weight:600;">Read / Fetch</span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.5;">Like checking your Instagram feed — your phone asks the server "give me the latest posts" and gets data back. Nothing changes.</p>
+        <p style="font-size:0.75rem;color:var(--cyan);margin-top:0.4rem;font-style:italic;">Jamf: GET /api/v1/computers-inventory</p>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.85rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+          <span style="background:rgba(192,132,252,0.15);color:var(--purple);font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--purple);">POST</span>
+          <span style="font-size:0.82rem;font-weight:600;">Create / Send</span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.5;">Like posting a tweet — you're sending new data to the server to create something new. Something that didn't exist before now exists.</p>
+        <p style="font-size:0.75rem;color:var(--cyan);margin-top:0.4rem;font-style:italic;">Jamf: POST /api/v1/auth/token</p>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.85rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+          <span style="background:rgba(251,191,36,0.12);color:var(--amber);font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--amber);">PUT</span>
+          <span style="font-size:0.82rem;font-weight:600;">Update / Replace</span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.5;">Like updating your Spotify profile picture — you're replacing something that already exists with new data.</p>
+        <p style="font-size:0.75rem;color:var(--cyan);margin-top:0.4rem;font-style:italic;">Jamf: PUT extension attribute value</p>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.85rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+          <span style="background:rgba(248,113,113,0.12);color:var(--red);font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--red);">DELETE</span>
+          <span style="font-size:0.82rem;font-weight:600;">Remove</span>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.5;">Like removing a LinkedIn connection — you're telling the server to delete a relationship. Gone permanently.</p>
+        <p style="font-size:0.75rem;color:var(--cyan);margin-top:0.4rem;font-style:italic;">Jamf: token invalidation</p>
+      </div>
+    </div>
+
+    <!-- Bearer token explainer -->
+    <div style="background:rgba(251,146,60,0.07);border:1px solid rgba(251,146,60,0.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.7rem;color:var(--orange);letter-spacing:0.08em;margin-bottom:0.4rem;">BEARER TOKEN — WHAT IS IT?</div>
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+        Think of a <strong style="color:var(--text);">wristband at a music festival</strong>. You prove your identity at the gate (username + password → POST /auth/token). They give you a wristband (the token). For the rest of the day, you just flash the wristband — no need to prove who you are again at every drink stand. The wristband expires when the festival ends. The token works the same way.
+      </p>
+    </div>
+
+    <!-- Real curl commands (collapsible) -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;margin-bottom:1.5rem;">
+      <div class="acc-btn" onclick="toggleAcc(this)" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--cyan);">// show real commands from the workshop</span>
+        <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+      </div>
+      <div class="acc-content">
+        <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+
+          <div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.35rem;">Step 1 — Get a token</div>
+            <div class="code-block">
+<span class="kw">curl</span> <span class="flag">-s</span> <span class="flag">-u</span> <span class="str">"jamfpro_api:eap.zog.neek26"</span> \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-X POST</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/token"</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.35rem;">Step 2 — Save token to a variable</div>
+            <div class="code-block">
+<span class="val">TOKEN</span>=<span class="kw">$(</span><span class="flag">curl</span> <span class="flag">-s</span> <span class="flag">-u</span> <span class="str">"jamfpro_api:eap.zog.neek26"</span> \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-X POST</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/token"</span> \
+  | <span class="kw">jq</span> <span class="flag">-r</span> <span class="str">'.token'</span><span class="kw">)</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.35rem;">Step 3 — List all computers (GET)</div>
+            <div class="code-block">
+<span class="kw">curl</span> <span class="flag">-s</span> \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/computers-inventory"</span> \
+  | <span class="kw">jq</span> .
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.35rem;">Step 4 — Update Extension Attribute (PUT via Classic API)</div>
+            <div class="code-block">
+<span class="kw">curl</span> <span class="flag">-X PUT</span> \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/xml"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/JSSResource/computers/id/YOUR_ID"</span> \
+  <span class="flag">-d</span> <span class="str">'&lt;computer&gt;
+  &lt;extension_attributes&gt;
+    &lt;extension_attribute&gt;
+      &lt;id&gt;1&lt;/id&gt;
+      &lt;value&gt;Butjilo&lt;/value&gt;
+    &lt;/extension_attribute&gt;
+  &lt;/extension_attributes&gt;
+&lt;/computer&gt;'</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.35rem;">Step 5 — Invalidate token (security best practice)</div>
+            <div class="code-block">
+<span class="kw">curl</span> <span class="flag">-X POST</span> \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- API Quiz -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--cyan);">// quiz: API concepts</div>
+        <span id="api-score" class="score-badge">0 / 0</span>
+      </div>
+      <div id="api-quiz"></div>
+      <button onclick="resetQuiz('api')" style="margin-top:1rem;font-size:0.75rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;">↺ reset quiz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 5 — WEBHOOKS ⚡ (Most interactive)
+══════════════════════════════════════════════════ -->
+<section id="webhooks">
+  <div class="card" style="border-color:var(--cyan);">
+    <div class="day-badge badge-d2">DAY 2 — FOCUS AREA</div>
+    <h2 class="sec-title" style="border-left-color:var(--cyan);">Webhooks</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">
+      This was the fuzziest topic. Let's fix that. Start with the real-world analogy, then trace the full Jamf flow.
+    </p>
+
+    <!-- Doorbell analogy -->
+    <div style="background:var(--cyan-dim);border:1px solid var(--cyan);border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.7rem;color:var(--cyan);letter-spacing:0.08em;margin-bottom:0.75rem;">THE VENMO ANALOGY — PUSH vs PULL</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--red);margin-bottom:0.4rem;">Polling (old way — PULL)</div>
+          <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Imagine checking your Venmo app every 5 seconds asking "did anyone send me money yet?" That's polling — constant checking, most of it wasted.</p>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--green);margin-bottom:0.4rem;">Webhooks (smart way — PUSH)</div>
+          <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Instead, you tell Venmo: "when someone sends me money, buzz my phone." Venmo fires a notification the instant it happens. You don't ask — <em>it tells you.</em> That's a webhook.</p>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid rgba(34,211,238,0.2);">
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">
+          <strong style="color:var(--cyan);">The doorbell version:</strong> Your front door doesn't call you every 30 seconds to ask "is anyone there?" You install a doorbell — it rings exactly when someone arrives. The doorbell URL is your webhook endpoint.
+        </p>
+      </div>
+    </div>
+
+    <!-- Workshop flow — step by step -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;">The exact flow from the workshop:</div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;background:var(--surface2);border-radius:6px;padding:0.75rem;">
+          <div style="min-width:28px;height:28px;background:var(--purple-dim);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--purple);">1</div>
+          <div style="font-size:0.82rem;line-height:1.55;">You ran a <strong style="color:var(--cyan);">PUT curl command</strong> to update the Extension Attribute on your device to your name ("Butjilo").</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;background:var(--surface2);border-radius:6px;padding:0.75rem;">
+          <div style="min-width:28px;height:28px;background:var(--purple-dim);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--purple);">2</div>
+          <div style="font-size:0.82rem;line-height:1.55;">Jamf Pro evaluated its <strong style="color:var(--cyan);">Smart Group rules</strong> automatically. "Workshop Participants" rule matched your device.</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;background:var(--surface2);border-radius:6px;padding:0.75rem;">
+          <div style="min-width:28px;height:28px;background:var(--purple-dim);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--purple);">3</div>
+          <div style="font-size:0.82rem;line-height:1.55;">Your device was added to the group. Jamf fired the <strong style="color:var(--cyan);">SmartGroupComputerMembershipChange</strong> event.</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;background:var(--surface2);border-radius:6px;padding:0.75rem;">
+          <div style="min-width:28px;height:28px;background:var(--purple-dim);border:1px solid var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--purple);">4</div>
+          <div style="font-size:0.82rem;line-height:1.55;">Jamf sent a <strong style="color:var(--cyan);">POST request</strong> to your webhook.site URL — the JSON payload arrived in real-time.</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;background:var(--surface2);border-radius:6px;padding:0.75rem;">
+          <div style="min-width:28px;height:28px;background:var(--green-dim);border:1px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--green);">✓</div>
+          <div style="font-size:0.82rem;line-height:1.55;">You watched it appear live on <strong style="color:var(--cyan);">webhook.site</strong> — no refresh needed. Event-driven in action.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JSON Payload section -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+        <div style="font-size:0.8rem;font-weight:600;color:var(--text);">The actual webhook JSON payload:</div>
+        <button class="copy-btn" onclick="copyCode(this, 'webhook-json')">copy</button>
+      </div>
+      <div class="code-block" id="webhook-json">
+<span class="comment">// This is what appeared in webhook.site when your device joined the Smart Group</span>
+{
+  <span class="str">"webhook"</span>: {
+    <span class="str">"id"</span>: <span class="val">1</span>,
+    <span class="str">"name"</span>: <span class="str">"Workshop Participants Webhook"</span>,
+    <span class="str">"webhookEvent"</span>: <span class="str">"SmartGroupComputerMembershipChange"</span>
+    <span class="comment">// ↑ This is the event type that fired — membership changed</span>
+  },
+  <span class="str">"event"</span>: {
+    <span class="str">"groupAddedDevicesIds"</span>: [<span class="val">42</span>],
+    <span class="comment">// ↑ Your device ID — added to the group</span>
+    <span class="str">"groupRemovedDevicesIds"</span>: [],
+    <span class="comment">// ↑ Empty — no devices were removed this time</span>
+    <span class="str">"jssid"</span>: <span class="val">1</span>,
+    <span class="str">"jssurl"</span>: <span class="str">"https://projsadp.jamfcloud.com"</span>,
+    <span class="comment">// ↑ Which Jamf Pro server fired this</span>
+    <span class="str">"name"</span>: <span class="str">"Workshop Participants"</span>,
+    <span class="comment">// ↑ The Smart Group that changed</span>
+    <span class="str">"smartGroup"</span>: <span class="val">true</span>
+  }
+}
+      </div>
+    </div>
+
+    <!-- Webhooks T/F Quiz -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--cyan);">// quiz: true or false?</div>
+        <span id="wh-score" class="score-badge">0 / 0</span>
+      </div>
+      <div id="webhook-quiz" style="display:flex;flex-direction:column;gap:1rem;"></div>
+      <button onclick="resetTFQuiz('webhook')" style="margin-top:1rem;font-size:0.75rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;">↺ reset quiz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 6 — VMs (Accordion reference)
+══════════════════════════════════════════════════ -->
+<section id="vms">
+  <div class="card">
+    <div class="day-badge badge-d2">DAY 2</div>
+    <h2 class="sec-title">Virtual Machines</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.25rem;">Quick reference — the key concepts and config specs.</p>
+
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">What is a VM?</span>
+          <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;font-size:0.83rem;line-height:1.7;color:var(--muted);">
+            A VM is <strong style="color:var(--text);">"a computer inside a computer."</strong><br><br>
+            <strong style="color:var(--cyan);">Real life analogy:</strong> Like running a game emulator — your PlayStation emulator doesn't need a real PlayStation. It simulates the hardware in software. A VM does the same thing for an entire computer: it simulates CPU, RAM, disk, and network in software so you can run a completely separate operating system inside your existing one.<br><br>
+            In the workshop you ran a full <strong style="color:var(--text);">macOS VM</strong> inside your M-series Mac to test Jamf enrollment without touching your real machine.
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">VM Config Specs</span>
+          <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;">
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-top:0.5rem;">
+              <div style="background:var(--surface2);border-radius:6px;padding:0.65rem 0.85rem;display:flex;justify-content:space-between;font-size:0.83rem;">
+                <span style="color:var(--muted);">CPU</span><span style="color:var(--cyan);font-weight:700;">4 cores</span>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.65rem 0.85rem;display:flex;justify-content:space-between;font-size:0.83rem;">
+                <span style="color:var(--muted);">RAM</span><span style="color:var(--cyan);font-weight:700;">8 GB</span>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.65rem 0.85rem;display:flex;justify-content:space-between;font-size:0.83rem;">
+                <span style="color:var(--muted);">Disk</span><span style="color:var(--cyan);font-weight:700;">50 GB</span>
+              </div>
+              <div style="background:var(--surface2);border-radius:6px;padding:0.65rem 0.85rem;display:flex;justify-content:space-between;font-size:0.83rem;">
+                <span style="color:var(--muted);">Source</span><span style="color:var(--cyan);font-weight:700;">IPSW file</span>
+              </div>
+            </div>
+            <p style="font-size:0.78rem;color:var(--muted);margin-top:0.75rem;">Tool used: <strong style="color:var(--text);">Virtual Buddy</strong> (lighter, ~50MB vs VMware's 500MB). macOS 15 and macOS 26 IPSW files from USB stick.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;">Snapshot = Save point</span>
+          <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div style="padding-bottom:1rem;font-size:0.83rem;line-height:1.7;color:var(--muted);">
+            Taking a <strong style="color:var(--text);">snapshot</strong> is like creating a restore point in a video game before a difficult boss fight. If you enroll the VM in Jamf and something goes wrong, you can revert to "Clean install" — no reinstall needed.<br><br>
+            Always name your first snapshot <code style="color:var(--cyan);">Clean install</code> before doing anything. That's your safety net.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 7 — COMPOUND ENGINEERING LOOP
+══════════════════════════════════════════════════ -->
+<section id="compound">
+  <div class="card" style="border-color:var(--orange);">
+    <div class="day-badge badge-d3">DAY 3</div>
+    <h2 class="sec-title" style="border-left-color:var(--orange);">Compound Engineering Loop</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">
+      The 4-step framework for working with AI. Not just for this workshop — for everything you build.
+    </p>
+
+    <!-- 4-step loop visual -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1.5rem;">
+      <div class="loop-step" style="border-color:var(--purple);">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+          <span style="background:var(--purple-dim);border:1px solid var(--purple);color:var(--purple);font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;">01</span>
+          <span style="font-size:0.9rem;font-weight:700;color:var(--purple);">Plan</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Define exactly what you're building before you start. Answer: "Do I have enough context to build this?" 80% of the work happens here.</p>
+        <p style="font-size:0.75rem;color:var(--purple);margin-top:0.5rem;">→ What are we building? What context exists? What decisions need a human?</p>
+      </div>
+      <div class="loop-step" style="border-color:var(--cyan);">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+          <span style="background:var(--cyan-dim);border:1px solid var(--cyan);color:var(--cyan);font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;">02</span>
+          <span style="font-size:0.9rem;font-weight:700;color:var(--cyan);">Work</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Execute with AI assistance while staying within the plan. The remaining 20%. Ask: "Am I drifting from what I planned?"</p>
+        <p style="font-size:0.75rem;color:var(--cyan);margin-top:0.5rem;">→ Build. Reference the plan. Don't let AI improvise beyond scope.</p>
+      </div>
+      <div class="loop-step" style="border-color:var(--green);">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+          <span style="background:var(--green-dim);border:1px solid var(--green);color:var(--green);font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;">03</span>
+          <span style="font-size:0.9rem;font-weight:700;color:var(--green);">Review</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Check the output against your plan. Your eyes and judgment are the primary review tool — not the AI's. Ask: "Does this match what I intended?"</p>
+        <p style="font-size:0.75rem;color:var(--green);margin-top:0.5rem;">→ Read every line. Ask the agent: "what did you miss or change?"</p>
+      </div>
+      <div class="loop-step" style="border-color:var(--orange);">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+          <span style="background:rgba(251,146,60,0.12);border:1px solid var(--orange);color:var(--orange);font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;">04</span>
+          <span style="font-size:0.9rem;font-weight:700;color:var(--orange);">Compound</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.55;">Type <code style="color:var(--orange);">/compound</code> at the end of each session. Distill what you learned into COMPOUND.md so the next session inherits all your decisions.</p>
+        <p style="font-size:0.75rem;color:var(--orange);margin-top:0.5rem;">→ What decisions did I make? What dead ends did I hit? What should next session know?</p>
+      </div>
+    </div>
+
+    <!-- Fill-in the loop -->
+    <div style="background:var(--surface2);border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;">Fill in the 4 steps:</div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-size:0.88rem;line-height:2.5;">
+        <input class="fill-input" id="loop1" placeholder="step 1" style="width:90px;" />
+        <span style="color:var(--muted);">→</span>
+        <input class="fill-input" id="loop2" placeholder="step 2" style="width:90px;" />
+        <span style="color:var(--muted);">→</span>
+        <input class="fill-input" id="loop3" placeholder="step 3" style="width:90px;" />
+        <span style="color:var(--muted);">→</span>
+        <input class="fill-input" id="loop4" placeholder="step 4" style="width:90px;" />
+        <span style="color:var(--muted);">→ (repeat)</span>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+        <button onclick="checkLoop()" class="tf-btn" style="border-color:var(--orange);color:var(--orange);">Check</button>
+        <button onclick="resetLoop()" class="tf-btn">Reset</button>
+      </div>
+      <div id="loop-result" style="display:none;margin-top:0.75rem;" class="explain-box"></div>
+    </div>
+
+    <!-- Principles quiz -->
+    <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--orange);margin-bottom:0.35rem;">// 5 principles that resonate</div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">From the 7 transferable principles — the ones that apply directly to how you think and work.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;" id="principles-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 8 — GLOSSARY FLASHCARDS
+══════════════════════════════════════════════════ -->
+<section id="glossary">
+  <div class="card">
+    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+      <div class="day-badge badge-d1">DAY 1</div>
+      <div class="day-badge badge-d2">DAY 2</div>
+      <div class="day-badge badge-d3">DAY 3</div>
+    </div>
+    <h2 class="sec-title">Glossary Flashcards</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">Tap to flip. Use arrow buttons to navigate. Test yourself before looking.</p>
+
+    <div style="max-width:520px;margin:0 auto;">
+      <div class="fc-wrap" onclick="flipGlossary()" style="margin-bottom:1rem;">
+        <div class="fc-inner" id="glossary-inner" style="min-height:180px;">
+          <div class="fc-front" id="glossary-front" style="align-items:center;text-align:center;">
+            <div style="font-size:0.7rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.5rem;" id="glossary-day-tag">DAY 2</div>
+            <div style="font-size:1.1rem;font-weight:700;" id="glossary-term">Bearer Token</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.75rem;">tap to reveal definition</div>
+          </div>
+          <div class="fc-back" id="glossary-back" style="align-items:center;text-align:center;">
+            <div style="font-size:0.82rem;line-height:1.6;" id="glossary-def"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;">
+        <button onclick="prevGlossary()" class="tf-btn">← prev</button>
+        <span id="glossary-counter" style="font-size:0.78rem;color:var(--muted);">1 / 12</span>
+        <button onclick="nextGlossary()" class="tf-btn">next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 9 — CHEAT SHEET
+══════════════════════════════════════════════════ -->
+<section id="cheatsheet">
+  <div class="card">
+    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+      <div class="day-badge badge-d1">DAY 1</div>
+      <div class="day-badge badge-d2">DAY 2</div>
+      <div class="day-badge badge-d3">DAY 3</div>
+    </div>
+    <h2 class="sec-title">Command Cheat Sheet</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:0.5rem;margin-bottom:1.5rem;">All key commands from the workshop. Click to expand a tool. Click copy to grab the command.</p>
+
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+
+      <!-- Claude Code -->
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;"><span style="color:var(--purple);">⬡</span> Claude Code</span>
+          <span class="acc-arrow" style="color:var(--purple);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div class="code-block" style="margin-bottom:1rem;">
+<span class="comment"># Install</span>
+<span class="kw">curl</span> <span class="flag">-fsSL</span> https://claude.ai/install.sh | bash
+<span class="kw">source</span> ~/.zshrc
+
+<span class="comment"># Set API key</span>
+<span class="kw">export</span> <span class="val">ANTHROPIC_API_KEY</span>=sk-ant-api03-YOUR_KEY
+
+<span class="comment"># Test it</span>
+<span class="kw">claude</span> <span class="str">"What is 2 + 2?"</span>
+<span class="kw">claude</span> <span class="flag">--version</span>
+
+<span class="comment"># In your project</span>
+<span class="kw">claude</span> /init          <span class="comment"># creates CLAUDE.md</span>
+<span class="kw">claude</span>               <span class="comment"># start interactive mode</span>
+
+<span class="comment"># Keyboard shortcuts</span>
+<span class="comment"># Shift+Tab  → cycle modes (normal / plan / auto-accept)</span>
+<span class="comment"># Ctrl+C     → stop immediately</span>
+<span class="comment"># /compound  → distill session to COMPOUND.md</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Git -->
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;"><span style="color:var(--orange);">⎇</span> Git</span>
+          <span class="acc-arrow" style="color:var(--orange);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div class="code-block" style="margin-bottom:1rem;">
+<span class="kw">git</span> <span class="flag">status</span>                           <span class="comment"># what's changed?</span>
+<span class="kw">git</span> <span class="flag">checkout</span> <span class="flag">-b</span> students/butjilo    <span class="comment"># create & switch branch</span>
+<span class="kw">git</span> <span class="flag">add</span> .                            <span class="comment"># stage all changes</span>
+<span class="kw">git</span> <span class="flag">commit</span> <span class="flag">-m</span> <span class="str">"your message"</span>        <span class="comment"># save a snapshot</span>
+<span class="kw">git</span> <span class="flag">push</span> origin students/butjilo    <span class="comment"># send to GitHub</span>
+<span class="kw">git</span> <span class="flag">pull</span> origin main               <span class="comment"># get latest from main</span>
+<span class="kw">git</span> <span class="flag">log</span> <span class="flag">--oneline</span>                  <span class="comment"># see recent commits</span>
+<span class="kw">git</span> <span class="flag">branch</span>                          <span class="comment"># list branches</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- curl / API -->
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;"><span style="color:var(--cyan);">&gt;_</span> curl / API</span>
+          <span class="acc-arrow" style="color:var(--cyan);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div class="code-block" style="margin-bottom:1rem;">
+<span class="comment"># Get token + save it</span>
+<span class="val">TOKEN</span>=<span class="kw">$(</span>curl <span class="flag">-s</span> <span class="flag">-u</span> <span class="str">"jamfpro_api:eap.zog.neek26"</span> \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> <span class="flag">-X POST</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/token"</span> \
+  | jq <span class="flag">-r</span> <span class="str">'.token'</span><span class="kw">)</span>
+
+<span class="comment"># Verify token</span>
+<span class="kw">echo</span> <span class="val">$TOKEN</span>
+
+<span class="comment"># GET computers</span>
+curl <span class="flag">-s</span> <span class="flag">-H</span> <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/computers-inventory"</span> | jq .
+
+<span class="comment"># Invalidate token when done</span>
+curl <span class="flag">-X POST</span> <span class="flag">-H</span> <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  <span class="str">"https://projsadp.jamfcloud.com/api/v1/auth/invalidate-token"</span>
+
+<span class="comment"># jq — format / parse JSON</span>
+<span class="kw">jq</span> .                   <span class="comment"># pretty print</span>
+<span class="kw">jq</span> <span class="str">'.token'</span>            <span class="comment"># extract field</span>
+<span class="kw">jq</span> <span class="flag">-r</span> <span class="str">'.token'</span>         <span class="comment"># raw (no quotes)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Homebrew -->
+      <div class="card" style="padding:0;">
+        <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.88rem;font-weight:600;"><span style="color:var(--amber);">🍺</span> Homebrew</span>
+          <span class="acc-arrow" style="color:var(--amber);">▶</span>
+        </div>
+        <div class="acc-content" style="padding:0 1rem;">
+          <div class="code-block" style="margin-bottom:1rem;">
+<span class="kw">brew</span> <span class="flag">install</span> node@20     <span class="comment"># install Node.js 20</span>
+<span class="kw">brew</span> <span class="flag">install</span> jq          <span class="comment"># install JSON parser</span>
+<span class="kw">brew</span> <span class="flag">list</span>               <span class="comment"># see installed packages</span>
+<span class="kw">brew</span> <span class="flag">update</span>             <span class="comment"># update Homebrew itself</span>
+<span class="kw">node</span> <span class="flag">--version</span>          <span class="comment"># verify Node install</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</div><!-- end main content -->
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<div style="border-top:1px solid var(--border);text-align:center;padding:1.5rem;font-size:0.75rem;color:var(--muted);">
+  <span style="color:var(--purple);">butjilo</span><span style="color:var(--muted);">@jamf-workshop</span> · built with compound engineering · day 3 · <span style="color:var(--cyan);">review mode active</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+// ── Flashcard flip ──────────────────────────────
+function flipCard(wrap) {
+  const inner = wrap.querySelector('.fc-inner')
+  inner.classList.toggle('flipped')
+}
+
+// ── Accordion ───────────────────────────────────
+function toggleAcc(btn) {
+  const content = btn.nextElementSibling
+  const arrow = btn.querySelector('.acc-arrow')
+  content.classList.toggle('open')
+  arrow.classList.toggle('open')
+}
+
+// ── Copy code ───────────────────────────────────
+function copyCode(btn, id) {
+  const el = document.getElementById(id)
+  const text = el.innerText.replace(/\/\/ .*$/gm, '').trim()
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!'
+    setTimeout(() => btn.textContent = 'copy', 1500)
+  })
+}
+
+// ══════════════════════════════════════════════
+// PERSONA QUIZ
+// ══════════════════════════════════════════════
+const personaQuestions = [
+  {
+    q: 'A zero-day vulnerability drops at 9am. You need to push a patch to 10,000 Macs across 50 offices right now. Which persona is this?',
+    opts: ['K-12 IT Coordinator', 'Enterprise IT Admin', 'Security Analyst', 'Help Desk Technician'],
+    answer: 1,
+    explain: 'Enterprise IT Admin — the defining challenge is managing thousands of devices at massive scale. K-12 handles shared iPads, not thousands of corporate Macs.'
+  },
+  {
+    q: 'A teacher can\'t open her gradebook app — class starts in 10 minutes. You cannot physically touch the device. Who is responsible for fixing this?',
+    opts: ['Enterprise IT Admin', 'Security Analyst', 'K-12 IT Coordinator', 'Help Desk Technician'],
+    answer: 3,
+    explain: 'Help Desk Technician — remote troubleshooting without physical access is exactly their domain. They use Jamf to diagnose and fix issues remotely.'
+  },
+  {
+    q: '1,000 security alerts hit your dashboard today. Most are noise — but some could be a real breach. What\'s the core challenge here?',
+    opts: ['Device compliance', 'Alert fatigue — finding real threats in the noise', 'Shared device management', 'Remote app deployment'],
+    answer: 1,
+    explain: 'Alert fatigue is the Security Analyst\'s biggest enemy. They see 1,000+ alerts/day and must identify which ones are actually dangerous — fast.'
+  },
+  {
+    q: '150 iPads are shared across 3 schools. Every morning kids grab whatever device is available. What does this persona need most?',
+    opts: ['Security monitoring', 'Automated patch management at scale', 'Device wipe and reset workflows', 'Ticket management system'],
+    answer: 2,
+    explain: 'K-12 IT Coordinator — shared devices need to be wiped and reset between users. Each student needs a clean, safe, filtered environment every single day.'
+  },
+  {
+    q: 'True or false: Jamf can push software updates to enrolled devices without the user doing anything.',
+    type: 'tf',
+    answer: true,
+    explain: 'TRUE — that\'s one of Jamf\'s core MDM capabilities. Admins can silently push updates, apps, and configs without requiring any user action.'
+  },
+  {
+    q: 'True or false: The K-12 IT Coordinator only manages devices at one school.',
+    type: 'tf',
+    answer: false,
+    explain: 'FALSE — they manage devices across multiple schools. That\'s what makes their job complex — different locations, different age groups, shared device pools.'
+  }
+]
+
+let personaState = { current: 0, correct: 0, total: 0, answered: [] }
+
+function renderPersonaQuiz() {
+  const container = document.getElementById('persona-quiz')
+  container.innerHTML = ''
+  personaState.answered = new Array(personaQuestions.length).fill(false)
+  personaState.correct = 0
+  personaState.total = 0
+  updateScore('persona', 0, 0)
+
+  personaQuestions.forEach((q, qi) => {
+    const div = document.createElement('div')
+    div.style.cssText = 'margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);'
+
+    if (q.type === 'tf') {
+      div.innerHTML = `
+        <p style="font-size:0.85rem;margin-bottom:0.6rem;line-height:1.5;">${q.q}</p>
+        <div style="display:flex;gap:0.5rem;" id="p-tf-${qi}">
+          <button class="tf-btn" onclick="answerTF('persona',${qi},true,this)">True</button>
+          <button class="tf-btn" onclick="answerTF('persona',${qi},false,this)">False</button>
+        </div>
+        <div id="p-exp-${qi}" style="display:none;" class="explain-box"></div>
+      `
+    } else {
+      const optsHtml = q.opts.map((o, oi) =>
+        `<button class="q-opt" onclick="answerMCQ('persona',${qi},${oi},this)">${String.fromCharCode(65+oi)}. ${o}</button>`
+      ).join('')
+      div.innerHTML = `
+        <p style="font-size:0.85rem;margin-bottom:0.6rem;line-height:1.5;">${q.q}</p>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;" id="p-opts-${qi}">${optsHtml}</div>
+        <div id="p-exp-${qi}" style="display:none;" class="explain-box"></div>
+      `
+    }
+    container.appendChild(div)
+  })
+}
+
+function answerMCQ(quiz, qi, chosen, btn) {
+  const questions = quiz === 'persona' ? personaQuestions : apiQuestions
+  const state = quiz === 'persona' ? personaState : apiState
+  if (state.answered[qi]) return
+
+  state.answered[qi] = true
+  state.total++
+
+  const q = questions[qi]
+  const container = document.getElementById(`${quiz === 'persona' ? 'p' : 'a'}-opts-${qi}`)
+  const expBox = document.getElementById(`${quiz === 'persona' ? 'p' : 'a'}-exp-${qi}`)
+
+  Array.from(container.querySelectorAll('.q-opt')).forEach(b => b.disabled = true)
+
+  if (chosen === q.answer) {
+    btn.classList.add('correct')
+    state.correct++
+  } else {
+    btn.classList.add('wrong')
+    container.querySelectorAll('.q-opt')[q.answer].classList.add('correct')
+  }
+
+  expBox.textContent = q.explain
+  expBox.style.display = 'block'
+  updateScore(quiz, state.correct, state.total)
+}
+
+function answerTF(quiz, qi, chosen, btn) {
+  const questions = quiz === 'persona' ? personaQuestions : webhookTFQuestions
+  const state = quiz === 'persona' ? personaState : webhookState
+  if (state.answered[qi]) return
+
+  state.answered[qi] = true
+  state.total++
+
+  const q = questions[qi]
+  const tfGroup = document.getElementById(`${quiz === 'persona' ? 'p' : 'wh'}-tf-${qi}`)
+  const expBox = document.getElementById(`${quiz === 'persona' ? 'p' : 'wh'}-exp-${qi}`)
+
+  Array.from(tfGroup.querySelectorAll('.tf-btn')).forEach(b => b.disabled = true)
+
+  if (chosen === q.answer) {
+    btn.classList.add('correct')
+    state.correct++
+  } else {
+    btn.classList.add('wrong')
+  }
+
+  expBox.textContent = q.explain
+  expBox.style.display = 'block'
+  updateScore(quiz, state.correct, state.total)
+}
+
+function updateScore(quiz, correct, total) {
+  const el = document.getElementById(`${quiz === 'persona' ? 'persona' : quiz === 'api' ? 'api' : 'wh'}-score`)
+  if (el) el.textContent = `${correct} / ${total}`
+}
+
+function resetQuiz(quiz) {
+  if (quiz === 'persona') { personaState = { current:0, correct:0, total:0, answered:[] }; renderPersonaQuiz() }
+  if (quiz === 'api') { apiState = { current:0, correct:0, total:0, answered:[] }; renderAPIQuiz() }
+}
+
+// ══════════════════════════════════════════════
+// GIT FILL-IN
+// ══════════════════════════════════════════════
+const gitFills = [
+  { before: 'git', blank: 'status', after: '', hint: 'See what files have changed' },
+  { before: 'git', blank: 'checkout', after: '-b students/butjilo', hint: 'Create and switch to a new branch' },
+  { before: 'git', blank: 'add', after: '.', hint: 'Stage all your changed files' },
+  { before: 'git', blank: 'commit', after: '-m "my first commit"', hint: 'Save a snapshot with a message' },
+  { before: 'git', blank: 'push', after: 'origin students/butjilo', hint: 'Send your branch to GitHub' }
+]
+
+function renderGitFills() {
+  const container = document.getElementById('git-fills')
+  container.innerHTML = ''
+  gitFills.forEach((f, i) => {
+    const div = document.createElement('div')
+    div.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;background:var(--surface2);border-radius:6px;padding:0.6rem 0.85rem;font-size:0.88rem;'
+    div.innerHTML = `
+      <span style="color:var(--muted);font-size:0.72rem;min-width:20px;">${i+1}.</span>
+      <span style="color:var(--cyan);">${f.before}</span>
+      <input class="fill-input" id="gf-${i}" placeholder="?" style="width:100px;" />
+      <span style="color:var(--muted);">${f.after}</span>
+      <span style="color:var(--muted);font-size:0.75rem;margin-left:auto;"># ${f.hint}</span>
+      <div id="gf-exp-${i}" style="display:none;width:100%;font-size:0.78rem;margin-top:0.3rem;"></div>
+    `
+    container.appendChild(div)
+  })
+  document.getElementById('git-fill-result').style.display = 'none'
+}
+
+function checkGitFills() {
+  let correct = 0
+  gitFills.forEach((f, i) => {
+    const input = document.getElementById(`gf-${i}`)
+    const exp = document.getElementById(`gf-exp-${i}`)
+    const val = input.value.trim().toLowerCase()
+    const answers = [f.blank, f.blank.toLowerCase()]
+    if (answers.includes(val)) {
+      input.classList.remove('wrong'); input.classList.add('correct')
+      exp.style.display = 'none'
+      correct++
+    } else {
+      input.classList.remove('correct'); input.classList.add('wrong')
+      exp.innerHTML = `<span style="color:var(--red);">✗ Answer: </span><span style="color:var(--green);">${f.blank}</span>`
+      exp.style.display = 'block'
+    }
+  })
+  const res = document.getElementById('git-fill-result')
+  res.style.display = 'block'
+  res.textContent = `${correct} / ${gitFills.length} correct. ${correct === gitFills.length ? 'All good — you know these!' : 'Check the highlighted answers above.'}`
+}
+
+function resetGitFills() {
+  gitFills.forEach((f, i) => {
+    const input = document.getElementById(`gf-${i}`)
+    input.value = ''
+    input.classList.remove('correct', 'wrong')
+    document.getElementById(`gf-exp-${i}`).style.display = 'none'
+  })
+  document.getElementById('git-fill-result').style.display = 'none'
+}
+
+// ══════════════════════════════════════════════
+// API QUIZ
+// ══════════════════════════════════════════════
+const apiQuestions = [
+  {
+    q: 'You want to retrieve a list of all computers in Jamf Pro. What HTTP method do you use?',
+    opts: ['POST', 'PUT', 'GET', 'DELETE'],
+    answer: 2,
+    explain: 'GET is for reading/fetching data. It never changes anything on the server — just returns what you asked for. Like checking your bank balance, not withdrawing money.'
+  },
+  {
+    q: 'What format does the Jamf Pro modern API return data in?',
+    opts: ['XML only', 'CSV', 'JSON', 'Plain text'],
+    answer: 2,
+    explain: 'JSON — JavaScript Object Notation. Key-value pairs in curly braces. The Classic API (JSSResource) still uses XML, which is why you saw both formats in the workshop.'
+  },
+  {
+    q: 'You\'ve just POSTed to /api/v1/auth/token and got a response. What do you have now?',
+    opts: ['A device ID', 'A bearer token you can use for subsequent requests', 'An XML payload', 'A webhook URL'],
+    answer: 1,
+    explain: 'A Bearer token — your session credential. Like the wristband at a festival. You use it in the Authorization header for every request until you invalidate it.'
+  },
+  {
+    q: 'What does piping your curl output to `jq .` do?',
+    opts: ['Sends the result to Jamf', 'Pretty-prints the JSON so it\'s readable', 'Converts JSON to XML', 'Filters only the token field'],
+    answer: 1,
+    explain: 'jq . pretty-prints JSON with colours and indentation. Raw API responses are one long line — jq makes them readable. jq \'.token\' extracts a specific field.'
+  },
+  {
+    q: 'Why should you always invalidate your token at the end of a session?',
+    opts: ['To free up RAM', 'It\'s required by Jamf Pro', 'Security — expired tokens can\'t be stolen and reused', 'To reset the Smart Group'],
+    answer: 2,
+    explain: 'Security best practice — a token that\'s still valid is a potential attack vector. Invalidate it when you\'re done so it can\'t be used if intercepted. Same reason you log out of banking apps.'
+  }
+]
+
+let apiState = { current: 0, correct: 0, total: 0, answered: [] }
+
+function renderAPIQuiz() {
+  const container = document.getElementById('api-quiz')
+  container.innerHTML = ''
+  apiState.answered = new Array(apiQuestions.length).fill(false)
+  apiState.correct = 0
+  apiState.total = 0
+  document.getElementById('api-score').textContent = '0 / 0'
+
+  apiQuestions.forEach((q, qi) => {
+    const div = document.createElement('div')
+    div.style.cssText = 'margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);'
+    const optsHtml = q.opts.map((o, oi) =>
+      `<button class="q-opt" onclick="answerAPIQ(${qi},${oi},this)">${String.fromCharCode(65+oi)}. ${o}</button>`
+    ).join('')
+    div.innerHTML = `
+      <p style="font-size:0.85rem;margin-bottom:0.6rem;line-height:1.5;">${q.q}</p>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;" id="a-opts-${qi}">${optsHtml}</div>
+      <div id="a-exp-${qi}" style="display:none;" class="explain-box"></div>
+    `
+    container.appendChild(div)
+  })
+}
+
+function answerAPIQ(qi, chosen, btn) {
+  if (apiState.answered[qi]) return
+  apiState.answered[qi] = true
+  apiState.total++
+
+  const q = apiQuestions[qi]
+  const container = document.getElementById(`a-opts-${qi}`)
+  const expBox = document.getElementById(`a-exp-${qi}`)
+
+  Array.from(container.querySelectorAll('.q-opt')).forEach(b => b.disabled = true)
+
+  if (chosen === q.answer) {
+    btn.classList.add('correct')
+    apiState.correct++
+  } else {
+    btn.classList.add('wrong')
+    container.querySelectorAll('.q-opt')[q.answer].classList.add('correct')
+  }
+
+  expBox.textContent = q.explain
+  expBox.style.display = 'block'
+  document.getElementById('api-score').textContent = `${apiState.correct} / ${apiState.total}`
+}
+
+// ══════════════════════════════════════════════
+// WEBHOOK T/F QUIZ
+// ══════════════════════════════════════════════
+const webhookTFQuestions = [
+  {
+    q: 'Polling means the server automatically pushes updates to you when something changes.',
+    answer: false,
+    explain: 'FALSE — that\'s what webhooks (pushing) do. Polling is the opposite: YOUR app keeps asking the server "anything new?" over and over. Polling = you checking your phone. Webhook = your phone buzzing you.'
+  },
+  {
+    q: 'A webhook fires a POST request to a URL you specify when a configured event happens.',
+    answer: true,
+    explain: 'TRUE — webhooks are just HTTP POST requests sent automatically by the source system (Jamf) to your specified endpoint URL the moment an event fires.'
+  },
+  {
+    q: 'webhook.site lets you receive and inspect incoming webhook payloads in real-time without writing any code.',
+    answer: true,
+    explain: 'TRUE — webhook.site gives you a temporary public URL. Anything POSTed to that URL appears in your browser instantly. It\'s how you verified your Jamf webhook was working.'
+  },
+  {
+    q: 'The Jamf webhook fires BEFORE the computer joins the Smart Group.',
+    answer: false,
+    explain: 'FALSE — the webhook fires AFTER the membership change happens. Event: device joins group → webhook fires → payload delivered. The event triggers the webhook, not the other way around.'
+  },
+  {
+    q: 'In the workshop, updating the Extension Attribute via curl caused the webhook to fire directly.',
+    answer: false,
+    explain: 'FALSE — the chain was: update Extension Attribute → Jamf re-evaluates Smart Group rules → device matches "Workshop Participants" rule → device added to group → THAT membership change event fired the webhook. The API call was the trigger, but the webhook fired because of the Smart Group change.'
+  },
+  {
+    q: 'The JSON payload Jamf sends includes the Smart Group name and the IDs of devices that were added or removed.',
+    answer: true,
+    explain: 'TRUE — the payload includes "name" (the Smart Group), "groupAddedDevicesIds" (array of IDs added), and "groupRemovedDevicesIds" (array of IDs removed). This tells your system exactly what changed and which devices were affected.'
+  }
+]
+
+let webhookState = { correct: 0, total: 0, answered: [] }
+
+function renderWebhookQuiz() {
+  const container = document.getElementById('webhook-quiz')
+  container.innerHTML = ''
+  webhookState = { correct: 0, total: 0, answered: new Array(webhookTFQuestions.length).fill(false) }
+  document.getElementById('wh-score').textContent = '0 / 0'
+
+  webhookTFQuestions.forEach((q, qi) => {
+    const div = document.createElement('div')
+    div.style.cssText = 'background:var(--surface2);border-radius:8px;padding:1rem;'
+    div.innerHTML = `
+      <p style="font-size:0.85rem;margin-bottom:0.6rem;line-height:1.5;">${q.q}</p>
+      <div style="display:flex;gap:0.5rem;" id="wh-tf-${qi}">
+        <button class="tf-btn" onclick="answerWH(${qi},true,this)">True</button>
+        <button class="tf-btn" onclick="answerWH(${qi},false,this)">False</button>
+      </div>
+      <div id="wh-exp-${qi}" style="display:none;" class="explain-box"></div>
+    `
+    container.appendChild(div)
+  })
+}
+
+function answerWH(qi, chosen, btn) {
+  if (webhookState.answered[qi]) return
+  webhookState.answered[qi] = true
+  webhookState.total++
+
+  const q = webhookTFQuestions[qi]
+  const tfGroup = document.getElementById(`wh-tf-${qi}`)
+  const expBox = document.getElementById(`wh-exp-${qi}`)
+
+  Array.from(tfGroup.querySelectorAll('.tf-btn')).forEach(b => b.disabled = true)
+
+  if (chosen === q.answer) {
+    btn.classList.add('correct')
+    webhookState.correct++
+  } else {
+    btn.classList.add('wrong')
+  }
+
+  expBox.textContent = q.explain
+  expBox.style.display = 'block'
+  document.getElementById('wh-score').textContent = `${webhookState.correct} / ${webhookState.total}`
+}
+
+function resetTFQuiz(quiz) {
+  if (quiz === 'webhook') { renderWebhookQuiz() }
+}
+
+// ══════════════════════════════════════════════
+// COMPOUND LOOP FILL-IN
+// ══════════════════════════════════════════════
+function checkLoop() {
+  const steps = ['plan', 'work', 'review', 'compound']
+  let correct = 0
+  steps.forEach((s, i) => {
+    const input = document.getElementById(`loop${i+1}`)
+    if (input.value.trim().toLowerCase() === s) {
+      input.classList.remove('wrong'); input.classList.add('correct')
+      correct++
+    } else {
+      input.classList.remove('correct'); input.classList.add('wrong')
+      input.placeholder = s
+    }
+  })
+  const res = document.getElementById('loop-result')
+  res.style.display = 'block'
+  if (correct === 4) {
+    res.textContent = '✓ Exactly right. Plan → Work → Review → Compound → repeat. That\'s the whole framework.'
+  } else {
+    res.textContent = `${correct}/4 correct. The 4 steps are: Plan → Work → Review → Compound. Check the highlighted fields.`
+  }
+}
+
+function resetLoop() {
+  ;[1,2,3,4].forEach(i => {
+    const input = document.getElementById(`loop${i}`)
+    input.value = ''
+    input.classList.remove('correct', 'wrong')
+    input.placeholder = `step ${i}`
+  })
+  document.getElementById('loop-result').style.display = 'none'
+}
+
+// ══════════════════════════════════════════════
+// PRINCIPLES
+// ══════════════════════════════════════════════
+const principles = [
+  {
+    title: 'Context Is Everything',
+    short: 'Quality of output = quality of context you give.',
+    detail: 'Before you prompt, ask: "Does the AI know what I\'m working with?" A vague prompt gets a vague answer. Show your CLAUDE.md, reference your files with @, explain the project. The more relevant context you give, the better the output. Garbage in, garbage out — but also: gold in, gold out.',
+    color: 'var(--purple)'
+  },
+  {
+    title: 'Planning > Building',
+    short: '80% planning, 20% building.',
+    detail: 'The biggest mistake is jumping to "build this for me" before you\'ve defined what you actually want. Spend most of your time in plan mode — clarifying requirements, surfacing unknowns, making decisions. When you finally say "go," the AI has everything it needs. This is why your one-shot page looked different from your planned page.',
+    color: 'var(--cyan)'
+  },
+  {
+    title: 'It\'s a Conversation, Not a Command',
+    short: 'Collaboration beats delegation.',
+    detail: 'You\'re not issuing orders to a machine. You\'re thinking out loud with a collaborator. Push back when something\'s wrong. Ask "why did you do it that way?" Add context mid-session. If you went from vague to specific as the conversation evolved — that\'s exactly how this is supposed to work.',
+    color: 'var(--green)'
+  },
+  {
+    title: 'Review Against Your Plan',
+    short: 'Your eyes are the primary review tool.',
+    detail: 'Don\'t just accept what the AI produced because it looks right. Does it match what you said you wanted to build? The AI will hallucinate, drift, or over-engineer. Your job is to catch it. Read every line. Then ask the agent: "What did you change that I didn\'t ask for?" That question surfaces the most issues.',
+    color: 'var(--orange)'
+  },
+  {
+    title: 'Compound Your Sessions',
+    short: 'Every session should inherit the last one\'s wisdom.',
+    detail: 'Type /compound at the end of every session. This distills your decisions, dead ends, and discoveries into COMPOUND.md. Next session, the AI reads it and picks up exactly where you left off — without you having to re-explain everything. This is the difference between 3 sessions of progress vs 3 sessions of starting over.',
+    color: 'var(--amber)'
+  }
+]
+
+function renderPrinciples() {
+  const container = document.getElementById('principles-list')
+  principles.forEach(p => {
+    const div = document.createElement('div')
+    div.style.cssText = `border:1px solid var(--border);border-radius:8px;overflow:hidden;`
+    div.innerHTML = `
+      <div class="acc-btn" onclick="toggleAcc(this)" style="padding:0.85rem 1rem;display:flex;justify-content:space-between;align-items:center;background:var(--surface2);">
+        <div>
+          <span style="color:${p.color};font-weight:700;font-size:0.88rem;">${p.title}</span>
+          <span style="color:var(--muted);font-size:0.78rem;margin-left:0.75rem;">${p.short}</span>
+        </div>
+        <span class="acc-arrow" style="color:${p.color};">▶</span>
+      </div>
+      <div class="acc-content" style="padding:0 1rem;">
+        <p style="padding:0.75rem 0;font-size:0.82rem;line-height:1.65;color:var(--muted);">${p.detail}</p>
+      </div>
+    `
+    container.appendChild(div)
+  })
+}
+
+// ══════════════════════════════════════════════
+// GLOSSARY FLASHCARDS
+// ══════════════════════════════════════════════
+const glossaryCards = [
+  { term: 'MDM', day: 'Day 1', def: 'Mobile Device Management — software that remotely manages a fleet of devices. Jamf is an MDM. Think of it as a remote control for every enrolled Apple device in an organization.' },
+  { term: 'Persona', day: 'Day 1', def: 'A fictional but realistic representation of a user type — their goals, pain points, and daily workflow. You mapped 4 personas: Enterprise IT Admin, K-12 IT Coordinator, Security Analyst, Help Desk Tech.' },
+  { term: 'Smart Group', day: 'Day 1 / Day 2', def: 'A dynamic device list in Jamf that updates automatically based on rules. If a device matches the rule, it\'s in. When it stops matching, it\'s out. No manual list management needed.' },
+  { term: 'REST API', day: 'Day 2', def: 'A standard way for software to talk to other software over HTTP. Uses verbs (GET, POST, PUT, DELETE) and URLs. The Jamf Pro API is REST-based — you used curl to make REST calls.' },
+  { term: 'Bearer Token', day: 'Day 2', def: 'A temporary authentication credential. You POST your credentials once, get a token back, then use that token in your Authorization header. Like a wristband at a festival — prove yourself once, use it all day.' },
+  { term: 'JSON', day: 'Day 2', def: 'JavaScript Object Notation — the standard data format for APIs. Key-value pairs in curly braces. { "name": "Butjilo", "device_id": 42 }. Most modern APIs speak JSON.' },
+  { term: 'Webhook', day: 'Day 2', def: 'An event-driven HTTP callback. You give Jamf a URL; when something happens (like a device joins a Smart Group), Jamf POSTs a JSON payload to that URL automatically. Push, not poll.' },
+  { term: 'Polling', day: 'Day 2', def: 'The old way — your app repeatedly asks "anything new?" on a timer. Inefficient. Webhooks replace this with push notifications. Like checking your email vs getting an email notification.' },
+  { term: 'Virtual Machine (VM)', day: 'Day 2', def: 'A full operating system running in software inside another computer. You ran macOS inside your Mac using Virtual Buddy and an IPSW file. Useful for testing Jamf enrollment without risking your real machine.' },
+  { term: 'Context Window', day: 'Day 3', def: 'How much an AI can "see" and work with at once. Like short-term memory. Filling it up degrades response quality. COMPOUND.md keeps key context concise so it fits efficiently.' },
+  { term: 'Compound Engineering', day: 'Day 3', def: 'The 4-step AI workflow: Plan → Work → Review → Compound. Each session builds on the last. The key insight: most of the work is planning, not building.' },
+  { term: 'Hallucination', day: 'Day 3', def: 'When an AI confidently states something wrong — a fake function, a misremembered API endpoint, a made-up fact. This is why Review Against Your Plan is a core principle. Never assume the output is correct.' }
+]
+
+let glossaryIdx = 0
+let glossaryFlipped = false
+
+function renderGlossaryCard() {
+  const card = glossaryCards[glossaryIdx]
+  const inner = document.getElementById('glossary-inner')
+  if (glossaryFlipped) { inner.classList.remove('flipped'); glossaryFlipped = false }
+  setTimeout(() => {
+    document.getElementById('glossary-term').textContent = card.term
+    document.getElementById('glossary-day-tag').textContent = card.day.toUpperCase()
+    document.getElementById('glossary-def').textContent = card.def
+    document.getElementById('glossary-counter').textContent = `${glossaryIdx + 1} / ${glossaryCards.length}`
+  }, glossaryFlipped ? 300 : 0)
+}
+
+function flipGlossary() {
+  const inner = document.getElementById('glossary-inner')
+  inner.classList.toggle('flipped')
+  glossaryFlipped = !glossaryFlipped
+}
+
+function nextGlossary() {
+  glossaryIdx = (glossaryIdx + 1) % glossaryCards.length
+  renderGlossaryCard()
+}
+
+function prevGlossary() {
+  glossaryIdx = (glossaryIdx - 1 + glossaryCards.length) % glossaryCards.length
+  renderGlossaryCard()
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+renderPersonaQuiz()
+renderGitFills()
+renderAPIQuiz()
+renderWebhookQuiz()
+renderPrinciples()
+renderGlossaryCard()
+
+// Set initial glossary back text
+document.getElementById('glossary-def').textContent = glossaryCards[0].def
+</script>
+</body>
+</html>
